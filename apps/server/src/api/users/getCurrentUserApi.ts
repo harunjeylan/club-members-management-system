@@ -1,0 +1,42 @@
+import prisma from '../../prisma/PrismaClient';
+import getArrayValues from '../../utils/getArrayValues';
+
+export default async function getCurrentUserApi(req, res) {
+  const { populate } = req.query;
+  try {
+    if (isNaN(req.user.id)) {
+      return res.status(400).json({ message: 'Invalid User ID' });
+    }
+    let populations = {};
+    getArrayValues(populate).forEach((item: string) => {
+      if (item === 'roles') {
+        populations['roles'] = true;
+      }
+
+      if (item === 'profile') {
+        populations['profile'] = true;
+      }
+    });
+    const user = await prisma.user.findFirst({
+      where: {
+        id: req.user.id,
+      },
+      include: populations,
+    });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: 'User Not Exist', code: 'get-user' });
+    }
+
+    return res.status(200).json({
+      user: prisma.$exclude(user, ['password']),
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: error.message, code: 'get-current-user' });
+  }
+}
