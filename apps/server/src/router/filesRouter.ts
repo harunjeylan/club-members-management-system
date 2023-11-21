@@ -1,10 +1,13 @@
 import express from 'express';
 import getAllFilesAPi from '../api/files/getAllFilesApi';
-import createFileApi from '../api/files/createFileApi';
-
+import uploadFilesApi from '../api/files/uploadFilesApi';
+import getOneFileAPi from '../api/files/getOneFileApi';
+import deleteFilesAPi from '../api/files/deleteFilesApi';
 
 const router = express.Router();
 router.get('/', getAllFilesAPi);
-router.post('/', createFileApi);
+router.post('/', uploadFilesApi);
+router.post('/:fileName', getOneFileAPi);
+router.delete('/:fileName', deleteFilesAPi);
 
 export default router;

@@ -3,14 +3,12 @@ import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import prisma from '../../prisma/PrismaClient';
 import generateUserToken from '../../utils/generateUserToken';
-type UserData = User & {
-  roles: Role[];
-};
+
 export default async function registerCurrentUserApi(req, res) {
   const { username, first_name, last_name, email, password } = req.body;
   try {
-    console.log({username, first_name, last_name, email, password});
-    
+    console.log({ username, first_name, last_name, email, password });
+
     const zodSchema = z.object({
       username: z.string().min(3),
       first_name: z.string().min(3),
@@ -60,7 +58,7 @@ export default async function registerCurrentUserApi(req, res) {
 
     const hashedPassword = bcrypt.hashSync(password, 10);
 
-    const user = (await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username,
         first_name,
@@ -71,7 +69,14 @@ export default async function registerCurrentUserApi(req, res) {
       include: {
         roles: true,
       },
-    })) as unknown as UserData | null;
+    });
+    await prisma.profile.create({
+      data: {
+        user: {
+          connect: { id: user.id },
+        },
+      },
+    });
     const { access, refresh } = generateUserToken(user);
     return res.status(200).json({
       user: prisma.$exclude(user, ['password']),

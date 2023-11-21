@@ -16,6 +16,9 @@ export default async function getOneRoleApi(req, res) {
     const role = await prisma.role.findFirst({
       where: { id: roleId, spaceName: spaceName },
     });
+    if (!role) {
+      return res.sendStatus(404);
+    }
     return res.status(200).json({
       role: role,
     });

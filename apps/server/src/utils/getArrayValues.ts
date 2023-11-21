@@ -1,7 +1,7 @@
-export default function getArrayValues(populate: string | string[]): string[] {
-  if (typeof populate === 'string') {
-    return [populate];
+export default function getArrayValues(value: string | string[]): string[] {
+  if (typeof value === 'string') {
+    return [value];
   } else {
-    return populate ?? [];
+    return value ?? [];
   }
 }

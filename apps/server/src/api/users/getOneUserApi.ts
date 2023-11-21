@@ -32,9 +32,7 @@ export default async function getOneUserApi(req, res) {
       include: populations,
     });
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: 'User Not Exist', code: 'get-user' });
+      return res.sendStatus(404);
     }
 
     return res.status(200).json({
@@ -43,5 +41,5 @@ export default async function getOneUserApi(req, res) {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error.message, code: 'get-user' });
-  } 
+  }
 }

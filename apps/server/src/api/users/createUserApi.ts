@@ -72,6 +72,13 @@ export default async function createUserApi(req, res) {
         password: hashedPassword,
       },
     });
+    await prisma.profile.create({
+      data: {
+        user: {
+          connect: { id: user.id },
+        },
+      },
+    });
     return res.status(200).json({
       user: prisma.$exclude(user, ['password']),
     });
