@@ -4,9 +4,6 @@ import getArrayValues from '../../utils/getArrayValues';
 export default async function getCurrentUserApi(req, res) {
   const { populate } = req.query;
   try {
-    if (isNaN(req.user.id)) {
-      return res.status(400).json({ message: 'Invalid User ID' });
-    }
     let populations = {};
     getArrayValues(populate).forEach((item: string) => {
       if (item === 'roles') {
@@ -14,7 +11,11 @@ export default async function getCurrentUserApi(req, res) {
       }
 
       if (item === 'profile') {
-        populations['profile'] = true;
+        populations['profile'] = {
+          include: {
+            image: true,
+          },
+        };
       }
     });
     const user = await prisma.user.findFirst({

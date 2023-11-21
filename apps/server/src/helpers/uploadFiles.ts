@@ -1,13 +1,15 @@
+import { FileModel } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidV4 } from 'uuid';
 import rewriteFileName from '../utils/rewriteFileName';
-import { FileType } from '@club-members/types';
 
-export default function uploadFiles(files: object): Promise<FileType[]> {
+export default function uploadFiles(
+  files: Omit<FileModel, 'id'>[]
+): Promise<Partial<Omit<FileModel, 'id'>[]>> {
   return new Promise((resolve, reject) => {
     try {
-      const uploadedFiles: FileType[] = [];
+      const uploadedFiles: Partial<Omit<FileModel, 'id'>[]> = [];
       Object.keys(files).forEach(async (key) => {
         let fileName = key;
         if (fs.existsSync(path.join(__dirname, 'uploads', fileName))) {

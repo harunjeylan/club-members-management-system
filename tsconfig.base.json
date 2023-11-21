@@ -15,8 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@club-members/types": ["libs/types/src/index.ts"]
+      "@client/*": ["apps/client/src/*"],
+      "@server/*": ["apps/server/src/*"]
     }
   },
+  "include": ["./types/**/*.d.ts"],
   "exclude": ["node_modules", "tmp"]
 }

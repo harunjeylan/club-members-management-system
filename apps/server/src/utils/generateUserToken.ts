@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { UserWithRoles } from '../types/users';
+import { UserWithRoles } from 'types/user';
 
 export default function generateUserToken(user: UserWithRoles) {
   const accessData = {

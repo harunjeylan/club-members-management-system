@@ -22,7 +22,11 @@ export default async function getOneUserApi(req, res) {
       }
 
       if (item === 'profile') {
-        populations['profile'] = true;
+        populations['profile'] = {
+          include: {
+            image:true
+          }
+        };
       }
     });
     const user = await prisma.user.findFirst({
