@@ -72,20 +72,23 @@ export default async function createUserApi(req, res) {
         password: hashedPassword,
       },
     });
-    await prisma.profile.create({
+    const profile = await prisma.profile.create({
       data: {
         user: {
           connect: { id: user.id },
         },
       },
+      include: {
+        image: true,
+      },
     });
     return res.status(200).json({
-      user: prisma.$exclude(user, ['password']),
+      user: prisma.$exclude({ ...user, profile }, ['password']),
     });
   } catch (error) {
     console.log(error);
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });
-  } 
+  }
 }

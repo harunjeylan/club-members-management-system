@@ -16,7 +16,8 @@
       ]
     },
     "e2e": {
-      "cache": true
+      "cache": true,
+      "inputs": ["default", "^production"]
     },
     "@nx/jest:jest": {
       "cache": true,
@@ -30,6 +31,9 @@
           "codeCoverage": true
         }
       }
+    },
+    "build-custom-server": {
+      "cache": true
     }
   },
   "namedInputs": {
@@ -46,5 +50,18 @@
     ],
     "sharedGlobals": []
   },
-  "nxCloudAccessToken": "OGQxODBjY2UtMzA0Zi00Nzk1LWI3NzAtZTFmNTE0NDk4YmJifHJlYWQtd3JpdGU="
+  "nxCloudAccessToken": "OGQxODBjY2UtMzA0Zi00Nzk1LWI3NzAtZTFmNTE0NDk4YmJifHJlYWQtd3JpdGU=",
+  "generators": {
+    "@nx/react": {
+      "application": {
+        "babel": true
+      }
+    },
+    "@nx/next": {
+      "application": {
+        "style": "css",
+        "linter": "eslint"
+      }
+    }
+  }
 }
