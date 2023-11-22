@@ -1,4 +1,8 @@
 import AdminSidebar from '@client/components/Sidebar/AdminSidebar';
+import getServerUser from '@client/libs/server/getServerUser';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
+import { RoleCode, RoleScop } from '@prisma/client';
+import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 
 export const metadata = {
@@ -9,10 +13,22 @@ type PropsType = {
   children: ReactNode | ReactNode[];
 };
 export default async function Layout({ children }: PropsType) {
+  const user = await getServerUser();
+  if (!user) {
+    return redirect('/auth/login');
+  }
+  const userAccessRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+  ]);
+  if (!userAccessRoles.length) {
+    return redirect('/auth/login');
+  }
   return (
     <main className="flex h-full w-full ">
       <AdminSidebar />
-      <div className="w-full max-w-[100vw] overflow-x-auto mt-12">{children}</div>
+      <div className="w-full max-w-[100vw] overflow-x-auto mt-12">
+        {children}
+      </div>
     </main>
   );
 }

@@ -1,21 +1,55 @@
-import SpaceList from '@client/components/Space/SpaceList';
-import Header2 from '@client/components/ui/Header2';
-import getSpaces from '@client/libs/server/getSpaces';
-import { Suspense } from 'react';
+import getSpaceDetails from '@client/libs/server/getSpaceDetails';
+import { BiUserCircle } from 'react-icons/bi';
 
-async function Page() {
-  const spaces = await getSpaces();
-
+async function Page({ params }: { params: { spaceName: string } }) {
+  const space = await getSpaceDetails(params.spaceName);
   return (
-    <section className="w-full ">
-      <div className="w-full px-1 md:px-2 lg:px-4 mx-full ">
-        <div className="flex justify-between w-full  border-b border-secondary-500  my-4 pb-2">
-          <Header2 title="Spaces" />
+    <section className="w-full flex flex-col gap-8">
+      <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-9 xl:grid-cols-12   gap-4">
+        <div className="col-span-3 rounded-md bg-secondary-200 dark:bg-secondary-900">
+          <div className="flex flex-col gap-4 p-10 mx-auto mt-auto justify-center items-center">
+            <BiUserCircle size={80} />
+            <div className="flex items-center gap-2">
+              <div className="text-3xl font-extrabold">5</div>
+              <div className="text-2xl font-extrabold">Members</div>
+            </div>
+          </div>
         </div>
-        <Suspense fallback={<div>Loading..</div>}>
-          {/* <SpaceListTable spaces={spaces} /> */}
-          <SpaceList spaces={spaces} />
-        </Suspense>
+
+        <div className="col-span-3 rounded-md bg-secondary-200 dark:bg-secondary-900">
+          <div className="flex flex-col gap-4 p-10 mx-auto mt-auto justify-center items-center">
+            <BiUserCircle size={80} />
+            <div className="flex items-center gap-2">
+              <div className="text-3xl font-extrabold">5</div>
+              <div className="text-2xl font-extrabold">Admins</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-span-3 rounded-md bg-secondary-200 dark:bg-secondary-900">
+          <div className="flex flex-col gap-4 p-10 mx-auto mt-auto justify-center items-center">
+            <BiUserCircle size={80} />
+            <div className="flex items-center gap-2">
+              <div className="text-3xl font-extrabold">5</div>
+              <div className="text-2xl font-extrabold">Editors</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-span-3 rounded-md bg-secondary-200 dark:bg-secondary-900">
+          <div className="flex flex-col gap-4 p-10 mx-auto mt-auto justify-center items-center">
+            <BiUserCircle size={80} />
+            <div className="flex items-center gap-2">
+              <div className="text-3xl font-extrabold">5</div>
+              <div className="text-2xl font-extrabold">Events</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="w-full h-full flex rounded-md bg-secondary-200 dark:bg-secondary-900">
+        <div className="mx-auto h-80 flex items-center justify-center">
+          <div className="my-auto  font-bold  text-xl md:text-4xl p-8">Manage Your Club Members</div>
+        </div>
       </div>
     </section>
   );

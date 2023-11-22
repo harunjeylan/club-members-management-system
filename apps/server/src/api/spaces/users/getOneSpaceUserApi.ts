@@ -1,5 +1,5 @@
 import { RoleCode, RoleScop } from '@prisma/client';
-import { getUserAccessRoles } from 'apps/server/src/utils/getUserAccessRoles';
+import {getUserAccessRoles} from "@libs/utils/getUserAccessRoles"
 import prisma from '../../../prisma/PrismaClient';
 import getArrayValues from '../../../utils/getArrayValues';
 
@@ -30,7 +30,11 @@ export default async function getOneSpaceUserApi(req, res) {
     const user = await prisma.user.findFirst({
       where: {
         id: userId,
+        spaces: {
+          some: { name: spaceName },
+        },
       },
+   
       include: populations,
     });
     if (!user) {

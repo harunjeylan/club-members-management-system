@@ -1,30 +1,29 @@
 'use client';
 
 import { Space } from '@prisma/client';
-import { ColumnDef, Table } from '@tanstack/react-table';
-import React, { useEffect, useState } from 'react';
-import DataTable from '../ui/DataTable';
-import { fuzzySort } from '../ui/DataTable/helperFns';
-import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
+import { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
+import React, { useState } from 'react';
+import DataTable from '../ui/DataTable';
+import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
+import { fuzzySort } from '../ui/DataTable/helperFns';
 
-function SpaceListTable({ spaces }: { spaces: Space[] }) {
-  const [table, setTable] = useState<Table<Space>>();
-  const [selectedRow, setSelectedRow] = useState<{}>({});
+function SpaceListTable({
+  spaces,
+  baseUrl,
+}: {
+  baseUrl: string;
+  spaces: Space[];
+}) {
   const [selected, setSelected] = useState<Space[]>([]);
-  useEffect(() => {
-    const selectedItem = Object.keys(selectedRow)
-      .map((idNumber) => table?.getRow(`${idNumber}`)?.original)
-      .filter((item) => !!item) as Space[];
-    setSelected(selectedItem);
-  }, [selectedRow]);
+  console.log(selected);
+
   const columns = React.useMemo<ColumnDef<Space, any>[]>(
     () => [
       {
         accessorFn: (row) => row.name,
         id: 'name',
         header: ({ table }) => {
-          setSelectedRow(table.getState().rowSelection);
           return (
             <div className="flex gap-2 items-center">
               <IndeterminateCheckbox
@@ -49,10 +48,23 @@ function SpaceListTable({ spaces }: { spaces: Space[] }) {
                 {...{
                   checked: row.getIsSelected(),
                   indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler(),
+                  onChange: (event) => {
+                    const checked = event.currentTarget.checked;
+                    setSelected((prev) =>
+                      checked
+                        ? [...prev, row.original]
+                        : prev.filter((item) => item.id !== row.original.id)
+                    );
+                    row.getToggleSelectedHandler()(event);
+                  },
                 }}
               />
-              <span>{getValue()}</span>
+              <Link
+                className="link-text"
+                href={`${baseUrl ?? ''}/spaces/${row.original.name}`}
+              >
+                {getValue()}
+              </Link>
             </div>
           </div>
         ),
@@ -106,11 +118,11 @@ function SpaceListTable({ spaces }: { spaces: Space[] }) {
         </div>
 
         <Link href={'/admin/spaces/new'} className="btn-primary py-2 px-4">
-            Add Space
-          </Link>
+          Add Space
+        </Link>
       </div>
       <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
-        <DataTable<Space> data={spaces} columns={columns} getTable={setTable} />
+        <DataTable<Space> data={spaces} columns={columns} />
       </div>
     </div>
   );

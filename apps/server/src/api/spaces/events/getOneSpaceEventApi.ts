@@ -1,8 +1,8 @@
 import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
-import { getUserAccessRoles } from 'apps/server/src/utils/getUserAccessRoles';
+import {getUserAccessRoles} from "@libs/utils/getUserAccessRoles"
 
-export default async function getOneEventApi(req, res) {
+export default async function getOneSpaceEventApi(req, res) {
   const { spaceName, eventId } = req.params;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [

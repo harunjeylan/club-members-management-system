@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { RoleCode, RoleScop } from '@prisma/client';
-import { getUserAccessRoles } from 'apps/server/src/utils/getUserAccessRoles';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import getFieldsData from 'apps/server/src/utils/getFieldsData';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 
-export default async function updateEventApi(req, res) {
+export default async function updateSpaceRoleApi(req, res) {
   const { spaceName, roleId } = req.params;
-  const fields = ['name', 'code', 'scop', 'description','users'];
+  const fields = ['name', 'code', 'scop', 'description', 'users'];
   const fieldsData = getFieldsData(req.body, fields);
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
@@ -47,7 +47,9 @@ export default async function updateEventApi(req, res) {
     const role = await prisma.role.update({
       where: {
         id: roleId,
+        spaceName: spaceName,
       },
+   
       data: fieldsData,
     });
 

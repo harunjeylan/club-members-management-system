@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { RoleCode, RoleScop } from '@prisma/client';
 import getFieldsData from 'apps/server/src/utils/getFieldsData';
-import { getUserAccessRoles } from 'apps/server/src/utils/getUserAccessRoles';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 
 export default async function updateUserApi(req, res) {
@@ -41,11 +41,15 @@ export default async function updateUserApi(req, res) {
         connect: fieldsData['roles'],
       };
     }
-    
+
     const user = await prisma.user.update({
       where: {
         id: userId,
+        spaces: {
+          some: { name: spaceName },
+        },
       },
+
       data: fieldsData,
     });
 

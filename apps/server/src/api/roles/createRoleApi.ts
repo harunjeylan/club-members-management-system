@@ -1,6 +1,6 @@
 import { RoleCode, RoleScop } from '@prisma/client';
-import prisma from 'apps/server/src/prisma/PrismaClient';
-import { getUserAccessRoles } from 'apps/server/src/utils/getUserAccessRoles';
+import prisma from '@server/prisma/PrismaClient';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { z } from 'zod';
 
 export default async function createRoleApi(req, res) {

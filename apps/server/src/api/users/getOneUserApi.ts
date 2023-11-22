@@ -1,7 +1,7 @@
 import { Role, RoleCode, RoleScop } from '@prisma/client';
 import prisma from '../../prisma/PrismaClient';
 import getArrayValues from '../../utils/getArrayValues';
-import { getUserAccessRoles } from '../../utils/getUserAccessRoles';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
 export default async function getOneUserApi(req, res) {
   const { userId } = req.params;

@@ -1,13 +1,7 @@
-import { RoleCode, RoleScop } from "@prisma/client";
+import { Role, RoleCode, RoleScop } from "@prisma/client";
 
 export function getUserAccessRoles(
-  userRoles: {
-    id: string;
-    name: string;
-    scop: RoleScop;
-    code: RoleCode;
-    spaceName: string;
-  }[],
+  userRoles: Partial<Role>[],
   roles: {
     scop: RoleScop;
     code: RoleCode;

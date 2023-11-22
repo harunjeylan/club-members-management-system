@@ -13,7 +13,7 @@ async function Page() {
           <Header2 title="Roles" />
         </div>
         <Suspense fallback={<div>Loading..</div>}>
-          <RoleListTable roles={roles} />
+          <RoleListTable roles={roles} baseUrl="/admin" />
         </Suspense>
       </div>
     </section>

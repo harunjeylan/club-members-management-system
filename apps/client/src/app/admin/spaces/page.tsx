@@ -1,4 +1,5 @@
 import SpaceList from '@client/components/Space/SpaceList';
+import SpaceListTable from '@client/components/Tables/SpaceListTable';
 import Header2 from '@client/components/ui/Header2';
 import getSpaces from '@client/libs/server/getSpaces';
 import { Suspense } from 'react';
@@ -13,8 +14,7 @@ async function Page() {
           <Header2 title="Spaces" />
         </div>
         <Suspense fallback={<div>Loading..</div>}>
-          {/* <SpaceListTable spaces={spaces} /> */}
-          <SpaceList spaces={spaces} />
+          <SpaceListTable spaces={spaces} baseUrl="/admin" />
         </Suspense>
       </div>
     </section>

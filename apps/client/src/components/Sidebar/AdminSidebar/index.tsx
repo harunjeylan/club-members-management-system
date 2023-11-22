@@ -4,7 +4,12 @@ import { selectCurrentUser } from '@client/libs/features/userSlice';
 import Link from 'next/link';
 import { AiFillSetting } from 'react-icons/ai';
 import { FaUsers } from 'react-icons/fa';
-import { MdAdminPanelSettings, MdEvent, MdWorkspaces } from 'react-icons/md';
+import {
+  MdAdminPanelSettings,
+  MdDashboard,
+  MdEvent,
+  MdWorkspaces,
+} from 'react-icons/md';
 import { useSelector } from 'react-redux';
 import { UserWithProfileAndRoles } from 'types/user';
 type PropsType = {
@@ -24,20 +29,38 @@ function AdminSidebar() {
 
           <ul className="flex flex-col gap-1">
             <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <Link href={'/admin/spaces'} className="w-full py-2 px-4  flex gap-2 items-center">
-              <MdWorkspaces size={20}  />
+              <Link
+                href={'/admin'}
+                className="w-full py-2 px-4  flex gap-2 items-center"
+              >
+                <MdDashboard size={20} />
+                Dashboard
+              </Link>
+            </li>
+            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
+              <Link
+                href={'/admin/spaces'}
+                className="w-full py-2 px-4  flex gap-2 items-center"
+              >
+                <MdWorkspaces size={20} />
                 Spaces
               </Link>
             </li>
             <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <Link href={'/admin/users'} className="w-full py-2 px-4  flex gap-2 items-center">
-              <FaUsers size={20}  />
+              <Link
+                href={'/admin/users'}
+                className="w-full py-2 px-4  flex gap-2 items-center"
+              >
+                <FaUsers size={20} />
                 Users
               </Link>
             </li>
             <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <Link href={'/admin/events'} className="w-full py-2 px-4  flex gap-2 items-center">
-              <MdEvent size={20}  />
+              <Link
+                href={'/admin/events'}
+                className="w-full py-2 px-4  flex gap-2 items-center"
+              >
+                <MdEvent size={20} />
                 Events
               </Link>
             </li>

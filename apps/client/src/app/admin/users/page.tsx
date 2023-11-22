@@ -12,7 +12,7 @@ async function Page() {
           <Header2 title="Users" />
         </div>
         <Suspense fallback={<div>Loading..</div>}>
-          <UsersListTable users={users} />
+          <UsersListTable users={users} baseUrl="/admin" />
         </Suspense>
       </div>
     </section>

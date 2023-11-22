@@ -1,7 +1,7 @@
 import { RoleCode, RoleScop } from '@prisma/client';
 import { z } from 'zod';
 import prisma from '../../prisma/PrismaClient';
-import { getUserAccessRoles } from '../../utils/getUserAccessRoles';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
 export default async function deleteSpaceApi(req, res) {
   const { spaceName } = req.params;

@@ -8,16 +8,9 @@ import { fuzzySort } from '../ui/DataTable/helperFns';
 import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
 import Link from 'next/link';
 
-function RoleListTable({ roles }: { roles: Role[] }) {
-  const [table, setTable] = useState<Table<Role>>();
-  const [selectedRow, setSelectedRow] = useState<{}>({});
+function RoleListTable({ roles, baseUrl }: { baseUrl: string; roles: Role[] }) {
   const [selected, setSelected] = useState<Role[]>([]);
-  useEffect(() => {
-    const selectedItem = Object.keys(selectedRow)
-      .map((idNumber) => table?.getRow(`${idNumber}`)?.original)
-      .filter((item) => !!item) as Role[];
-    setSelected(selectedItem);
-  }, [selectedRow]);
+  console.log(selected);
 
   const columns = React.useMemo<ColumnDef<Role, any>[]>(
     () => [
@@ -25,7 +18,6 @@ function RoleListTable({ roles }: { roles: Role[] }) {
         accessorFn: (row) => row.name,
         id: 'name',
         header: ({ table }) => {
-          setSelectedRow(table.getState().rowSelection);
           return (
             <div className="flex gap-2 items-center">
               <IndeterminateCheckbox
@@ -39,24 +31,39 @@ function RoleListTable({ roles }: { roles: Role[] }) {
             </div>
           );
         },
-        cell: ({ row, getValue }) => (
-          <div
-            style={{
-              paddingLeft: `${row.depth * 2}rem`,
-            }}
-          >
-            <div className="flex gap-2 items-center">
-              <IndeterminateCheckbox
-                {...{
-                  checked: row.getIsSelected(),
-                  indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler(),
-                }}
-              />
-              <span>{getValue()}</span>
+        cell: ({ row, getValue }) => {
+          return (
+            <div
+              style={{
+                paddingLeft: `${row.depth * 2}rem`,
+              }}
+            >
+              <div className="flex gap-2 items-center">
+                <IndeterminateCheckbox
+                  {...{
+                    checked: row.getIsSelected(),
+                    indeterminate: row.getIsSomeSelected(),
+                    onChange: (event) => {
+                      const checked = event.currentTarget.checked;
+                      setSelected((prev) =>
+                        checked
+                          ? [...prev, row.original]
+                          : prev.filter((item) => item.id !== row.original.id)
+                      );
+                      row.getToggleSelectedHandler()(event);
+                    },
+                  }}
+                />
+                <Link
+                  className="link-text"
+                  href={`${baseUrl ?? ''}/roles/${row.original.id}`}
+                >
+                  {getValue()}
+                </Link>
+              </div>
             </div>
-          </div>
-        ),
+          );
+        },
         footer: (props) => props.column.id,
       },
       {
@@ -108,7 +115,7 @@ function RoleListTable({ roles }: { roles: Role[] }) {
         </Link>
       </div>
       <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
-        <DataTable<Role> data={roles} columns={columns} getTable={setTable} />
+        <DataTable<Role> data={roles} columns={columns} />
       </div>
     </div>
   );

@@ -1,31 +1,30 @@
 'use client';
 
-import { ColumnDef, Table } from '@tanstack/react-table';
-import React, { useEffect, useState } from 'react';
+import { User } from '@prisma/client';
+import { ColumnDef } from '@tanstack/react-table';
+import Link from 'next/link';
+import React, { useState } from 'react';
 import { UserWithProfileAndRoles } from 'types/user';
 import DataTable from '../ui/DataTable';
-import { fuzzySort } from '../ui/DataTable/helperFns';
 import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
-import { User } from '@prisma/client';
-import Link from 'next/link';
+import { fuzzySort } from '../ui/DataTable/helperFns';
 
-function UsersListTable({ users }: { users: UserWithProfileAndRoles[] }) {
-  const [table, setTable] = useState<Table<UserWithProfileAndRoles>>();
-  const [selectedRow, setSelectedRow] = useState<{}>({});
+function UsersListTable({
+  users,
+  baseUrl,
+}: {
+  baseUrl: string;
+  users: UserWithProfileAndRoles[];
+}) {
   const [selected, setSelected] = useState<User[]>([]);
-  useEffect(() => {
-    const selectedItem = Object.keys(selectedRow)
-      .map((idNumber) => table?.getRow(`${idNumber}`)?.original)
-      .filter((item) => !!item) as User[];
-    setSelected(selectedItem);
-  }, [selectedRow]);
+  console.log(selected);
+
   const columns = React.useMemo<ColumnDef<UserWithProfileAndRoles, any>[]>(
     () => [
       {
         accessorFn: (row) => row.first_name,
         id: 'first_name',
         header: ({ table }) => {
-          setSelectedRow(table.getState().rowSelection);
           return (
             <div className="flex gap-2 items-center">
               <IndeterminateCheckbox
@@ -39,24 +38,36 @@ function UsersListTable({ users }: { users: UserWithProfileAndRoles[] }) {
             </div>
           );
         },
-        cell: ({ row, getValue }) => (
-          <div
-            style={{
-              paddingLeft: `${row.depth * 2}rem`,
-            }}
-          >
-            <div className="flex gap-2 items-center">
-              <IndeterminateCheckbox
-                {...{
-                  checked: row.getIsSelected(),
-                  indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler(),
-                }}
-              />
-              <span>{getValue()}</span>
+        cell: ({ row, getValue }) => {
+          return (
+            <div
+              style={{
+                paddingLeft: `${row.depth * 2}rem`,
+              }}
+            >
+              <div className="flex gap-2 items-center">
+                <IndeterminateCheckbox
+                  {...{
+                    checked: row.getIsSelected(),
+                    indeterminate: row.getIsSomeSelected(),
+                    onChange: (event) => {
+                      const checked = event.currentTarget.checked;
+                      setSelected((prev) =>
+                        checked
+                          ? [...prev, row.original]
+                          : prev.filter((item) => item.id !== row.original.id)
+                      );
+                      row.getToggleSelectedHandler()(event);
+                    },
+                  }}
+                />
+                <Link href={`${baseUrl ?? ''}/users/${row.original.id}`}>
+                  {getValue()}
+                </Link>
+              </div>
             </div>
-          </div>
-        ),
+          );
+        },
         footer: (props) => props.column.id,
       },
       {
@@ -113,11 +124,7 @@ function UsersListTable({ users }: { users: UserWithProfileAndRoles[] }) {
         </Link>
       </div>
       <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
-        <DataTable<UserWithProfileAndRoles>
-          data={users}
-          columns={columns}
-          getTable={setTable}
-        />
+        <DataTable<UserWithProfileAndRoles> data={users} columns={columns} />
       </div>
     </div>
   );

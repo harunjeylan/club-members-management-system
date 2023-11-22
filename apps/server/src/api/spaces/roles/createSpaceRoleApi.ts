@@ -1,57 +1,33 @@
-import { RoleCode, RoleScop, Event, Repeat } from '@prisma/client';
+import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
-import { getUserAccessRoles } from 'apps/server/src/utils/getUserAccessRoles';
+import {getUserAccessRoles} from "@libs/utils/getUserAccessRoles"
 import { z } from 'zod';
 
-export default async function createEventApi(req, res) {
-  const {
-    title,
-    startAt,
-    endAt,
-    fullDay,
-    repeat,
-    location,
-    description,
-    categoryId,
-  } = req.body;
+export default async function createSpaceRoleApi(req, res) {
+  const { name, code, scop, description } = req.body;
   const { spaceName } = req.params;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
       { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: spaceName },
-      { scop: RoleScop.SPACE, code: RoleCode.EDITOR, spaceName: spaceName },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      title: z.string().min(3),
-      startAt: z.date(),
-      endAt: z.date(),
-      fullDay: z.boolean(),
-      repeat: z.enum([
-        Repeat.NO_REPEAT,
-        Repeat.EVERY_DAY,
-        Repeat.EVERY_WEEK,
-        Repeat.EVERY_MONTH,
-        Repeat.EVERY_YEAR,
-      ]),
+      name: z.string().min(3),
+      code: z.enum([RoleCode.ADMIN, RoleCode.EDITOR, RoleCode.MEMBER]),
+      scop: z.enum([RoleScop.SUPER, RoleScop.SPACE]),
       description: z.string().or(z.undefined()),
-      location: z.string().or(z.undefined()),
-      categoryId: z.string(),
     });
 
     //@ts-ignore: Unreachable code error
     const { success, error } = zodSchema.safeParse({
-      title,
-      startAt,
-      endAt,
-      fullDay,
-      repeat,
-      location,
+      name,
+      code,
+      scop,
       description,
-      categoryId,
     });
 
     if (!success) {
@@ -62,20 +38,12 @@ export default async function createEventApi(req, res) {
       });
     }
 
-    const event = await prisma.event.create({
+    const role = await prisma.role.create({
       data: {
-        title,
-        startAt,
-        endAt,
-        fullDay,
-        repeat,
-        location,
+        name,
+        code,
+        scop,
         description,
-        category: {
-          connect: {
-            id: categoryId,
-          },
-        },
         space: {
           connect: {
             name: spaceName,
@@ -84,12 +52,12 @@ export default async function createEventApi(req, res) {
       },
     });
     return res.status(200).json({
-      event: event,
+      role: role,
     });
   } catch (error) {
     console.log(error);
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });
-  } 
+  }
 }
