@@ -16,7 +16,7 @@ export default async function createSpaceApi(req, res) {
     const zodSchema = z.object({
       name: z.string().min(3),
       isPrivate: z.boolean(),
-      description: z.string().nullable(),
+      description: z.string().or(z.undefined()),
     });
 
     //@ts-ignore: Unreachable code error

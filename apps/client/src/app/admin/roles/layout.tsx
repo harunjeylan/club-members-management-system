@@ -1,4 +1,3 @@
-import AdminSidebar from '@client/components/Sidebar/AdminSidebar';
 import { ReactNode } from 'react';
 
 export const metadata = {
@@ -9,10 +8,5 @@ type PropsType = {
   children: ReactNode | ReactNode[];
 };
 export default async function Layout({ children }: PropsType) {
-  return (
-    <main className="flex h-full w-full ">
-      <AdminSidebar />
-      <div className="w-full max-w-[100vw] overflow-x-auto mt-12">{children}</div>
-    </main>
-  );
+  return <main className="flex h-full w-full">{children}</main>;
 }

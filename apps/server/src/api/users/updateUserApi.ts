@@ -17,10 +17,10 @@ export default async function updateUserApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      username: z.string().min(3).nullable(),
-      first_name: z.string().min(3).nullable(),
-      last_name: z.string().nullable(),
-      email: z.string().email().nullable(),
+      username: z.string().min(3).or(z.undefined()),
+      first_name: z.string().min(3).or(z.undefined()),
+      last_name: z.string().or(z.undefined()),
+      email: z.string().email().or(z.undefined()),
       roles: z.array(z.string()),
     });
 
@@ -35,18 +35,17 @@ export default async function updateUserApi(req, res) {
       });
     }
 
-
     if (fieldsData['roles']) {
       fieldsData['roles'] = {
-        connect: fieldsData['roles'],
+        connect: fieldsData['roles'].map((id: string) => ({ id })),
       };
     }
-    
+
     const user = await prisma.user.update({
       where: {
         id: userId,
       },
-      data: fieldsData ,
+      data: fieldsData,
     });
 
     return res.status(200).json({
@@ -57,5 +56,5 @@ export default async function updateUserApi(req, res) {
     return res
       .status(500)
       .json({ message: error.message, code: 'update-user' });
-  } 
+  }
 }

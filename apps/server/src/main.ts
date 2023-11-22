@@ -1,3 +1,4 @@
+import path from 'path';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -8,14 +9,13 @@ import authRouter from './router/authRouter';
 import usersRouter from './router/usersRouter';
 import spacesRouter from './router/spacesRouter';
 import filesRouter from './router/filesRouter';
-import path from 'path';
+import rolesRouter from './router/rolesRouter';
 
 dotenv.config();
 
 const app = express();
 
 app.use(cors(corsOptions));
-// app.use(formidableMiddleware());
 app.use(express.json());
 app.get('/', async (req, res) => {
   try {
@@ -29,6 +29,7 @@ app.get('/', async (req, res) => {
 app.use('/auth', authRouter);
 app.use('/files', formidableMiddleware(), filesRouter);
 app.use('/users', usersRouter);
+app.use('/roles', rolesRouter);
 app.use('/spaces', spacesRouter);
 
 const port = process.env.PORT || 8080;

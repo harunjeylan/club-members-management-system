@@ -19,9 +19,9 @@ export default async function updateEventApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      name: z.string().min(3).nullable(),
-      isPrivate: z.boolean().nullable(),
-      description: z.string().nullable(),
+      name: z.string().min(3).or(z.undefined()),
+      isPrivate: z.boolean().or(z.undefined()),
+      description: z.string().or(z.undefined()),
     });
 
     //@ts-ignore: Unreachable code error

@@ -15,7 +15,7 @@ export default async function Layout({ children }: PropsType) {
   const cookieStore = cookies();
   const token = cookieStore.has('token');
   return (
-    <main className="flex gap-2 h-full">
+    <main className="flex h-full">
       <UserSidebar />
       <section className="w-full px-4 py-4 mx-auto">
         <div className="w-full max-w-7xl mx-auto">{children}</div>

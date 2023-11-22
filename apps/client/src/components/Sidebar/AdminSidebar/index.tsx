@@ -1,55 +1,66 @@
 'use client';
 import Sidebar from '@client/components/ui/Sidebar';
-import useMediaQuery from '@client/hooks/useMediaQuery';
-import handleLogout from '@client/libs/client/handleLogout';
-import { selectCurrentUser, setUser } from '@client/libs/features/userSlice';
-import Image from 'next/image';
+import { selectCurrentUser } from '@client/libs/features/userSlice';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { AiOutlineClose, AiOutlineMenuFold } from 'react-icons/ai';
-import { useDispatch, useSelector } from 'react-redux';
+import { AiFillSetting } from 'react-icons/ai';
+import { FaUsers } from 'react-icons/fa';
+import { MdAdminPanelSettings, MdEvent, MdWorkspaces } from 'react-icons/md';
+import { useSelector } from 'react-redux';
 import { UserWithProfileAndRoles } from 'types/user';
 type PropsType = {
   user: UserWithProfileAndRoles | null;
 };
 function AdminSidebar() {
-  const isMobile = useMediaQuery('(max-width: 768px)');
-  const [show, setShow] = useState(!isMobile);
-
-  useEffect(() => {
-    setShow(!isMobile);
-  }, [isMobile]);
-
-  const dispatch = useDispatch();
-  const router = useRouter();
   const userData = useSelector(selectCurrentUser);
   return (
-    <Sidebar className="h-[calc(100vh_-_70px)] ">
+    <Sidebar className="h-[calc(100vh_-_70px)]">
       <div
-        className={`w-full h-full flex flex-col justify-between gap-2 bg-secondary-100 dark:bg-secondary-900`}
+        className={`relative w-full h-full flex flex-col justify-between gap-2 bg-secondary-100 dark:bg-secondary-900`}
       >
         <div className="h-full overflow-y-auto flex flex-col gap-1 ">
           <div className="px-4 py-4 bg-secondary-200 dark:bg-secondary-800">
-            <div className="text-xl font-bold">User Dashboard</div>
+            <div className="text-xl font-bold">Admin Dashboard</div>
           </div>
 
           <ul className="flex flex-col gap-1">
-            <li className="py-4 px-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <Link href={'/profile/account'}>Account</Link>
+            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
+              <Link href={'/admin/spaces'} className="w-full py-2 px-4  flex gap-2 items-center">
+              <MdWorkspaces size={20}  />
+                Spaces
+              </Link>
             </li>
-
-            <li className="py-4 px-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <button
-                onClick={() =>
-                  handleLogout(dispatch, () =>
-                    router.push('auth/login?next=/profile')
-                  )
-                }
-                className="w-full text-start"
+            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
+              <Link href={'/admin/users'} className="w-full py-2 px-4  flex gap-2 items-center">
+              <FaUsers size={20}  />
+                Users
+              </Link>
+            </li>
+            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
+              <Link href={'/admin/events'} className="w-full py-2 px-4  flex gap-2 items-center">
+              <MdEvent size={20}  />
+                Events
+              </Link>
+            </li>
+            <li className="w-full flex  px-4 py-2 bg-secondary-200 dark:bg-secondary-800">
+              <div className="font-extralight ">Administrations</div>
+            </li>
+            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
+              <Link
+                href={'/admin/roles'}
+                className="w-full py-2 px-4 flex gap-2 items-center"
               >
-                Logout
-              </button>
+                <MdAdminPanelSettings size={20} />
+                Roles
+              </Link>
+            </li>
+            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
+              <Link
+                href={'/admin/settings'}
+                className="w-full py-2 px-4 flex gap-2 items-center"
+              >
+                <AiFillSetting size={20} />
+                Setting
+              </Link>
             </li>
           </ul>
         </div>

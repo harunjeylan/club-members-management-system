@@ -25,16 +25,19 @@ function NavLink({ children }: PropsType) {
       <ul
         className={`flex  duration-100 ease-in-out ${
           isMobile
-            ? 'fixed z-10 top-0 right-0 pt-8 px-4  flex-col gap-0 bg-secondary-100 dark:bg-secondary-900 inset-y-0 w-3/4 sm:w-1/2 overflow-y-auto'
+            ? 'fixed z-10 top-0 right-0 flex-col gap-0 bg-secondary-100 dark:bg-secondary-900 inset-y-0 w-3/4 sm:w-1/2 overflow-y-auto'
             : 'flex-row gap-4'
         } ${show ? 'translate-x-0' : 'translate-x-full'}`}
       >
+        <li
+          className={`block md:hidden bg-secondary-100 dark:bg-secondary-800 py-3 px-4 text-xl font-bold`}
+        >Links</li>
         {children.map((link, ind) => (
           <li
             key={ind}
             className={`font-bold ${
               isMobile
-                ? 'py-2 px-1 border-b border-slate-500 hover:bg-secondary-200 dark:hover:bg-secondary-700'
+                ? 'py-2 px-4 hover:bg-secondary-200 dark:hover:bg-secondary-700'
                 : 'link-text'
             }`}
           >

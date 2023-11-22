@@ -29,39 +29,33 @@ function Sidebar({ children, className, maxWidth = '16rem' }: PropsType) {
   useEffect(() => {
     setShow(!isMobile);
   }, [isMobile]);
-  function getBtnTranslateX() {
-    if (isMobile) {
-      return show ? `translateX(${maxWidth})` : '';
-    }
-    return '';
-  }
   return (
-    <aside className={className}>
-      <div className={`flex w-fit h-full relative`}>
+    <aside style={{ position: 'relative' }} className={className}>
+      <div className={`flex w-auto h-full relative`}>
         <div
           style={{ width: show ? maxWidth : '0px' }}
           className={`h-full flex duration-100 ease-in-out flex-col overflow-hidden gap-0 ${
-            isMobile && 'fixed z-[100] pt-2 left-0 inset-y-0 w-3/4 sm:w-1/2'
+            isMobile && 'fixed z-[100] left-0 inset-y-0 w-3/4 sm:w-1/2'
           } `}
         >
-          <div className={`relative w-full h-full overflow-hidden duration-0 ${show ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div
+            className={`relative w-full h-full overflow-hidden duration-0 ${
+              show ? 'translate-x-0' : '-translate-x-full'
+            }`}
+          >
             {children}
           </div>
         </div>
-        <button
-          style={{
-            transform: getBtnTranslateX(),
-          }}
-          onClick={() => setShow((prev) => !prev)}
-          className={`mt-4 z-[110]  h-fit duration-100 ease-in-out  bg-secondary-100 dark:bg-secondary-900 btn-icon rounded-r-full rounded-l-none`}
-        >
-          {show ? (
-            <AiOutlineClose size={25} />
-          ) : (
-            <AiOutlineMenuFold size={25} />
-          )}
-        </button>
       </div>
+      <button
+        style={{
+          transform: show ? `translateX(${maxWidth})` : '',
+        }}
+        onClick={() => setShow((prev) => !prev)}
+        className={`fixed top-16 mt-4 z-[110]  h-fit duration-100 ease-in-out  bg-secondary-100/50 dark:bg-secondary-900/50 btn-icon rounded-r-full rounded-l-none `}
+      >
+        {show ? <AiOutlineClose size={25} /> : <AiOutlineMenuFold size={25} />}
+      </button>
       {isMobile && (
         <div
           onClick={() => setShow(false)}

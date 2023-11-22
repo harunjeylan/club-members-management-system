@@ -18,13 +18,13 @@ export default async function updateEventApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      name: z.string().min(3).nullable(),
+      name: z.string().min(3).or(z.undefined()),
       code: z
         .enum([RoleCode.ADMIN, RoleCode.EDITOR, RoleCode.MEMBER])
-        .nullable(),
-      scop: z.enum([RoleScop.SUPER, RoleScop.SPACE]).nullable(),
-      users: z.array(z.string()).nullable(),
-      description: z.string().nullable(),
+        .or(z.undefined()),
+      scop: z.enum([RoleScop.SUPER, RoleScop.SPACE]).or(z.undefined()),
+      users: z.array(z.string()).or(z.undefined()),
+      description: z.string().or(z.undefined()),
     });
 
     //@ts-ignore: Unreachable code error

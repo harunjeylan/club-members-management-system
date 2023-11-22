@@ -37,8 +37,8 @@ export default async function createEventApi(req, res) {
         Repeat.EVERY_MONTH,
         Repeat.EVERY_YEAR,
       ]),
-      description: z.string().nullable(),
-      location: z.string().nullable(),
+      description: z.string().or(z.undefined()),
+      location: z.string().or(z.undefined()),
       categoryId: z.string(),
     });
 
