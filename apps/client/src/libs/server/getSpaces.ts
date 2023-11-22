@@ -1,19 +1,19 @@
+import { Space } from '@prisma/client';
 import { cookies } from 'next/headers';
-import { host } from '../../config/host.config';
-import 'server-only';
 import { redirect } from 'next/navigation';
-import { Role } from '@prisma/client';
+import 'server-only';
+import { host } from '../../config/host.config';
 
-async function getRoles() {
+async function getSpaces() {
   const cookieStore = cookies();
   if (!cookieStore.has('token')) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/roles`;
+  const url = `${host}/spaces`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getRoles'] },
+    next: { tags: ['getSpaces'] },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
@@ -26,8 +26,8 @@ async function getRoles() {
     throw new Error('Failed to fetch data');
   }
 
-  const { roles } = (await res.json()) as { roles: Role[] };
-  return roles;
+  const { spaces } = (await res.json()) as { spaces: Space[] };
+  return spaces;
 }
 
-export default getRoles;
+export default getSpaces;

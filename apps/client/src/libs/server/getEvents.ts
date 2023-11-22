@@ -4,16 +4,16 @@ import 'server-only';
 import { redirect } from 'next/navigation';
 import { Role } from '@prisma/client';
 
-async function getRoles() {
+async function getEvents() {
   const cookieStore = cookies();
   if (!cookieStore.has('token')) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/roles`;
+  const url = `${host}/events`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getRoles'] },
+    next: { tags: ['getEvents'] },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
@@ -30,4 +30,4 @@ async function getRoles() {
   return roles;
 }
 
-export default getRoles;
+export default getEvents;

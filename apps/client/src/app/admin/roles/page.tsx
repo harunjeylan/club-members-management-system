@@ -2,21 +2,19 @@ import RoleListTable from '@client/components/Tables/RoleListTable';
 import Header2 from '@client/components/ui/Header2';
 import getRoles from '@client/libs/server/getRoles';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 async function Page() {
   const roles = await getRoles();
   return (
     <section className="w-full ">
-      <div className="w-full px-4 mx-full ">
-        <div className="flex justify-between w-full ">
+      <div className="w-full px-1 md:px-2 lg:px-4 mx-full ">
+        <div className="flex justify-between w-full border-b border-secondary-500  my-4 pb-2">
           <Header2 title="Roles" />
-          <Link href={'/admin/roles/new'} className="btn-primary py-2 px-4">
-            Add Role
-          </Link>
         </div>
-        <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
+        <Suspense fallback={<div>Loading..</div>}>
           <RoleListTable roles={roles} />
-        </div>
+        </Suspense>
       </div>
     </section>
   );

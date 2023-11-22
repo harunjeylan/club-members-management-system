@@ -30,7 +30,7 @@ function NavLink({ children }: PropsType) {
         } ${show ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <li
-          className={`block md:hidden bg-secondary-100 dark:bg-secondary-800 py-3 px-4 text-xl font-bold`}
+          className={`block md:hidden bg-secondary-200 dark:bg-secondary-800 py-3 px-4 text-xl font-bold`}
         >Links</li>
         {children.map((link, ind) => (
           <li

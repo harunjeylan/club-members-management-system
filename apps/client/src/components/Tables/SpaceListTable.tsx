@@ -1,6 +1,6 @@
 'use client';
 
-import { Role } from '@prisma/client';
+import { Space } from '@prisma/client';
 import { ColumnDef, Table } from '@tanstack/react-table';
 import React, { useEffect, useState } from 'react';
 import DataTable from '../ui/DataTable';
@@ -8,18 +8,17 @@ import { fuzzySort } from '../ui/DataTable/helperFns';
 import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
 import Link from 'next/link';
 
-function RoleListTable({ roles }: { roles: Role[] }) {
-  const [table, setTable] = useState<Table<Role>>();
+function SpaceListTable({ spaces }: { spaces: Space[] }) {
+  const [table, setTable] = useState<Table<Space>>();
   const [selectedRow, setSelectedRow] = useState<{}>({});
-  const [selected, setSelected] = useState<Role[]>([]);
+  const [selected, setSelected] = useState<Space[]>([]);
   useEffect(() => {
     const selectedItem = Object.keys(selectedRow)
       .map((idNumber) => table?.getRow(`${idNumber}`)?.original)
-      .filter((item) => !!item) as Role[];
+      .filter((item) => !!item) as Space[];
     setSelected(selectedItem);
   }, [selectedRow]);
-
-  const columns = React.useMemo<ColumnDef<Role, any>[]>(
+  const columns = React.useMemo<ColumnDef<Space, any>[]>(
     () => [
       {
         accessorFn: (row) => row.name,
@@ -60,25 +59,28 @@ function RoleListTable({ roles }: { roles: Role[] }) {
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row.code,
-        id: 'code',
-        cell: (info) => info.getValue(),
-        header: () => <span>Code</span>,
+        accessorFn: (row) => row.isPrivate,
+        id: 'isPrivate',
+        cell: (info) => (
+          <>
+            {info.getValue() ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-1 text-xs font-semibold text-violet-600">
+                Private
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 px-2 py-1 text-xs font-semibold text-bg-fuchsia-600">
+                Public
+              </span>
+            )}
+          </>
+        ),
+        header: () => <span>Private</span>,
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => `${row.scop}`,
-        id: 'scop',
+        accessorFn: (row) => `${row.description}`,
+        id: 'description',
         header: 'Scop',
-        cell: (info) => info.getValue(),
-        footer: (props) => props.column.id,
-        filterFn: 'fuzzy',
-        sortingFn: fuzzySort,
-      },
-      {
-        accessorFn: (row) => `${row.spaceName}`,
-        id: 'spaceName',
-        header: 'Space Name',
         cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
         filterFn: 'fuzzy',
@@ -103,15 +105,15 @@ function RoleListTable({ roles }: { roles: Role[] }) {
           )}
         </div>
 
-        <Link href={'/admin/roles/new'} className="btn-primary py-1 px-4">
-          Add Role
-        </Link>
+        <Link href={'/admin/spaces/new'} className="btn-primary py-2 px-4">
+            Add Space
+          </Link>
       </div>
       <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
-        <DataTable<Role> data={roles} columns={columns} getTable={setTable} />
+        <DataTable<Space> data={spaces} columns={columns} getTable={setTable} />
       </div>
     </div>
   );
 }
 
-export default RoleListTable;
+export default SpaceListTable;

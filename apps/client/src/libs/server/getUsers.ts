@@ -2,15 +2,15 @@ import { cookies } from 'next/headers';
 import { host } from '../../config/host.config';
 import 'server-only';
 import { redirect } from 'next/navigation';
-import { Role } from '@prisma/client';
+import { UserWithProfileAndRoles } from 'types/user';
 
-async function getRoles() {
+async function getUsers() {
   const cookieStore = cookies();
   if (!cookieStore.has('token')) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/roles`;
+  const url = `${host}/users?populate=profile&populate=roles`;
   const res = await fetch(url, {
     method: 'GET',
     next: { tags: ['getRoles'] },
@@ -26,8 +26,8 @@ async function getRoles() {
     throw new Error('Failed to fetch data');
   }
 
-  const { roles } = (await res.json()) as { roles: Role[] };
-  return roles;
+  const { users } = (await res.json()) as { users: UserWithProfileAndRoles[] };
+  return users;
 }
 
-export default getRoles;
+export default getUsers;

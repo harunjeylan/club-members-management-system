@@ -1,29 +1,29 @@
 'use client';
 
-import { Role } from '@prisma/client';
 import { ColumnDef, Table } from '@tanstack/react-table';
 import React, { useEffect, useState } from 'react';
+import { UserWithProfileAndRoles } from 'types/user';
 import DataTable from '../ui/DataTable';
 import { fuzzySort } from '../ui/DataTable/helperFns';
 import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
+import { User } from '@prisma/client';
 import Link from 'next/link';
 
-function RoleListTable({ roles }: { roles: Role[] }) {
-  const [table, setTable] = useState<Table<Role>>();
+function EventListTable({ users }: { users: UserWithProfileAndRoles[] }) {
+  const [table, setTable] = useState<Table<UserWithProfileAndRoles>>();
   const [selectedRow, setSelectedRow] = useState<{}>({});
-  const [selected, setSelected] = useState<Role[]>([]);
+  const [selected, setSelected] = useState<User[]>([]);
   useEffect(() => {
     const selectedItem = Object.keys(selectedRow)
       .map((idNumber) => table?.getRow(`${idNumber}`)?.original)
-      .filter((item) => !!item) as Role[];
+      .filter((item) => !!item) as User[];
     setSelected(selectedItem);
   }, [selectedRow]);
-
-  const columns = React.useMemo<ColumnDef<Role, any>[]>(
+  const columns = React.useMemo<ColumnDef<UserWithProfileAndRoles, any>[]>(
     () => [
       {
-        accessorFn: (row) => row.name,
-        id: 'name',
+        accessorFn: (row) => row.first_name,
+        id: 'first_name',
         header: ({ table }) => {
           setSelectedRow(table.getState().rowSelection);
           return (
@@ -35,7 +35,7 @@ function RoleListTable({ roles }: { roles: Role[] }) {
                   onChange: table.getToggleAllRowsSelectedHandler(),
                 }}
               />
-              <span>Name</span>
+              <span>First Name</span>
             </div>
           );
         },
@@ -60,25 +60,30 @@ function RoleListTable({ roles }: { roles: Role[] }) {
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row.code,
-        id: 'code',
+        accessorFn: (row) => row.last_name,
+        id: 'last_name',
         cell: (info) => info.getValue(),
-        header: () => <span>Code</span>,
+        header: () => <span>Last Name</span>,
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => `${row.scop}`,
-        id: 'scop',
-        header: 'Scop',
+        accessorFn: (row) => row.username,
+        id: 'username',
         cell: (info) => info.getValue(),
+        header: () => <span>Username</span>,
         footer: (props) => props.column.id,
-        filterFn: 'fuzzy',
-        sortingFn: fuzzySort,
       },
       {
-        accessorFn: (row) => `${row.spaceName}`,
-        id: 'spaceName',
-        header: 'Space Name',
+        accessorFn: (row) => row.email,
+        id: 'email',
+        cell: (info) => info.getValue(),
+        header: () => <span>Email</span>,
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorFn: (row) => `${row.createdAt}`,
+        id: 'createdAt',
+        header: () => <span>Join At</span>,
         cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
         filterFn: 'fuzzy',
@@ -103,15 +108,19 @@ function RoleListTable({ roles }: { roles: Role[] }) {
           )}
         </div>
 
-        <Link href={'/admin/roles/new'} className="btn-primary py-1 px-4">
-          Add Role
+        <Link href={'/admin/users/new'} className="btn-primary py-2 px-4">
+          Add User
         </Link>
       </div>
       <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
-        <DataTable<Role> data={roles} columns={columns} getTable={setTable} />
+        <DataTable<UserWithProfileAndRoles>
+          data={users}
+          columns={columns}
+          getTable={setTable}
+        />
       </div>
     </div>
   );
 }
 
-export default RoleListTable;
+export default EventListTable;

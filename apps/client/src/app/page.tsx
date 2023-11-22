@@ -9,8 +9,8 @@ export default async function Home() {
         {/* <Suspense fallback={<div>Loading..</div>}>
           <CategorySlider />
         </Suspense>
+        <PopularProducts />
         <Suspense fallback={<div>Loading..</div>}>
-          <PopularProducts />
         </Suspense>
         <Suspense fallback={<div>Loading..</div>}>
           <NewArrival />
