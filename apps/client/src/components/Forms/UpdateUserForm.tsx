@@ -6,15 +6,12 @@ import { useEffect, useState } from 'react';
 import { UserWithProfileAndRoles } from 'types/user';
 import * as yup from 'yup';
 import Alert, { AlertMessage } from '../ui/Alert';
-function UpdateUserForm({
-  user,
-  roles,
-  spaces,
-}: {
+type PropsType = {
   user: Partial<UserWithProfileAndRoles & { spaces: Space[] }>;
-  roles: Role[];
-  spaces: Space[];
-}) {
+  roles?: Role[];
+  spaces?: Space[];
+};
+function UpdateUserForm({ user, roles, spaces }: PropsType) {
   const [message, setMessage] = useState<AlertMessage>();
   const initialValues = {
     first_name: user.first_name ?? '',
@@ -24,6 +21,7 @@ function UpdateUserForm({
     roles: user.roles?.map((role) => role.id) ?? [],
     spaces: user.spaces?.map((role) => role.name) ?? [],
   };
+
   let userSchema = yup.object({
     first_name: yup.string().required(),
     last_name: yup.string().required(),
@@ -32,6 +30,7 @@ function UpdateUserForm({
     roles: yup.array(yup.string()),
     spaces: yup.array(yup.string()),
   });
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (message) {
@@ -64,7 +63,7 @@ function UpdateUserForm({
     }
     const response = await handleUpdateUser(user.id, values);
     console.log(response.user);
-    
+
     if (response.user) {
       setMessage({
         type: 'success',
@@ -188,7 +187,7 @@ function UpdateUserForm({
               className="text-red-500 dark:text-red-300"
             />
           </div>
-          <div className="col-span-2 flex flex-col gap-4 w-full">
+          {spaces?.length ? (
             <div className="col-span-2 flex flex-col gap-1 w-full">
               <label>Space</label>
               <select
@@ -203,9 +202,10 @@ function UpdateUserForm({
                 value={values.spaces}
                 multiple
               >
-                <option value={''}>-----</option>
                 {spaces.map((space) => (
-                  <option value={space.name}>{space.name}</option>
+                  <option key={space.name} value={space.name}>
+                    {space.name}
+                  </option>
                 ))}
               </select>
               <ErrorMessage
@@ -214,8 +214,10 @@ function UpdateUserForm({
                 className="text-red-500 dark:text-red-300"
               />
             </div>
-          </div>
-          <div className="col-span-2 flex flex-col gap-4 w-full">
+          ) : (
+            ''
+          )}
+          {roles?.length ? (
             <div className="col-span-2 flex flex-col gap-1 w-full">
               <label>Role</label>
               <select
@@ -230,9 +232,8 @@ function UpdateUserForm({
                 onBlur={handleBlur}
                 value={values.roles}
               >
-                <option value={''}>-----</option>
                 {roles.map((role) => (
-                  <option value={role.id}>
+                  <option key={role.id} value={role.id}>
                     {role.spaceName ? role.spaceName + ' -> ' : ''}
                     {role.name}
                   </option>
@@ -244,7 +245,9 @@ function UpdateUserForm({
                 className="text-red-500 dark:text-red-300"
               />
             </div>
-          </div>
+          ) : (
+            ''
+          )}
           <div className="col-span-2 flex flex-col justify-end gap-1 w-full">
             <button
               type="submit"

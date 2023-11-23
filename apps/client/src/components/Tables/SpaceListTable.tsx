@@ -3,21 +3,16 @@
 import { Space } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import DataTable from '../ui/DataTable';
 import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
 import { fuzzySort } from '../ui/DataTable/helperFns';
-
-function SpaceListTable({
-  spaces,
-  baseUrl,
-}: {
+type PropsType = {
   baseUrl: string;
   spaces: Space[];
-}) {
-  const [selected, setSelected] = useState<Space[]>([]);
-  console.log(selected);
-
+  setSelected: Dispatch<SetStateAction<Space[]>>;
+};
+function SpaceListTable({ spaces, baseUrl, setSelected }: PropsType) {
   const columns = React.useMemo<ColumnDef<Space, any>[]>(
     () => [
       {
@@ -30,7 +25,17 @@ function SpaceListTable({
                 {...{
                   checked: table.getIsAllRowsSelected(),
                   indeterminate: table.getIsSomeRowsSelected(),
-                  onChange: table.getToggleAllRowsSelectedHandler(),
+                  onChange: (event) => {
+                    const checked = event.currentTarget.checked;
+                    const selectedUsers = (
+                      checked
+                        ? table.getCenterRows().map((row) => row.original)
+                        : []
+                    ) as any[];
+
+                    setSelected(selectedUsers);
+                    table.getToggleAllRowsSelectedHandler()(event);
+                  },
                 }}
               />
               <span>Name</span>
@@ -92,7 +97,7 @@ function SpaceListTable({
       {
         accessorFn: (row) => `${row.description}`,
         id: 'description',
-        header: 'Scop',
+        header: 'Description',
         cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
         filterFn: 'fuzzy',
@@ -102,30 +107,7 @@ function SpaceListTable({
     []
   );
 
-  return (
-    <div>
-      <div className="flex justify-between w-full ">
-        <div>
-          {selected.length ? (
-            <div className="flex gap-2">
-              <button className="btn-danger py-1 px-4">Delete</button>
-              <button className="btn-success py-1 px-4">Add to Space</button>
-              <button className="btn-success py-1 px-4">Assign Role</button>
-            </div>
-          ) : (
-            ''
-          )}
-        </div>
-
-        <Link href={'/admin/spaces/new'} className="btn-primary py-2 px-4">
-          Add Space
-        </Link>
-      </div>
-      <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
-        <DataTable<Space> data={spaces} columns={columns} />
-      </div>
-    </div>
-  );
+  return <DataTable<Space> data={spaces} columns={columns} />;
 }
 
 export default SpaceListTable;

@@ -30,7 +30,7 @@ function Sidebar({ children, className, maxWidth = '16rem' }: PropsType) {
     setShow(!isMobile);
   }, [isMobile]);
   return (
-    <aside style={{ position: 'relative' }} className={className}>
+    <aside style={{ position: 'sticky', top: '0px' }} className={className+' h-[100vh_-_70px]'}>
       <div className={`flex w-auto h-full relative`}>
         <div
           style={{ width: show ? maxWidth : '0px' }}

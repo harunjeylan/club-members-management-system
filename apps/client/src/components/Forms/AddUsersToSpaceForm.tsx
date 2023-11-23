@@ -1,17 +1,21 @@
 'use client';
-import { default as handleAddToSpace, default as handleAddUsersToSpace } from '@client/libs/client/handleAddUsersToSpace';
+import {
+  default as handleAddToSpace,
+  default as handleAddUsersToSpace,
+} from '@client/libs/client/handleAddUsersToSpace';
 import { Space } from '@prisma/client';
 import { FormEvent, useEffect, useState } from 'react';
 import Alert, { AlertMessage } from '../ui/Alert';
-function AddUsersToSpaceForm({
-  users,
-  spaces,
-}: {
+
+type PropsType = {
   users: string[];
   spaces: Space[];
-}) {
+};
+function AddUsersToSpaceForm({ users, spaces }: PropsType) {
   const [message, setMessage] = useState<AlertMessage>();
-  const [selectedSpace, setSelectedSpace] = useState<string>('');
+  const [selectedSpace, setSelectedSpace] = useState<string>(
+    spaces.length ? spaces?.[0].name : ''
+  );
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -26,35 +30,32 @@ function AddUsersToSpaceForm({
   }, [message]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
-    let response: any;
     e.preventDefault();
-    if (selectedSpace.length) {
-      response = await handleAddUsersToSpace(selectedSpace, users);
-      if (response.space) {
-        setMessage({
-          type: 'success',
-          summery: 'Users are added to Space successfully',
-          title: 'Success ',
-        });
-      }
-    } else {
-      response = await handleAddToSpace(selectedSpace, users);
-      if (response.space) {
-        setMessage({
-          type: 'success',
-          summery: 'Users are added to Space successfully',
-          title: 'Success ',
-        });
-      }
+    console.log(selectedSpace.length);
+
+    if (!selectedSpace.length) {
+      return setMessage({
+        type: 'warning',
+        summery: "Space can't empty",
+        title: 'Warning ',
+      });
+    }
+    const response = await handleAddUsersToSpace(selectedSpace, users);
+    if (response.space) {
+      setMessage({
+        type: 'success',
+        summery: 'Users are added to Space successfully',
+        title: 'Success ',
+      });
     }
 
     console.log({ response });
 
     if (response?.error) {
       setMessage({
-        type: 'warning',
+        type: 'error',
         summery: response?.error,
-        title: 'Warning ',
+        title: 'Error ',
       });
     }
   }
@@ -74,18 +75,19 @@ function AddUsersToSpaceForm({
             onChange={(e) => setSelectedSpace(e.target.value)}
             value={selectedSpace}
           >
-            <option value={''}>-----</option>
             {spaces.map((space) => (
-              <option value={space.name}>{space.name}</option>
+              <option key={space.name} value={space.name}>
+                {space.name}
+              </option>
             ))}
           </select>
         </div>
       </div>
-        <div className="col-span-2 flex flex-col justify-end gap-1 w-full">
-          <button type="submit" className="btn-primary py-2">
-            Submit
-          </button>
-        </div>
+      <div className="col-span-2 flex flex-col justify-end gap-1 w-full">
+        <button type="submit" className="btn-primary py-2">
+          Submit
+        </button>
+      </div>
     </form>
   );
 }

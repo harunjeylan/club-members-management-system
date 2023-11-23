@@ -24,7 +24,17 @@ function RoleListTable({ roles, baseUrl }: { baseUrl: string; roles: Role[] }) {
                 {...{
                   checked: table.getIsAllRowsSelected(),
                   indeterminate: table.getIsSomeRowsSelected(),
-                  onChange: table.getToggleAllRowsSelectedHandler(),
+                  onChange: (event) => {
+                    const checked = event.currentTarget.checked;
+                    const selectedUsers = (
+                      checked
+                        ? table.getCenterRows().map((row) => row.original)
+                        : []
+                    ) as any[];
+
+                    setSelected(selectedUsers);
+                    table.getToggleAllRowsSelectedHandler()(event);
+                  },
                 }}
               />
               <span>Name</span>

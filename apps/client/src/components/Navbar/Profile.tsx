@@ -19,32 +19,32 @@ function Profile() {
 
   const dispatch = useDispatch();
   const router = useRouter();
-  useEffect(() => {
-    const role = user?.roles.find((role) => {
-      {
-        if (role.scop === RoleScop.SUPER && role.code === RoleCode.ADMIN)
-          return true;
-        if (role.scop === RoleScop.SUPER && role.code === RoleCode.EDITOR)
-          return true;
-        if (role.scop === RoleScop.SPACE && role.code === RoleCode.ADMIN)
-          return true;
-        if (role.scop === RoleScop.SPACE && role.code === RoleCode.EDITOR)
-          return true;
-      }
-    });
-    setUserRole(role);
-  }, [user?.roles]);
-  function getAdminPanelPath(role: Partial<Role>) {
-    if (role.scop === RoleScop.SUPER && role.code === RoleCode.ADMIN)
-      return '/admin';
-    if (role.scop === RoleScop.SUPER && role.code === RoleCode.EDITOR)
-      return '/editor';
-    if (role.scop === RoleScop.SPACE && role.code === RoleCode.ADMIN)
-      return `/spaces/${role.spaceName}/admin`;
-    if (role.scop === RoleScop.SPACE && role.code === RoleCode.EDITOR)
-      return `/spaces/${role.spaceName}/editor`;
-    return '/auth/login';
-  }
+  // useEffect(() => {
+  //   const role = user?.roles.find((role) => {
+  //     {
+  //       if (role.scop === RoleScop.SUPER && role.code === RoleCode.ADMIN)
+  //         return true;
+  //       if (role.scop === RoleScop.SUPER && role.code === RoleCode.EDITOR)
+  //         return true;
+  //       if (role.scop === RoleScop.SPACE && role.code === RoleCode.ADMIN)
+  //         return true;
+  //       if (role.scop === RoleScop.SPACE && role.code === RoleCode.EDITOR)
+  //         return true;
+  //     }
+  //   });
+  //   setUserRole(role);
+  // }, [user?.roles]);
+  // function getAdminPanelPath(role: Partial<Role>) {
+  //   if (role.scop === RoleScop.SUPER && role.code === RoleCode.ADMIN)
+  //     return '/dashboard';
+  //   if (role.scop === RoleScop.SUPER && role.code === RoleCode.EDITOR)
+  //     return '/editor';
+  //   if (role.scop === RoleScop.SPACE && role.code === RoleCode.ADMIN)
+  //     return `/spaces/${role.spaceName}/admin`;
+  //   if (role.scop === RoleScop.SPACE && role.code === RoleCode.EDITOR)
+  //     return `/spaces/${role.spaceName}/editor`;
+  //   return '/auth/login';
+  // }
   return (
     <div className="relative">
       <div>
@@ -80,7 +80,7 @@ function Profile() {
           {userRole && (
             <li className="flex hover:bg-secondary-200 dark:hover:bg-secondary-700">
               <Link
-                href={getAdminPanelPath(userRole)}
+                href={'/dashboard'}
                 className="w-full py-2 px-2 "
               >
                 Dashboard

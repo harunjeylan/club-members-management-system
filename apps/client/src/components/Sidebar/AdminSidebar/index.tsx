@@ -30,7 +30,7 @@ function AdminSidebar() {
           <ul className="flex flex-col gap-1">
             <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
               <Link
-                href={'/admin'}
+                href={'/dashboard'}
                 className="w-full py-2 px-4  flex gap-2 items-center"
               >
                 <MdDashboard size={20} />
@@ -39,7 +39,7 @@ function AdminSidebar() {
             </li>
             <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
               <Link
-                href={'/admin/spaces'}
+                href={'/spaces'}
                 className="w-full py-2 px-4  flex gap-2 items-center"
               >
                 <MdWorkspaces size={20} />
@@ -48,7 +48,7 @@ function AdminSidebar() {
             </li>
             <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
               <Link
-                href={'/admin/users'}
+                href={'/users'}
                 className="w-full py-2 px-4  flex gap-2 items-center"
               >
                 <FaUsers size={20} />
@@ -57,7 +57,7 @@ function AdminSidebar() {
             </li>
             <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
               <Link
-                href={'/admin/events'}
+                href={'/events'}
                 className="w-full py-2 px-4  flex gap-2 items-center"
               >
                 <MdEvent size={20} />
@@ -69,7 +69,7 @@ function AdminSidebar() {
             </li>
             <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
               <Link
-                href={'/admin/roles'}
+                href={'/roles'}
                 className="w-full py-2 px-4 flex gap-2 items-center"
               >
                 <MdAdminPanelSettings size={20} />
@@ -78,7 +78,7 @@ function AdminSidebar() {
             </li>
             <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
               <Link
-                href={'/admin/settings'}
+                href={'/settings'}
                 className="w-full py-2 px-4 flex gap-2 items-center"
               >
                 <AiFillSetting size={20} />

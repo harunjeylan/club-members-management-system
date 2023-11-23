@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import prisma from '../../prisma/PrismaClient';
-import getFieldsData from '../../utils/getFieldsData';
+import getFieldsData from '../../../../../libs/utils/getFieldsData';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { RoleCode, RoleScop } from '@prisma/client';
 

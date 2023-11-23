@@ -4,16 +4,14 @@ import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
-export default async function removeUsersFromSpaceApi(req, res) {
-  const { spaceName } = req.params;
+export default async function removeUsersFromRoleApi(req, res) {
+  const { roleId } = req.params;
   const { users } = req.body;
   try {
     
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-      { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: spaceName },
-      { scop: RoleScop.SPACE, code: RoleCode.EDITOR, spaceName: spaceName },
     ]);
 
     if (!userAccessRoles.length) {
@@ -33,9 +31,9 @@ export default async function removeUsersFromSpaceApi(req, res) {
         code: 'register-user',
       });
     }
-    const space = await prisma.space.update({
+    const role = await prisma.role.update({
       where: {
-        name: spaceName,
+        id: roleId,
       },
       data: {
         users: {
@@ -47,7 +45,7 @@ export default async function removeUsersFromSpaceApi(req, res) {
     });
 
     return res.status(200).json({
-      space: space,
+      role: role,
     });
   } catch (error) {
     console.log(error);

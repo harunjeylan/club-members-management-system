@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { RoleCode, RoleScop } from '@prisma/client';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
-import getFieldsData from 'apps/server/src/utils/getFieldsData';
+import getFieldsData from '@libs/utils/getFieldsData';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 
 export default async function updateSpaceRoleApi(req, res) {

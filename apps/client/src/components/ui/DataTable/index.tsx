@@ -89,8 +89,8 @@ function DataTable<T>({ data, columns, subRows, getTable }: PropsType<T>) {
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    scope="col"
                     colSpan={header.colSpan}
+                    scope="col"
                     className="px-6 py-4 "
                   >
                     {header.isPlaceholder ? null : (

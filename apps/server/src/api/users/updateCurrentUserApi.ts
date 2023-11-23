@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import prisma from '../../prisma/PrismaClient';
-import getFieldsData from '../../utils/getFieldsData';
+import getFieldsData from '../../../../../libs/utils/getFieldsData';
 
 export default async function updateCurrentUserApi(req, res) {
   const fields = ['username', 'first_name', 'last_name', 'email'];

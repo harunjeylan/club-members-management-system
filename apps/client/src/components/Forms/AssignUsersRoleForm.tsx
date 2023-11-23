@@ -3,9 +3,15 @@ import handleAssignUsersRole from '@client/libs/client/handleAssignUsersRole';
 import { Role } from '@prisma/client';
 import { FormEvent, useEffect, useState } from 'react';
 import Alert, { AlertMessage } from '../ui/Alert';
-function AssignUsersRoleForm({ users, roles }: { users: string[]; roles: Role[] }) {
+function AssignUsersRoleForm({
+  users,
+  roles,
+}: {
+  users: string[];
+  roles: Role[];
+}) {
   const [message, setMessage] = useState<AlertMessage>();
-  const [selectedRole, setSelectedRole] = useState<string>('');
+  const [selectedRole, setSelectedRole] = useState<string>(roles.length ? roles?.[0].name : '');
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -21,6 +27,13 @@ function AssignUsersRoleForm({ users, roles }: { users: string[]; roles: Role[] 
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!selectedRole.length) {
+      return setMessage({
+        type: 'warning',
+        summery: "Role can't empty",
+        title: 'Warning ',
+      });
+    }
     const response = await handleAssignUsersRole(selectedRole, users);
     console.log({ response });
 
@@ -55,18 +68,19 @@ function AssignUsersRoleForm({ users, roles }: { users: string[]; roles: Role[] 
             onChange={(e) => setSelectedRole(e.target.value)}
             value={selectedRole}
           >
-            <option value={''}>-----</option>
             {roles.map((role) => (
-              <option value={role.id}>{role.name}</option>
+              <option key={role.id} value={role.id}>
+                {role.name}
+              </option>
             ))}
           </select>
         </div>
       </div>
-        <div className="col-span-2 flex flex-col justify-end gap-1 w-full">
-          <button type="submit" className="btn-primary py-2">
-            Submit
-          </button>
-        </div>
+      <div className="col-span-2 flex flex-col justify-end gap-1 w-full">
+        <button type="submit" className="btn-primary py-2">
+          Submit
+        </button>
+      </div>
     </form>
   );
 }
