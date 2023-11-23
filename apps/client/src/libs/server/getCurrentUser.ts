@@ -4,7 +4,7 @@ import 'server-only';
 import { UserWithAll, UserWithProfileAndRoles } from 'types/user';
 import { host } from '../../config/host.config';
 
-async function getServerUser() {
+async function getCurrentUser() {
   const cookieStore = cookies();
   const token = cookieStore.get('token');
 
@@ -16,7 +16,7 @@ async function getServerUser() {
         headers: {
           Authorization: `Bearer ${token.value}`,
         },
-        next: { tags: ['currentUserDetails'], revalidate: 3600 * 12 * 7 },
+        next: { tags: ['getCurrentUser'], revalidate: 3600 * 12 * 7 },
       });
       if (!res.ok) {
         return null;
@@ -34,4 +34,4 @@ async function getServerUser() {
   }
 }
 
-export default getServerUser;
+export default getCurrentUser

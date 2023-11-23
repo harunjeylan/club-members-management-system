@@ -4,6 +4,7 @@ import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
 export default async function deleteUserApi(req, res) {
   const { userId } = req.params;
+  const { userIds } = req.body;
 
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
@@ -13,13 +14,24 @@ export default async function deleteUserApi(req, res) {
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
     }
-
-    await prisma.user.delete({
-      where: {
-        id: userId,
-      },
-    });
+    if (userId) {
+      await prisma.user.delete({
+        where: {
+          id: userId,
+        },
+      });
+    }
+    if (userIds?.length) {
+      await prisma.user.deleteMany({
+        where: {
+          id: {
+            in: userIds,
+          },
+        },
+      });
+    }
     return res.status(200).json({
+      deleted: { userId, userIds },
       message: 'User deleted successfully',
     });
   } catch (error) {

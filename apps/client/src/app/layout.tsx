@@ -1,6 +1,6 @@
 import Navbar from '@client/components/Navbar';
 import StoreProvider from '@client/libs/app/StoreProvider';
-import getServerUser from '@client/libs/server/getServerUser';
+import getCurrentUser from '@client/libs/server/getCurrentUser';
 import { Roboto } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { ReactNode } from 'react';
@@ -20,7 +20,7 @@ type PropsType = {
   children: ReactNode | ReactNode[];
 };
 export default async function RootLayout({ children }: PropsType) {
-  const user = await getServerUser();
+  const user = await getCurrentUser();
   const cookieStore = cookies();
   const token = cookieStore.has('token')
     ? (cookieStore.get('token')?.value as string)

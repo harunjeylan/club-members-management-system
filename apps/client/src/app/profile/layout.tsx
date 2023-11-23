@@ -1,5 +1,5 @@
 import UserSidebar from '@client/components/Sidebar/UserSidebar';
-import getServerUser from '@client/libs/server/getServerUser';
+import getCurrentUser from '@client/libs/server/getCurrentUser';
 import { cookies } from 'next/headers';
 import { ReactNode, Suspense } from 'react';
 
@@ -11,7 +11,7 @@ type PropsType = {
   children: ReactNode | ReactNode[];
 };
 export default async function Layout({ children }: PropsType) {
-  const user = await getServerUser();
+  const user = await getCurrentUser();
   const cookieStore = cookies();
   const token = cookieStore.has('token');
   return (

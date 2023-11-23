@@ -1,5 +1,5 @@
 import AdminSidebar from '@client/components/Sidebar/AdminSidebar';
-import getServerUser from '@client/libs/server/getServerUser';
+import getCurrentUser from '@client/libs/server/getCurrentUser';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { RoleCode, RoleScop } from '@prisma/client';
 import { redirect } from 'next/navigation';
@@ -13,7 +13,7 @@ type PropsType = {
   children: ReactNode | ReactNode[];
 };
 export default async function Layout({ children }: PropsType) {
-  const user = await getServerUser();
+  const user = await getCurrentUser();
   if (!user) {
     return redirect('/auth/login');
   }

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import Alert, { AlertMessage } from '../ui/Alert';
 import handleCreateRole from '@client/libs/client/handleCreateRole';
-function RoleForm() {
+function CreateRoleForm() {
   const [message, setMessage] = useState<AlertMessage>();
   const initialValues: Partial<Role> = {
     name: '',
@@ -205,4 +205,4 @@ function RoleForm() {
   );
 }
 
-export default RoleForm;
+export default CreateRoleForm;

@@ -13,12 +13,16 @@ import addSpaceUsersToRole from '@server/api/spaces/roles/addSpaceUsersToRole';
 import addUsersToSpaceApi from '@server/api/spaces/users/addUsersToSpaceApi';
 import removeUsersFromSpaceApi from '@server/api/spaces/users/removeUsersFromSpaceApi';
 import updateSpaceApi from '@server/api/spaces/updateSpaceApi';
+import deleteSpaceApi from '@server/api/spaces/deleteSpaceApi';
 
 const router = express.Router();
 router.get('/', authenticateToken, getAllSpacesApi);
 router.post('/', authenticateToken, createSpaceApi);
+router.put('/', authenticateToken, deleteSpaceApi);
+
 router.get('/:spaceName', authenticateToken, getOneSpaceApi);
 router.put('/:spaceName', authenticateToken, updateSpaceApi);
+router.put('/:spaceName', authenticateToken, deleteSpaceApi);
 
 router.get('/:spaceName/users', authenticateToken, getAllSpaceUsersApi);
 router.put('/:spaceName/users', authenticateToken, addUsersToSpaceApi);
@@ -35,4 +39,5 @@ router.get(
   authenticateToken,
   getOneSpaceEventApi
 );
+
 export default router;

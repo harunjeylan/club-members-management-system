@@ -5,6 +5,7 @@ import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
 export default async function deleteSpaceApi(req, res) {
   const { spaceName } = req.params;
+  const { spaceNames } = req.body;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
@@ -13,13 +14,24 @@ export default async function deleteSpaceApi(req, res) {
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
     }
-
-    await prisma.space.delete({
-      where: {
-        name: spaceName,
-      },
-    });
+    if (spaceName) {
+      await prisma.space.delete({
+        where: {
+          name: spaceName,
+        },
+      });
+    }
+    if (spaceNames?.length) {
+      await prisma.space.deleteMany({
+        where: {
+          name: {
+            in: spaceNames,
+          },
+        },
+      });
+    }
     return res.status(200).json({
+      deleted: { spaceNames, spaceName },
       message: 'Space deleted successfully',
     });
   } catch (error) {
@@ -27,5 +39,5 @@ export default async function deleteSpaceApi(req, res) {
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });
-  } 
+  }
 }

@@ -13,7 +13,7 @@ async function getEvents() {
   const url = `${host}/events`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getEvents'] },
+    next: { tags: ['getEvents'], revalidate: 3600 * 12 * 7  },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },

@@ -7,6 +7,7 @@ import deleteFilesAPi from '../api/files/deleteFilesApi';
 const router = express.Router();
 router.get('/', getAllFilesAPi);
 router.post('/', uploadFilesApi);
+
 router.post('/:fileName', getOneFileAPi);
 router.delete('/:fileName', deleteFilesAPi);
 

@@ -1,5 +1,4 @@
 import CreateUserForm from '@client/components/Forms/CreateUserForm';
-import Header2 from '@client/components/ui/Header2';
 import Link from 'next/link';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 

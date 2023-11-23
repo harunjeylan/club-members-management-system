@@ -15,7 +15,7 @@ async function getSpaceDetails(spaceName: string) {
   
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getSpaces'] },
+    next: { tags: [`getSpaceDetails/${spaceName}`] , revalidate: 3600 * 12 * 7 },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },

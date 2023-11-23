@@ -13,7 +13,7 @@ async function getSpaceRoles(spaceName: string) {
   const url = `${host}/spaces/${spaceName}/roles`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getSpaceRoles'] },
+    next: { tags: ['getSpaceRoles'], revalidate: 3600 * 12 * 7  },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },

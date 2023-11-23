@@ -2,16 +2,9 @@ import { host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 
-export default async function handleAddToSpace(
-  spaceName: string,
-  users: string[]
-) {
+export default async function handleDeleteRole(roleId: string | string[]) {
   try {
     const token = getCookie('token');
-    const url = `${host}/spaces/${spaceName}/users`;
-    const payloadData = {
-      users: users,
-    };
     if (typeof token === 'undefined') {
       return;
     }
@@ -21,7 +14,12 @@ export default async function handleAddToSpace(
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.put(url, payloadData, payload);
+    let res: any;
+    if (roleId === 'string') {
+      res = await axios.delete(`${host}/roles/${roleId}`, payload);
+    } else {
+      res = await axios.put(`${host}/roles`, { roleIds: roleId }, payload);
+    }
     return res.data;
   } catch (error) {
     //@ts-ignore

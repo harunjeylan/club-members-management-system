@@ -6,6 +6,7 @@ import CreateUserForm from '@client/components/Forms/CreateUserForm';
 import UpdateUserForm from '@client/components/Forms/UpdateUserForm';
 import UsersListTable from '@client/components/Tables/UserListTable';
 import Model from '@client/components/ui/Model';
+import handleDeleteUser from '@client/libs/client/handleDeleteUser';
 import { Role, Space } from '@prisma/client';
 import { Dispatch, SetStateAction, Suspense, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
@@ -36,6 +37,27 @@ function UsersManager({ users, roles, spaces }: PropsType) {
       setExpandUrl(undefined);
     }
   }, [activeModel]);
+
+  async function deleteUsers() {
+    const response = await handleDeleteUser(selected.map((user) => user.id));
+    if (response.space) {
+      // setMessage({
+      //   type: 'success',
+      //   summery: 'Users are added to Space successfully',
+      //   title: 'Success ',
+      // });
+    }
+
+    console.log({ response });
+
+    if (response?.error) {
+      // setMessage({
+      //   type: 'error',
+      //   summery: response?.error,
+      //   title: 'Error ',
+      // });
+    }
+  }
   return (
     <div>
       <Model
@@ -90,7 +112,9 @@ function UsersManager({ users, roles, spaces }: PropsType) {
         <div>
           {selected.length ? (
             <div className="flex flex-wrap gap-2">
-              <button className="btn-danger py-1 px-4">delete</button>
+              <button className="btn-danger py-1 px-4" onClick={deleteUsers}>
+                delete
+              </button>
               <button
                 className="btn-success py-1 px-4"
                 onClick={() => {
@@ -138,11 +162,7 @@ function UsersManager({ users, roles, spaces }: PropsType) {
       </div>
       <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
         <Suspense fallback={<div>Loading..</div>}>
-          <UsersListTable
-            users={users}
-            setSelected={setSelected}
-            baseUrl=""
-          />
+          <UsersListTable users={users} setSelected={setSelected} baseUrl="" />
         </Suspense>
       </div>
     </div>

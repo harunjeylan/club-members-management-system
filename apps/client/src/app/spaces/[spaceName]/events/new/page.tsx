@@ -1,4 +1,4 @@
-import RoleForm from '@client/components/Forms/RoleForm';
+import RoleForm from '@client/components/Forms/CreateRoleForm';
 import Header2 from '@client/components/ui/Header2';
 
 async function Page() {

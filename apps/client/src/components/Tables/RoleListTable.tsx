@@ -1,17 +1,19 @@
 'use client';
 
 import { Role } from '@prisma/client';
-import { ColumnDef, Table } from '@tanstack/react-table';
-import React, { useEffect, useState } from 'react';
-import DataTable from '../ui/DataTable';
-import { fuzzySort } from '../ui/DataTable/helperFns';
-import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
+import { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
+import React, { Dispatch } from 'react';
+import DataTable from '../ui/DataTable';
+import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
+import { fuzzySort } from '../ui/DataTable/helperFns';
 
-function RoleListTable({ roles, baseUrl }: { baseUrl: string; roles: Role[] }) {
-  const [selected, setSelected] = useState<Role[]>([]);
-  console.log(selected);
-
+type PropsType = {
+  baseUrl: string;
+  roles: Role[];
+  setSelected: Dispatch<React.SetStateAction<Role[]>>;
+};
+function RoleListTable({ roles, baseUrl, setSelected }: PropsType) {
   const columns = React.useMemo<ColumnDef<Role, any>[]>(
     () => [
       {
@@ -101,34 +103,20 @@ function RoleListTable({ roles, baseUrl }: { baseUrl: string; roles: Role[] }) {
         filterFn: 'fuzzy',
         sortingFn: fuzzySort,
       },
+      {
+        accessorFn: (row) => `${row.description}`,
+        id: 'description',
+        header: 'Description',
+        cell: (info) => info.getValue(),
+        footer: (props) => props.column.id,
+        filterFn: 'fuzzy',
+        sortingFn: fuzzySort,
+      },
     ],
     []
   );
 
-  return (
-    <div>
-      <div className="flex justify-between w-full ">
-        <div>
-          {selected.length ? (
-            <div className="flex gap-2">
-              <button className="btn-danger py-1 px-4">Delete</button>
-              <button className="btn-success py-1 px-4">Add to Space</button>
-              <button className="btn-success py-1 px-4">Assign Role</button>
-            </div>
-          ) : (
-            ''
-          )}
-        </div>
-
-        <Link href={'/admin/roles/new'} className="btn-primary py-1 px-4">
-          Add Role
-        </Link>
-      </div>
-      <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
-        <DataTable<Role> data={roles} columns={columns} />
-      </div>
-    </div>
-  );
+  return <DataTable<Role> data={roles} columns={columns} />;
 }
 
 export default RoleListTable;

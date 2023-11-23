@@ -18,7 +18,7 @@ export default async function getUserDetails(userId: string) {
 
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getSpaces'] },
+    next: { tags: [`getUserDetails/${userId}`], revalidate: 3600 * 12 * 7  },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },

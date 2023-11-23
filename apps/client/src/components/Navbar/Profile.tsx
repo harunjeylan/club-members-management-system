@@ -4,6 +4,7 @@ import {
   selectCurrentUser,
   selectToken,
 } from '@client/libs/features/userSlice';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { Role, RoleCode, RoleScop } from '@prisma/client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -13,38 +14,27 @@ import { useDispatch, useSelector } from 'react-redux';
 
 function Profile() {
   const [show, setShow] = useState(false);
-  const [userRole, setUserRole] = useState<Partial<Role> | undefined>();
+  const [allowedRoles, setAllowedRoles] = useState<Partial<Role>[]>([]);
   const user = useSelector(selectCurrentUser);
   const token = useSelector(selectToken);
 
   const dispatch = useDispatch();
   const router = useRouter();
-  // useEffect(() => {
-  //   const role = user?.roles.find((role) => {
-  //     {
-  //       if (role.scop === RoleScop.SUPER && role.code === RoleCode.ADMIN)
-  //         return true;
-  //       if (role.scop === RoleScop.SUPER && role.code === RoleCode.EDITOR)
-  //         return true;
-  //       if (role.scop === RoleScop.SPACE && role.code === RoleCode.ADMIN)
-  //         return true;
-  //       if (role.scop === RoleScop.SPACE && role.code === RoleCode.EDITOR)
-  //         return true;
-  //     }
-  //   });
-  //   setUserRole(role);
-  // }, [user?.roles]);
-  // function getAdminPanelPath(role: Partial<Role>) {
-  //   if (role.scop === RoleScop.SUPER && role.code === RoleCode.ADMIN)
-  //     return '/dashboard';
-  //   if (role.scop === RoleScop.SUPER && role.code === RoleCode.EDITOR)
-  //     return '/editor';
-  //   if (role.scop === RoleScop.SPACE && role.code === RoleCode.ADMIN)
-  //     return `/spaces/${role.spaceName}/admin`;
-  //   if (role.scop === RoleScop.SPACE && role.code === RoleCode.EDITOR)
-  //     return `/spaces/${role.spaceName}/editor`;
-  //   return '/auth/login';
-  // }
+
+  useEffect(() => {
+    if (user && user.roles) {
+      const superAdminRole = getUserAccessRoles(user.roles, [
+        { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+        { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+        { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+        { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+      ]);
+      if (superAdminRole?.length) {
+        setAllowedRoles(superAdminRole);
+      }
+    }
+  }, [user?.roles]);
+
   return (
     <div className="relative">
       <div>
@@ -77,12 +67,9 @@ function Profile() {
           ''
         )}
         <ul className="flex flex-col gap-1">
-          {userRole && (
+          {allowedRoles.length && (
             <li className="flex hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <Link
-                href={'/dashboard'}
-                className="w-full py-2 px-2 "
-              >
+              <Link href={'/dashboard'} className="w-full py-2 px-2 ">
                 Dashboard
               </Link>
             </li>

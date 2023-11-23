@@ -1,4 +1,4 @@
-import RoleForm from '@client/components/Forms/RoleForm';
+import CreateRoleForm from '@client/components/Forms/CreateRoleForm';
 import Header2 from '@client/components/ui/Header2';
 import Link from 'next/link';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
@@ -21,7 +21,7 @@ async function Page() {
         </div>
 
         <div className="flex w-full max-w-4xl mx-auto h-full max-h-fit my-auto p-4">
-          <RoleForm />
+          <CreateRoleForm />
         </div>
       </div>
     </section>

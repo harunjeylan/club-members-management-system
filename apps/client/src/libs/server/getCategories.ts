@@ -6,7 +6,7 @@ async function getCategories() {
   const url = `${host}/api/categories?populate[0]=thumbnail`;
   const res = await fetch(url, {
     method: "GET",
-    next: { tags: ["categories"] },
+    next: { tags: ["getCategories"], revalidate: 3600 * 12 * 7  },
   });
 
   if (!res.ok) {

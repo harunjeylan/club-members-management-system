@@ -1,6 +1,6 @@
 import Header2 from '@client/components/ui/Header2';
 import getSpaces from '@client/libs/server/getSpaces';
-import SpaceManager from './SpaceManager';
+import SpacesManager from './SpacesManager';
 
 async function Page() {
   const spaces = await getSpaces();
@@ -11,7 +11,7 @@ async function Page() {
         <div className="flex justify-between w-full  border-b border-secondary-500  my-4 pb-2">
           <Header2 title="Spaces" />
         </div>
-        <SpaceManager spaces={spaces} />
+        <SpacesManager spaces={spaces} />
       </div>
     </section>
   );

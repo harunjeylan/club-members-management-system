@@ -17,7 +17,7 @@ export default async function getRoleDetails(roleId: string) {
 
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getSpaces'] },
+    next: { tags: [`getRoleDetails/${roleId}`], revalidate: 3600 * 12 * 7  },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
