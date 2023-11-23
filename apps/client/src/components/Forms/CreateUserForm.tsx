@@ -1,25 +1,22 @@
 'use client';
+import handleCreateUser from '@client/libs/client/handleCreateUser';
 import { ErrorMessage, Formik } from 'formik';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import Alert, { AlertMessage } from '../ui/Alert';
-import handleRegister from '@client/libs/client/handleRegister';
-function RegisterForm() {
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const searchParams = useSearchParams();
+function CreateUserForm() {
   const [message, setMessage] = useState<AlertMessage>();
   const initialValues = {
-    // name: "",
+    first_name: '',
+    last_name: '',
     username: '',
     email: '',
     password: '',
   };
   let userSchema = Yup.object({
-    // name: Yup.string().required(),
+    first_name: Yup.string().required(),
+    last_name: Yup.string().required(),
     username: Yup.string().required(),
     email: Yup.string().required(),
     password: Yup.string().required(),
@@ -38,16 +35,22 @@ function RegisterForm() {
 
   async function onSubmit(
     values: {
+      first_name: string;
+      last_name: string;
       username: string;
       email: string;
       password: string;
     },
     {}
   ) {
-    const next = searchParams.get('next');
-    const response = await handleRegister(values, dispatch, () =>
-      router.push(next ?? '/')
-    );
+    const response = await handleCreateUser(values);
+    if (response.user) {
+      setMessage({
+        type: 'success',
+        summery: 'User created successfully',
+        title: 'Success ',
+      });
+    }
     if (response?.error) {
       setMessage({
         type: 'warning',
@@ -83,7 +86,46 @@ function RegisterForm() {
               />
             </div>
           )}
-
+          <div className="col-span-1 flex flex-col gap-1 w-full">
+            <label>First Name</label>
+            <input
+              type="text"
+              name="first_name"
+              className={`input ${
+                !!touched.first_name && !!errors.first_name
+                  ? 'bg-red-300/50 border border-red-500'
+                  : ''
+              }`}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.first_name}
+            />
+            <ErrorMessage
+              name="first_name"
+              component="div"
+              className="text-red-500 dark:text-red-300"
+            />
+          </div>
+          <div className="col-span-1 flex flex-col gap-1 w-full">
+            <label>Last Name</label>
+            <input
+              type="text"
+              name="last_name"
+              className={`input ${
+                !!touched.last_name && !!errors.last_name
+                  ? 'bg-red-300/50 border border-red-500'
+                  : ''
+              }`}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.last_name}
+            />
+            <ErrorMessage
+              name="last_name"
+              component="div"
+              className="text-red-500 dark:text-red-300"
+            />
+          </div>
           <div className="col-span-1 flex flex-col gap-1 w-full">
             <label>Username</label>
             <input
@@ -145,7 +187,8 @@ function RegisterForm() {
               className="text-red-500 dark:text-red-300"
             />
           </div>
-          <div className="col-span-2 flex flex-col gap-1 w-full">
+          
+          <div className="col-span-2 flex flex-col justify-end gap-1 w-full">
             <button
               type="submit"
               className="btn-primary py-2"
@@ -154,16 +197,10 @@ function RegisterForm() {
               Submit
             </button>
           </div>
-          <div className="flex flex-row gap-1 w-full">
-            <span>I have an account</span>
-            <Link href="/auth/login" className="link-text">
-              Login
-            </Link>
-          </div>
         </form>
       )}
     </Formik>
   );
 }
 
-export default RegisterForm;
+export default CreateUserForm;

@@ -1,4 +1,5 @@
 import AdminSidebar from '@client/components/Sidebar/AdminSidebar';
+import getRoles from '@client/libs/server/getRoles';
 import getServerUser from '@client/libs/server/getServerUser';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { RoleCode, RoleScop } from '@prisma/client';
@@ -14,6 +15,7 @@ type PropsType = {
 };
 export default async function Layout({ children }: PropsType) {
   const user = await getServerUser();
+  
   if (!user) {
     return redirect('/auth/login');
   }

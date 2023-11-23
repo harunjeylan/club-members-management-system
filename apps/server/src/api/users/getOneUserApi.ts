@@ -28,6 +28,9 @@ export default async function getOneUserApi(req, res) {
           }
         };
       }
+      if (item === 'spaces') {
+        populations['spaces'] = true;
+      }
     });
     const user = await prisma.user.findFirst({
       where: {

@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import Alert, { AlertMessage } from '../ui/Alert';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 function LoginForm() {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -21,6 +21,17 @@ function LoginForm() {
     identifier: Yup.string().required(),
     password: Yup.string().required(),
   });
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (message) {
+        setMessage(undefined);
+      }
+    }, 3000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [message]);
 
   async function onSubmit(
     values: {

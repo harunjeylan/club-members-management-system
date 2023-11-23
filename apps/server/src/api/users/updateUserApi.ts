@@ -6,8 +6,10 @@ import { RoleCode, RoleScop } from '@prisma/client';
 
 export default async function updateUserApi(req, res) {
   const { userId } = req.params;
-  const fields = ['username', 'first_name', 'last_name', 'email', 'roles'];
+  const fields = ['username', 'first_name', 'last_name', 'email', 'roles', 'spaces'];
   const fieldsData = getFieldsData(req.body, fields);
+  console.log({fieldsData});
+  
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
@@ -21,7 +23,8 @@ export default async function updateUserApi(req, res) {
       first_name: z.string().min(3).or(z.undefined()),
       last_name: z.string().or(z.undefined()),
       email: z.string().email().or(z.undefined()),
-      roles: z.array(z.string()),
+      roles: z.array(z.string()).or(z.undefined()),
+      spaces: z.array(z.string()).or(z.undefined()),
     });
 
     //@ts-ignore: Unreachable code error
@@ -35,9 +38,14 @@ export default async function updateUserApi(req, res) {
       });
     }
 
+    if (fieldsData['spaces']) {
+      fieldsData['spaces'] = {
+        set: fieldsData['spaces'].map((id: string) => ({ id })),
+      };
+    }
     if (fieldsData['roles']) {
       fieldsData['roles'] = {
-        connect: fieldsData['roles'].map((id: string) => ({ id })),
+        set: fieldsData['roles'].map((id: string) => ({ id })),
       };
     }
 

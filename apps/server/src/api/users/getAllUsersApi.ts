@@ -11,7 +11,7 @@ export default async function getAllUsersApi(req, res) {
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
     ]);
-    
+
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
     }
@@ -22,7 +22,14 @@ export default async function getAllUsersApi(req, res) {
       }
 
       if (item === 'profile') {
-        populations['profile'] = true;
+        populations['profile'] = {
+          include: {
+            image: true,
+          },
+        };
+      }
+      if (item === 'spaces') {
+        populations['spaces'] = true;
       }
     });
     const users = await prisma.user.findMany({
@@ -35,5 +42,5 @@ export default async function getAllUsersApi(req, res) {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error.message, code: 'get-users' });
-  } 
+  }
 }

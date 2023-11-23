@@ -52,7 +52,7 @@ function Sidebar({ children, className, maxWidth = '16rem' }: PropsType) {
           transform: show ? `translateX(${maxWidth})` : '',
         }}
         onClick={() => setShow((prev) => !prev)}
-        className={`fixed top-16 mt-4 z-[110]  h-fit duration-100 ease-in-out  bg-secondary-100/50 dark:bg-secondary-900/50 btn-icon rounded-r-full rounded-l-none `}
+        className={`fixed top-16 mt-4 z-[101]  h-fit duration-100 ease-in-out  bg-secondary-100/50 dark:bg-secondary-900/50 btn-icon rounded-r-full rounded-l-none `}
       >
         {show ? <AiOutlineClose size={25} /> : <AiOutlineMenuFold size={25} />}
       </button>

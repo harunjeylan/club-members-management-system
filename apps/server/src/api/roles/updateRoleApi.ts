@@ -4,8 +4,8 @@ import {getUserAccessRoles} from "@libs/utils/getUserAccessRoles";
 import getFieldsData from 'apps/server/src/utils/getFieldsData';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 
-export default async function updateEventApi(req, res) {
-  const { spaceName, roleId } = req.params;
+export default async function updateRoleApi(req, res) {
+  const { roleId } = req.params;
   const fields = ['name', 'code', 'scop', 'description','users'];
   const fieldsData = getFieldsData(req.body, fields);
   try {

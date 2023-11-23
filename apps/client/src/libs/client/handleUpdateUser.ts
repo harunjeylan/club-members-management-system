@@ -1,27 +1,36 @@
 import { host } from '@client/config/host.config';
-import { Space } from '@prisma/client';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 
-export default async function handleCreateSpace(values: Partial<Space>) {
+export default async function handleUpdateUser(userId:string, values: {
+  first_name: string;
+  last_name: string;
+  username: string;
+  email: string;
+  roles: string[];
+  spaces: string[];
+}) {
   try {
     const token = getCookie('token');
-    const url = `${host}/spaces`;
+    const url = `${host}/users/${userId}`;
+
     const payloadData = {
-      name: values.name,
-      description: values.description,
-      isPrivate: values.isPrivate,
+      first_name: values.first_name,
+      last_name: values.last_name,
+      username: values.username,
+      email: values.email,
+      roles: values.roles,
+      spaces: values.spaces,
     };
     if (typeof token === 'undefined') {
       return;
     }
-
     const payload = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.post(url, payloadData, payload);
+    const res = await axios.put(url, payloadData, payload);
     return res.data;
   } catch (error) {
     //@ts-ignore

@@ -9,6 +9,8 @@ import getAllSpaceRolesApi from '@server/api/spaces/roles/getAllSpaceRolesApi';
 import getOneSpaceRoleApi from '@server/api/spaces/roles/getOneSpaceRoleApi';
 import getAllSpaceEventsApi from '@server/api/spaces/events/getAllSpaceEventsApi';
 import getOneSpaceEventApi from '@server/api/spaces/events/getOneSpaceEventApi';
+import addSpaceUsersToRole from '@server/api/spaces/roles/addSpaceUsersToRole';
+import addUsersToSpaceApi from '@server/api/spaces/users/addUsersToSpaceApi';
 
 const router = express.Router();
 router.get('/', authenticateToken, getAllSpacesApi);
@@ -16,10 +18,12 @@ router.post('/', authenticateToken, createSpaceApi);
 router.get('/:spaceName', authenticateToken, getOneSpaceApi);
 
 router.get('/:spaceName/users', authenticateToken, getAllSpaceUsersApi);
+router.put('/:spaceName/users', authenticateToken, addUsersToSpaceApi);
 router.get('/:spaceName/users/:userId', authenticateToken, getOneSpaceUserApi);
 
 router.get('/:spaceName/roles', authenticateToken, getAllSpaceRolesApi);
 router.get('/:spaceName/roles/:roleId', authenticateToken, getOneSpaceRoleApi);
+router.get('/:spaceName/roles/:roleId/users', authenticateToken, addSpaceUsersToRole);
 
 router.get('/:spaceName/events', authenticateToken, getAllSpaceEventsApi);
 router.get(

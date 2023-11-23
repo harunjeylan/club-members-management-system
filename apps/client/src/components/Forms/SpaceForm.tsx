@@ -2,7 +2,7 @@
 import handleCreateSpace from '@client/libs/client/handleCreateSpace';
 import { Space } from '@prisma/client';
 import { ErrorMessage, Formik } from 'formik';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import Alert, { AlertMessage } from '../ui/Alert';
 function SpaceForm() {
@@ -17,6 +17,17 @@ function SpaceForm() {
     description: yup.string(),
     isPrivate: yup.boolean().required(),
   });
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (message) {
+        setMessage(undefined);
+      }
+    }, 3000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [message]);
 
   async function onSubmit(values: Partial<Space>) {
     console.log({ values });

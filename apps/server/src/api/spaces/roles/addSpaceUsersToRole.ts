@@ -2,10 +2,10 @@ import { z } from 'zod';
 
 import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
-import {getUserAccessRoles} from "@libs/utils/getUserAccessRoles"
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
-export default async function addUsersToSpaceApi(req, res) {
-  const { spaceName } = req.params;
+export default async function addSpaceUsersToRole(req, res) {
+  const { roleId, spaceName } = req.params;
   const { users } = req.body;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
@@ -23,7 +23,7 @@ export default async function addUsersToSpaceApi(req, res) {
     });
 
     //@ts-ignore: Unreachable code error
-    const { success, error } = zodSchema.safeParse({users});
+    const { success, error } = zodSchema.safeParse({ users });
 
     if (!success) {
       return res.status(409).json({
@@ -32,9 +32,10 @@ export default async function addUsersToSpaceApi(req, res) {
         code: 'register-user',
       });
     }
-    const space = await prisma.space.update({
+    const space = await prisma.role.update({
       where: {
-        name: spaceName,
+        spaceName: spaceName,
+        id: roleId,
       },
       data: {
         users: {

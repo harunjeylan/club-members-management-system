@@ -1,7 +1,7 @@
 import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import 'server-only';
-import { UserWithProfileAndRoles } from 'types/user';
+import { UserWithAll, UserWithProfileAndRoles } from 'types/user';
 import { host } from '../../config/host.config';
 
 async function getServerUser() {
@@ -21,7 +21,7 @@ async function getServerUser() {
       if (!res.ok) {
         return null;
       }
-      const data = (await res.json()) as { user: UserWithProfileAndRoles };
+      const data = (await res.json()) as { user: UserWithAll };
 
       return data.user;
     } catch (error) {

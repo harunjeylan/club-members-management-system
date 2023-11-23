@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
-import {getUserAccessRoles} from "@libs/utils/getUserAccessRoles";
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
 export default async function removeUsersFromSpaceApi(req, res) {
   const { spaceName } = req.params;
@@ -38,7 +38,9 @@ export default async function removeUsersFromSpaceApi(req, res) {
       },
       data: {
         users: {
-          disconnect: users,
+          disconnect: users.map((userId: string) => ({
+            id: userId,
+          })),
         },
       },
     });

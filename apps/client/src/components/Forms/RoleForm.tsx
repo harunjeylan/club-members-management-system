@@ -1,7 +1,7 @@
 'use client';
 import { Role, RoleCode, RoleScop } from '@prisma/client';
 import { ErrorMessage, Formik } from 'formik';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import Alert, { AlertMessage } from '../ui/Alert';
 import handleCreateRole from '@client/libs/client/handleCreateRole';
@@ -27,6 +27,17 @@ function RoleForm() {
       then: () => yup.string().required('required in space scop'),
     }),
   });
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (message) {
+        setMessage(undefined);
+      }
+    }, 3000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [message]);
 
   async function onSubmit(values: Partial<Role>) {
     console.log({ values });

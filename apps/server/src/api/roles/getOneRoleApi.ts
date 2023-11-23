@@ -1,9 +1,9 @@
 import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
-import {getUserAccessRoles} from "@libs/utils/getUserAccessRoles";
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
 export default async function getOneRoleApi(req, res) {
-  const { spaceName, roleId } = req.params;
+  const { roleId } = req.params;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
@@ -14,7 +14,7 @@ export default async function getOneRoleApi(req, res) {
     }
 
     const role = await prisma.role.findFirst({
-      where: { id: roleId, spaceName: spaceName },
+      where: { id: roleId },
     });
     if (!role) {
       return res.sendStatus(404);
@@ -27,5 +27,5 @@ export default async function getOneRoleApi(req, res) {
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });
-  } 
+  }
 }

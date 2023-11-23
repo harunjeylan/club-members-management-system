@@ -1,9 +1,9 @@
+import { getUserAccessRoles } from "@libs/utils/getUserAccessRoles";
 import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
-import {getUserAccessRoles} from "@libs/utils/getUserAccessRoles";
 
 export default async function deleteRoleApi(req, res) {
-  const { spaceName, roleId } = req.params;
+  const {  roleId } = req.params;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },

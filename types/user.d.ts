@@ -1,4 +1,4 @@
-import { FileModel, Profile, Role, User } from '@prisma/client';
+import { FileModel, Profile, Role, Space, User } from '@prisma/client';
 
 export type UserWithRoles = User & {
   roles: Role[];
@@ -13,4 +13,12 @@ export type UserWithProfileAndRoles = User & {
     image: FileModel;
   };
   roles: Role[];
+};
+
+export type UserWithAll = User & {
+  profile: Profile & {
+    image: FileModel;
+  };
+  roles: Role[];
+  spaces: Space[];
 };
