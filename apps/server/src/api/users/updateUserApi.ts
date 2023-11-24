@@ -18,8 +18,8 @@ export default async function updateUserApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      username: z.string().min(3).or(z.undefined()),
-      first_name: z.string().min(3).or(z.undefined()),
+      username: z.string().or(z.undefined()),
+      first_name: z.string().or(z.undefined()),
       last_name: z.string().or(z.undefined()),
       email: z.string().email().or(z.undefined()),
       roles: z.array(z.string()).or(z.undefined()),

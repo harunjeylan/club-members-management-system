@@ -30,7 +30,7 @@ export default async function updateEventApi(req, res) {
     }
 
     const zodSchema = z.object({
-      title: z.string().min(3),
+      title: z.string(),
       startAt: z.string().or(z.undefined()),
       endAt: z.string().or(z.undefined()),
       fullDay: z.boolean().or(z.undefined()),

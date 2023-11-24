@@ -17,7 +17,7 @@ export default async function updateSpaceApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      name: z.string().min(3).or(z.undefined()),
+      name: z.string().or(z.undefined()),
       isPrivate: z.boolean().or(z.undefined()),
       description: z.string().or(z.undefined()),
     });

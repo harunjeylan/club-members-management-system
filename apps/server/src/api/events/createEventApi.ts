@@ -25,7 +25,7 @@ export default async function createEventApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      title: z.string().min(3),
+      title: z.string(),
       startAt: z.string(),
       endAt: z.string(),
       fullDay: z.boolean(),

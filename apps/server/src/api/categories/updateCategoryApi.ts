@@ -1,28 +1,28 @@
-import { z } from 'zod';
-import { RoleCode, RoleScop } from '@prisma/client';
 import getFieldsData from '@libs/utils/getFieldsData';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
+import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
+import { z } from 'zod';
 
-export default async function updateUserApi(req, res) {
-  const { userId, spaceName } = req.params;
-  const fields = ['username', 'first_name', 'last_name', 'email', 'roles'];
+export default async function updateEventApi(req, res) {
+  const { categoryId } = req.params;
+  const fields = ['name'];
   const fieldsData = getFieldsData(req.body, fields);
+  const { mainCategoryId } = req.body;
+
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-      { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: spaceName },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+      { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
     }
+
     const zodSchema = z.object({
-      username: z.string().or(z.undefined()),
-      first_name: z.string().or(z.undefined()),
-      last_name: z.string().or(z.undefined()),
-      email: z.string().email().or(z.undefined()),
-      roles: z.array(z.string()),
+      name: z.string().or(z.undefined()),
     });
 
     //@ts-ignore: Unreachable code error
@@ -36,25 +36,22 @@ export default async function updateUserApi(req, res) {
       });
     }
 
-    if (fieldsData['roles']) {
-      fieldsData['roles'] = {
-        connect: fieldsData['roles'],
+    if (mainCategoryId?.length) {
+      fieldsData['category'] = {
+        connect: {
+          id: mainCategoryId,
+        },
       };
     }
-
-    const user = await prisma.user.update({
+    const category = await prisma.category.update({
       where: {
-        id: userId,
-        spaces: {
-          some: { name: spaceName },
-        },
+        id: categoryId,
       },
-
       data: fieldsData,
     });
 
     return res.status(200).json({
-      user: prisma.$exclude(user, ['password']),
+      category: category,
     });
   } catch (error) {
     console.log(error);

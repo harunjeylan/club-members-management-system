@@ -71,7 +71,7 @@ model Setting {
 
 model Category {
   id         String     @id @default(uuid())
-  name       String
+  name       String     @unique
   events     Event[]
   category   Category?  @relation("category", fields: [categoryId], references: [id])
   categories Category[] @relation("category")

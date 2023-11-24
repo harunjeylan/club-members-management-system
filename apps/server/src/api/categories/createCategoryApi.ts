@@ -1,33 +1,35 @@
-import { RoleCode, RoleScop } from '@prisma/client';
-import prisma from '@server/prisma/PrismaClient';
+import { RoleCode, RoleScop, Category, Repeat } from '@prisma/client';
+import prisma from 'apps/server/src/prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { z } from 'zod';
 
-export default async function createRoleApi(req, res) {
-  const { name, code, scop, description } = req.body;
+export default async function createCategoryApi(req, res) {
+  const { name, mainCategoryId } = req.body;
+
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+      { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+      { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
       name: z.string(),
-      code: z.enum([RoleCode.ADMIN, RoleCode.EDITOR, RoleCode.MEMBER]),
-      scop: z.enum([RoleScop.SUPER, RoleScop.SPACE]),
-      description: z.string().or(z.undefined()),
+      mainCategoryId: z.string().or(z.undefined()),
     });
 
     //@ts-ignore: Unreachable code error
     const { success, error } = zodSchema.safeParse({
       name,
-      code,
-      scop,
-      description,
+      mainCategoryId,
     });
 
     if (!success) {
+      console.log(error.issues);
+
       return res.status(409).json({
         message: 'Invalid Data',
         details: error.issues,
@@ -35,16 +37,25 @@ export default async function createRoleApi(req, res) {
       });
     }
 
-    const role = await prisma.role.create({
-      data: {
-        name,
-        code,
-        scop,
-        description,
-      },
+    const fieldsData = {
+      name,
+    };
+
+    if (mainCategoryId?.length) {
+      fieldsData['category'] = {
+        connect: {
+          id: mainCategoryId,
+        },
+      };
+    }
+
+    console.log(fieldsData);
+
+    const category = await prisma.category.create({
+      data: fieldsData,
     });
     return res.status(200).json({
-      role: role,
+      category: category,
     });
   } catch (error) {
     console.log(error);

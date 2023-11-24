@@ -28,7 +28,7 @@ export default async function updateSpaceEventApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      title: z.string().min(3),
+      title: z.string(),
       startAt: z.date(),
       endAt: z.date(),
       fullDay: z.boolean(),

@@ -14,7 +14,7 @@ export default async function createSpaceApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      name: z.string().min(3),
+      name: z.string(),
       isPrivate: z.boolean(),
       description: z.string().or(z.undefined()),
     });

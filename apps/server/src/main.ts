@@ -9,6 +9,7 @@ import filesRouter from './router/filesRouter';
 import rolesRouter from './router/rolesRouter';
 import spacesRouter from './router/spacesRouter';
 import usersRouter from './router/usersRouter';
+import categoriesRouter from './router/categoriesRouter';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use('/users', usersRouter);
 app.use('/roles', rolesRouter);
 app.use('/spaces', spacesRouter);
 app.use('/events', eventsRouter);
+app.use('/categories', categoriesRouter);
 
 const port = process.env.PORT || 8080;
 const server = app.listen(port, () => {

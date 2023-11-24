@@ -16,7 +16,7 @@ export default async function createSpaceRoleApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      name: z.string().min(3),
+      name: z.string(),
       code: z.enum([RoleCode.ADMIN, RoleCode.EDITOR, RoleCode.MEMBER]),
       scop: z.enum([RoleScop.SUPER, RoleScop.SPACE]),
       description: z.string().or(z.undefined()),

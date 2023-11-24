@@ -25,7 +25,7 @@ router.put('/', authenticateToken, deleteSpaceApi);
 
 router.get('/:spaceName', authenticateToken, getOneSpaceApi);
 router.put('/:spaceName', authenticateToken, updateSpaceApi);
-router.put('/:spaceName', authenticateToken, deleteSpaceApi);
+router.delete('/:spaceName', authenticateToken, deleteSpaceApi);
 
 router.get('/:spaceName/users', authenticateToken, getAllSpaceUsersApi);
 router.put('/:spaceName/users', authenticateToken, addUsersToSpaceApi);

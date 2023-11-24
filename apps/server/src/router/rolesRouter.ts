@@ -15,7 +15,7 @@ router.put('/', authenticateToken, deleteRoleApi);
 
 router.get('/:roleId', authenticateToken, getOneRoleApi);
 router.put('/:roleId', authenticateToken, updateRoleApi);
-router.put('/:roleId', authenticateToken, deleteRoleApi);
+router.delete('/:roleId', authenticateToken, deleteRoleApi);
 
 router.put('/:roleId/users', authenticateToken, addUsersToRole);
 router.put('/:roleId/users/remove', authenticateToken, removeUsersFromRoleApi);

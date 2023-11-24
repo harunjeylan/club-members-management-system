@@ -10,8 +10,8 @@ export default async function registerCurrentUserApi(req, res) {
     console.log({ username, first_name, last_name, email, password });
 
     const zodSchema = z.object({
-      username: z.string().min(3),
-      first_name: z.string().min(3),
+      username: z.string(),
+      first_name: z.string(),
       last_name: z.string(),
       email: z.string().email(),
       password: z.string().min(6),

@@ -16,7 +16,7 @@ export default async function updateRoleApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      name: z.string().min(3).or(z.undefined()),
+      name: z.string().or(z.undefined()),
       code: z
         .enum([RoleCode.ADMIN, RoleCode.EDITOR, RoleCode.MEMBER])
         .or(z.undefined()),
