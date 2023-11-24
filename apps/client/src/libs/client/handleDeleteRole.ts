@@ -17,7 +17,7 @@ export default async function handleDeleteRole(roleId: string | string[]) {
       },
     };
     let res: any;
-    if (roleId === 'string') {
+    if (typeof roleId === 'string') {
       res = await axios.delete(`${host}/roles/${roleId}`, payload);
       handleRevalidate({
         'path[0]': '/roles',

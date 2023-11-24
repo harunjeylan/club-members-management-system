@@ -1,6 +1,6 @@
 'use client';
-import CreateSpaceForm from '@client/components/Forms/CreateSpaceForm';
-import UpdateSpaceForm from '@client/components/Forms/UpdateSpaceForm';
+import CreateSpaceForm from '@client/components/Forms/SpaceForm/CreateSpaceForm';
+import UpdateSpaceForm from '@client/components/Forms/SpaceForm/UpdateSpaceForm';
 import SpaceListTable from '@client/components/Tables/SpaceListTable';
 import Model from '@client/components/ui/Model';
 import handleDeleteSpace from '@client/libs/client/handleDeleteSpace';

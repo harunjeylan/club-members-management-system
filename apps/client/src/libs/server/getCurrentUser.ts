@@ -16,7 +16,8 @@ async function getCurrentUser() {
         headers: {
           Authorization: `Bearer ${token.value}`,
         },
-        next: { tags: ['getCurrentUser'], revalidate: 3600 * 12 * 7 },
+        next: { tags: ['getCurrentUser'],  revalidate: 3600 * 12 },
+        
       });
       if (!res.ok) {
         return null;

@@ -18,8 +18,8 @@ export async function POST(req: NextRequest) {
       jwt: { access: string; refresh: string };
     }>(url, payload);
     const { user, jwt } = response.data;
-    cookies().set('token', jwt.access);
-    cookies().set('userId', user.id);
+    cookies().set({ name: 'token', value: jwt.access, secure: true });
+    cookies().set({ name: 'userId', value: user.id, secure: true });
     try {
       revalidateTag('currentUserDetails');
     } catch (e) {}

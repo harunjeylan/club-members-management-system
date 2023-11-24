@@ -1,13 +1,14 @@
 import { z } from 'zod';
 import { RoleCode, RoleScop } from '@prisma/client';
-import {getUserAccessRoles} from "@libs/utils/getUserAccessRoles";
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 import getFieldsData from '@libs/utils/getFieldsData';
 
 export default async function updateRoleApi(req, res) {
   const { roleId } = req.params;
-  const fields = ['name', 'code', 'scop', 'description','users'];
+  const fields = ['name', 'code', 'scop', 'description'];
   const fieldsData = getFieldsData(req.body, fields);
+  const { addUsers, removeUsers, setUsers, spaceName } = req.body;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
@@ -35,18 +36,47 @@ export default async function updateRoleApi(req, res) {
         code: 'register-user',
       });
     }
-    
-    if (fieldsData['users']) {
+
+    let populations = {};
+    if (setUsers?.length) {
       fieldsData['users'] = {
-        connect: fieldsData['users'],
+        set: setUsers.map((userId: string) => ({
+          id: userId,
+        })),
       };
+      populations['users'] = true;
     }
-    
+
+    if (addUsers?.length) {
+      fieldsData['users'] = {
+        connect: addUsers.map((userId: string) => ({
+          id: userId,
+        })),
+      };
+      populations['users'] = true;
+    }
+
+    if (removeUsers?.length) {
+      fieldsData['users'] = {
+        disconnect: removeUsers.map((userId: string) => ({
+          id: userId,
+        })),
+      };
+      populations['users'] = true;
+    }
+    if (spaceName?.length) {
+      fieldsData['space'] = {
+        set: { name: spaceName },
+      };
+      populations['space'] = true;
+    }
+
     const role = await prisma.role.update({
       where: {
         id: roleId,
       },
       data: fieldsData,
+      include: populations,
     });
 
     return res.status(200).json({

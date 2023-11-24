@@ -1,5 +1,4 @@
 'use client';
-import handleAssignUsersRole from '@client/libs/client/handleAssignUsersRole';
 import { Role } from '@prisma/client';
 import { FormEvent, useEffect, useState } from 'react';
 import Alert, { AlertMessage } from '../ui/Alert';
@@ -34,23 +33,23 @@ function AssignUsersRoleForm({
         title: 'Warning ',
       });
     }
-    const response = await handleAssignUsersRole(selectedRole, users);
-    console.log({ response });
+    // const response = await handleAssignUsersRole(selectedRole, users);
+    // console.log({ response });
 
-    if (response.role) {
-      setMessage({
-        type: 'success',
-        summery: 'Role Assigned to Users successfully',
-        title: 'Success ',
-      });
-    }
-    if (response?.error) {
-      setMessage({
-        type: 'warning',
-        summery: response?.error,
-        title: 'Warning ',
-      });
-    }
+    // if (response.role) {
+    //   setMessage({
+    //     type: 'success',
+    //     summery: 'Role Assigned to Users successfully',
+    //     title: 'Success ',
+    //   });
+    // }
+    // if (response?.error) {
+    //   setMessage({
+    //     type: 'warning',
+    //     summery: response?.error,
+    //     title: 'Warning ',
+    //   });
+    // }
   }
   return (
     <form onSubmit={onSubmit} className="w-full grid grid-cols-2 gap-4 p-4">

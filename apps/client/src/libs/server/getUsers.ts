@@ -13,7 +13,7 @@ async function getUsers() {
   const url = `${host}/users?populate=profile&populate=roles&populate=spaces`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getUsers'], revalidate: 3600 * 12 * 7  },
+    next: { tags: ['getUsers'], revalidate: 3600 * 12  },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },

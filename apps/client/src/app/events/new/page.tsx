@@ -1,5 +1,5 @@
-import CreateEventForm from '@client/components/Forms/CreateEventForm';
-import RoleForm from '@client/components/Forms/CreateRoleForm';
+import CreateEventForm from '@client/components/Forms/EventForm/CreateEventForm';
+import RoleForm from '@client/components/Forms/RoleForm/CreateRoleForm';
 import Header2 from '@client/components/ui/Header2';
 import Link from 'next/link';
 import { AiOutlineArrowLeft } from 'react-icons/ai';

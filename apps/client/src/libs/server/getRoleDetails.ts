@@ -12,12 +12,12 @@ export default async function getRoleDetails(roleId: string) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/roles/${roleId}?populate=users`;
+  const url = `${host}/roles/${roleId}?populate=users&populate=space`;
   console.log(url);
 
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: [`getRoleDetails/${roleId}`], revalidate: 3600 * 12 * 7  },
+    next: { tags: [`getRoleDetails/${roleId}`],  revalidate: 3600 * 12   },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },

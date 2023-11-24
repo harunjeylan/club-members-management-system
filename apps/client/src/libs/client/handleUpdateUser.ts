@@ -3,17 +3,12 @@ import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import handleRevalidate from './handleRevalidate';
+import { UserWithAll } from 'types/user';
+import { UserFormType } from '@client/components/Forms/UserForm/UserForm';
 
 export default async function handleUpdateUser(
   userId: string,
-  values: {
-    first_name: string;
-    last_name: string;
-    username: string;
-    email: string;
-    roles: string[];
-    spaces: string[];
-  }
+  values: UserFormType
 ) {
   try {
     const token = getCookie('token');
@@ -40,6 +35,10 @@ export default async function handleUpdateUser(
     handleRevalidate({
       'path[0]': '/users',
       'path[1]': `/users/${userId}`,
+      'path[2]': `/roles`,
+      'path[3]': `/spaces`,
+      'path[4]': `/roles/users`,
+      'path[5]': `/spaces/users`,
       'tag[0]': 'getUsers',
       'tag[1]': `getUserDetails/${userId}`,
     });

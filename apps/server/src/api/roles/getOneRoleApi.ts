@@ -21,6 +21,9 @@ export default async function getOneRoleApi(req, res) {
       if (item === 'users') {
         populations['users'] = true;
       }
+      if (item === 'space') {
+        populations['space'] = true;
+      }
     });
     const role = await prisma.role.findFirst({
       where: { id: roleId },

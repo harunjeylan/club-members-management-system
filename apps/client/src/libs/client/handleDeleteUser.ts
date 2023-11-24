@@ -16,7 +16,7 @@ export default async function handleDeleteUser(userId: string | string[]) {
       },
     };
     let res: any;
-    if (userId === 'string') {
+    if (typeof userId === 'string') {
       res = await axios.delete(`${host}/users/${userId}`, payload);
       handleRevalidate({
         'path[0]': '/users',

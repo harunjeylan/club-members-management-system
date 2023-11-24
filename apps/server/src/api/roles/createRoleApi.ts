@@ -4,7 +4,7 @@ import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { z } from 'zod';
 
 export default async function createRoleApi(req, res) {
-  const { name, code, scop, description } = req.body;
+  const { name, code, scop, description, spaceName, users } = req.body;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
@@ -17,6 +17,7 @@ export default async function createRoleApi(req, res) {
       code: z.enum([RoleCode.ADMIN, RoleCode.EDITOR, RoleCode.MEMBER]),
       scop: z.enum([RoleScop.SUPER, RoleScop.SPACE]),
       description: z.string().or(z.undefined()),
+      spaceName: z.string().or(z.undefined()),
     });
 
     //@ts-ignore: Unreachable code error
@@ -25,6 +26,7 @@ export default async function createRoleApi(req, res) {
       code,
       scop,
       description,
+      spaceName,
     });
 
     if (!success) {
@@ -34,14 +36,33 @@ export default async function createRoleApi(req, res) {
         code: 'create-event',
       });
     }
+    const fieldsData = {
+      name,
+      code,
+      scop,
+      description,
+    };
 
+    let populations = {};
+    if (spaceName?.length) {
+      fieldsData['space'] = {
+        connect: {
+          name: spaceName,
+        },
+      };
+      populations['space'] = true;
+    }
+    if (users?.length) {
+      fieldsData['users'] = {
+        connect: users.map((userId: string) => ({
+          id: userId,
+        })),
+      };
+      populations['users'] = true;
+    }
     const role = await prisma.role.create({
-      data: {
-        name,
-        code,
-        scop,
-        description,
-      },
+      data: fieldsData,
+      include: populations,
     });
     return res.status(200).json({
       role: role,

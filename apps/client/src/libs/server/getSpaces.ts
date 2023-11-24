@@ -13,7 +13,7 @@ async function getSpaces() {
   const url = `${host}/spaces`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getSpaces'], revalidate: 3600 * 12 * 7  },
+    next: { tags: ['getSpaces'], revalidate: 3600 * 12 },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },

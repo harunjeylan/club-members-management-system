@@ -10,12 +10,12 @@ async function getSpaceDetails(spaceName: string) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/spaces/${spaceName}`;
+  const url = `${host}/spaces/${spaceName}?populate=users&populate=roles&populate=events`;
   console.log(url);
   
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: [`getSpaceDetails/${spaceName}`] , revalidate: 3600 * 12 * 7 },
+    next: { tags: [`getSpaceDetails/${spaceName}`] ,  revalidate: 3600 * 12  },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },

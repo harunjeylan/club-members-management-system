@@ -17,7 +17,7 @@ export default async function handleDeleteSpace(spaceName: string | string[]) {
       },
     };
     let res: any;
-    if (spaceName === 'string') {
+    if (typeof spaceName === 'string') {
       res = await axios.delete(`${host}/spaces/${spaceName}`, payload);
       handleRevalidate({
         'path[0]': '/spaces',

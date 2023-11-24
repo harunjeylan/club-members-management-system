@@ -10,7 +10,6 @@ export default async function handleUpdateRole(
 ) {
   try {
     const token = getCookie('token');
-    const url = `${host}/roles/${roleId}`;
     const payloadData = {
       name: values.name,
       description: values.description,
@@ -26,6 +25,9 @@ export default async function handleUpdateRole(
         Authorization: `Bearer ${token}`,
       },
     };
+    const url = values.spaceName
+      ? `${host}/spaces/${values.spaceName}/roles/${roleId}`
+      : `${host}/roles/${roleId}`;
     const res = await axios.put(url, payloadData, payload);
 
     handleRevalidate({

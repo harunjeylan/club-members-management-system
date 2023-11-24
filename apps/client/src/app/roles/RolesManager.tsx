@@ -1,11 +1,11 @@
 'use client';
 
-import CreateRoleForm from '@client/components/Forms/CreateRoleForm';
-import UpdateRoleForm from '@client/components/Forms/UpdateRoleForm';
+import CreateRoleForm from '@client/components/Forms/RoleForm/CreateRoleForm';
+import UpdateRoleForm from '@client/components/Forms/RoleForm/UpdateRoleForm';
 import RoleListTable from '@client/components/Tables/RoleListTable';
 import Model from '@client/components/ui/Model';
 import handleDeleteRole from '@client/libs/client/handleDeleteRole';
-import { Role } from '@prisma/client';
+import { Role, Space } from '@prisma/client';
 import React, { Suspense, useEffect, useState } from 'react';
 enum FormType {
   UPDATE_ROLE,
@@ -13,8 +13,9 @@ enum FormType {
 }
 type PropsType = {
   roles: Role[];
+  spaces: Space[];
 };
-function RolesManager({ roles }: PropsType) {
+function RolesManager({ roles, spaces }: PropsType) {
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
   const [selected, setSelected] = useState<Role[]>([]);
@@ -62,14 +63,14 @@ function RolesManager({ roles }: PropsType) {
         {activeModel === FormType.CREATE_ROLE && (
           <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
             <div className="text-xl font-bold">Create Role Form</div>
-            <CreateRoleForm />
+            <CreateRoleForm spaces={spaces} />
           </div>
         )}
         {activeModel === FormType.UPDATE_ROLE && selected.length === 1 && (
           <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
             <div className="text-xl font-bold">Update Role</div>
             <Suspense fallback={<div>Loading..</div>}>
-              <UpdateRoleForm role={selected[0]} />
+              <UpdateRoleForm spaces={spaces} role={selected[0]} />
             </Suspense>
           </div>
         )}

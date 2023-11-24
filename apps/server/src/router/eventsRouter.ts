@@ -5,19 +5,20 @@ import createEventApi from '@server/api/events/createEventApi';
 import deleteEventApi from '@server/api/events/deleteEventApi';
 import getOneEventApi from '@server/api/events/getOneEventApi';
 import updateEventApi from '@server/api/events/updateEventApi';
+import getAllPublicEventsApi from '@server/api/events/getAllPublicEventsApi';
+import getOnePublicEventApi from '@server/api/events/getOnePublicEventApi';
 
 const router = express.Router();
 router.get('/', authenticateToken, getAllEventsApi);
-router.post(
-  '/',
-  authenticateToken,
-  
-  createEventApi
-);
+router.post('/', authenticateToken, createEventApi);
 router.put('/', authenticateToken, deleteEventApi);
+
+router.get('/public', getAllPublicEventsApi);
 
 router.get('/:eventId', authenticateToken, getOneEventApi);
 router.put('/:eventId', authenticateToken, updateEventApi);
 router.delete('/:eventId', authenticateToken, deleteEventApi);
+
+router.get('/:eventId/public', authenticateToken, getOnePublicEventApi);
 
 export default router;

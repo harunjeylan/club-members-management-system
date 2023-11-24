@@ -13,7 +13,7 @@ async function getRoles() {
   const url = `${host}/roles`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getRoles'], revalidate: 3600 * 12 * 7  },
+    next: { tags: ['getRoles'],  revalidate: 3600 * 12   },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },

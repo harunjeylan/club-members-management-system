@@ -14,6 +14,7 @@ export default async function createEventApi(req, res) {
     description,
     categoryId,
     published,
+    spaceName,
   } = req.body;
 
   try {
@@ -40,6 +41,7 @@ export default async function createEventApi(req, res) {
       location: z.string().or(z.undefined()),
       categoryId: z.string().or(z.undefined()),
       published: z.boolean(),
+      spaceName: z.string().or(z.undefined()),
     });
 
     //@ts-ignore: Unreachable code error
@@ -53,11 +55,10 @@ export default async function createEventApi(req, res) {
       description,
       published,
       categoryId,
+      spaceName,
     });
 
     if (!success) {
-      console.log(error.issues);
-
       return res.status(409).json({
         message: 'Invalid Data',
         details: error.issues,
@@ -75,19 +76,27 @@ export default async function createEventApi(req, res) {
       description,
       published,
     };
-
+    let populations = {};
     if (categoryId?.length) {
       fieldsData['category'] = {
         connect: {
           id: categoryId,
         },
       };
+      populations['category'] = true;
     }
-
-    console.log(fieldsData);
+    if (spaceName?.length) {
+      fieldsData['space'] = {
+        connect: {
+          name: spaceName,
+        },
+      };
+      populations['space'] = true;
+    }
 
     const event = await prisma.event.create({
       data: fieldsData,
+      include: populations,
     });
     return res.status(200).json({
       event: event,

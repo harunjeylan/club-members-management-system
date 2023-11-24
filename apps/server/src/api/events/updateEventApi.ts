@@ -17,8 +17,7 @@ export default async function updateEventApi(req, res) {
     'published',
   ];
   const fieldsData = getFieldsData(req.body, fields);
-  const { categoryId } = req.body;
-  console.log({ fieldsData });
+  const { categoryId, spaceName } = req.body;
 
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
@@ -47,6 +46,7 @@ export default async function updateEventApi(req, res) {
       location: z.string().or(z.undefined()),
       categoryId: z.string().or(z.undefined()),
       published: z.boolean().or(z.undefined()),
+      spaceName: z.string().or(z.undefined()),
     });
 
     //@ts-ignore: Unreachable code error
@@ -66,18 +66,29 @@ export default async function updateEventApi(req, res) {
     if (fieldsData['endAt']) {
       fieldsData['endAt'] = new Date(fieldsData['endAt']).toISOString();
     }
+    let populations = {};
     if (categoryId?.length) {
       fieldsData['category'] = {
-        connect: {
+        set: {
           id: categoryId,
         },
       };
+      populations['category'] = true;
+    }
+    if (spaceName?.length) {
+      fieldsData['space'] = {
+        set: {
+          name: spaceName,
+        },
+      };
+      populations['space'] = true;
     }
     const event = await prisma.event.update({
       where: {
         id: eventId,
       },
       data: fieldsData,
+      include: populations,
     });
 
     return res.status(200).json({

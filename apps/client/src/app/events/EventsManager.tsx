@@ -1,12 +1,12 @@
 'use client';
 
-import CreateEventForm from '@client/components/Forms/CreateEventForm';
-import UpdateEventForm from '@client/components/Forms/UpdateEventForm';
+import CreateEventForm from '@client/components/Forms/EventForm/CreateEventForm';
+import UpdateEventForm from '@client/components/Forms/EventForm/UpdateEventForm';
 import EventListTable from '@client/components/Tables/EventListTable';
 import Model from '@client/components/ui/Model';
 import handleDeleteEvent from '@client/libs/client/handleDeleteEvent';
 import handleDeleteRole from '@client/libs/client/handleDeleteRole';
-import { Event } from '@prisma/client';
+import { Category, Event } from '@prisma/client';
 import { Suspense, useEffect, useState } from 'react';
 enum FormType {
   UPDATE_EVENT,
@@ -14,8 +14,9 @@ enum FormType {
 }
 type PropsType = {
   events: Event[];
+  categories: Category[];
 };
-function EventsManager({ events }: PropsType) {
+function EventsManager({ events, categories }: PropsType) {
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
   const [selected, setSelected] = useState<Event[]>([]);
@@ -63,14 +64,14 @@ function EventsManager({ events }: PropsType) {
         {activeModel === FormType.CREATE_EVENT && (
           <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
             <div className="text-xl font-bold">Create Role Form</div>
-            <CreateEventForm />
+            <CreateEventForm categories={categories} />
           </div>
         )}
         {activeModel === FormType.UPDATE_EVENT && selected.length === 1 && (
           <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
             <div className="text-xl font-bold">Update Role</div>
             <Suspense fallback={<div>Loading..</div>}>
-              <UpdateEventForm event={selected[0]} />
+              <UpdateEventForm categories={categories} event={selected[0]} />
             </Suspense>
           </div>
         )}

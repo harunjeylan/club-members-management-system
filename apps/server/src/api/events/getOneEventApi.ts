@@ -1,9 +1,11 @@
 import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
+import getArrayValues from '@libs/utils/getArrayValues';
 
 export default async function getOneEventApi(req, res) {
   const { eventId } = req.params;
+  const { populate } = req.query;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
@@ -14,17 +16,27 @@ export default async function getOneEventApi(req, res) {
       { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
     ]);
 
+    let populations = {};
+    getArrayValues(populate).forEach((item: string) => {
+      if (item === 'space') {
+        populations['space'] = true;
+      }
+      if (item === 'category') {
+        populations['category'] = true;
+      }
+    });
     if (!userAccessRoles.length) {
       const events = await prisma.event.findFirst({
         where: { id: eventId, published: true },
+        include: populations,
       });
       return res.status(200).json({
         events: events,
       });
     }
-
     const event = await prisma.event.findFirst({
       where: { id: eventId },
+      include: populations,
     });
     return res.status(200).json({
       event: event,

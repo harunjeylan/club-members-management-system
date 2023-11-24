@@ -7,7 +7,6 @@ import handleRevalidate from './handleRevalidate';
 export default async function handleCreateRole(values: Partial<Role>) {
   try {
     const token = getCookie('token');
-    const url = `${host}/roles`;
     const payloadData = {
       name: values.name,
       description: values.description,
@@ -23,11 +22,17 @@ export default async function handleCreateRole(values: Partial<Role>) {
         Authorization: `Bearer ${token}`,
       },
     };
+
+    const url = values.spaceName
+      ? `${host}/roles/${values.spaceName}`
+      : `${host}/roles`;
     const res = await axios.post(url, payloadData, payload);
 
     handleRevalidate({
-      path: '/roles',
-      tag: 'getRoles',
+      'path[0]': '/roles',
+      'path[1]': `/spaces/roles`,
+      'tag[0]': 'getSpaces',
+      'tag[1]': 'getRoles',
     });
 
     return res.data;

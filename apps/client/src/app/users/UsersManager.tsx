@@ -2,13 +2,13 @@
 
 import AddUsersToSpaceForm from '@client/components/Forms/AddUsersToSpaceForm';
 import AssignUsersRoleForm from '@client/components/Forms/AssignUsersRoleForm';
-import CreateUserForm from '@client/components/Forms/CreateUserForm';
-import UpdateUserForm from '@client/components/Forms/UpdateUserForm';
+import { CreateUserForm } from '@client/components/Forms/UserForm/CreateUserForm';
+import { UpdateUserForm } from '@client/components/Forms/UserForm/UpdateUserForm';
 import UsersListTable from '@client/components/Tables/UserListTable';
 import Model from '@client/components/ui/Model';
 import handleDeleteUser from '@client/libs/client/handleDeleteUser';
 import { Role, Space } from '@prisma/client';
-import { Dispatch, SetStateAction, Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
 enum FormType {
   ASSIGN_ROLE,
@@ -69,7 +69,7 @@ function UsersManager({ users, roles, spaces }: PropsType) {
         {activeModel === FormType.CREATE_USER && (
           <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
             <div className="text-xl font-bold">User Creation Form</div>
-            <CreateUserForm />
+            <CreateUserForm roles={roles} spaces={spaces} />
           </div>
         )}
         {activeModel === FormType.ADD_TO_SPACE && selected.length && (

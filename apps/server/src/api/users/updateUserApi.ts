@@ -6,9 +6,16 @@ import { RoleCode, RoleScop } from '@prisma/client';
 
 export default async function updateUserApi(req, res) {
   const { userId } = req.params;
-  const fields = ['username', 'first_name', 'last_name', 'email', 'roles', 'spaces'];
+  const fields = ['username', 'first_name', 'last_name', 'email'];
   const fieldsData = getFieldsData(req.body, fields);
-  
+  const {
+    addSpaces,
+    addRoles,
+    removeSpaces,
+    removeRoles,
+    setSpaces,
+    setRoles,
+  } = req.body;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
@@ -28,7 +35,6 @@ export default async function updateUserApi(req, res) {
 
     //@ts-ignore: Unreachable code error
     const { success, error } = zodSchema.safeParse(fieldsData);
-
     if (!success) {
       return res.status(409).json({
         message: 'Invalid Data',
@@ -37,15 +43,54 @@ export default async function updateUserApi(req, res) {
       });
     }
 
-    if (fieldsData['spaces']) {
+    let populations = {};
+    if (setSpaces?.length) {
       fieldsData['spaces'] = {
-        set: fieldsData['spaces'].map((id: string) => ({ id })),
+        set: setSpaces.map((spaceName: string) => ({
+          name: spaceName,
+        })),
       };
+      populations['spaces'] = true;
     }
-    if (fieldsData['roles']) {
+    if (setRoles?.length) {
       fieldsData['roles'] = {
-        set: fieldsData['roles'].map((id: string) => ({ id })),
+        set: setRoles.map((roleId: string) => ({
+          id: roleId,
+        })),
       };
+      populations['roles'] = true;
+    }
+    if (addSpaces?.length) {
+      fieldsData['spaces'] = {
+        connect: addSpaces.map((spaceName: string) => ({
+          name: spaceName,
+        })),
+      };
+      populations['spaces'] = true;
+    }
+    if (addRoles?.length) {
+      fieldsData['roles'] = {
+        connect: addRoles.map((roleId: string) => ({
+          id: roleId,
+        })),
+      };
+      populations['roles'] = true;
+    }
+    if (removeSpaces?.length) {
+      fieldsData['spaces'] = {
+        disconnect: removeSpaces.map((spaceName: string) => ({
+          name: spaceName,
+        })),
+      };
+      populations['spaces'] = true;
+    }
+    if (removeRoles?.length) {
+      fieldsData['roles'] = {
+        disconnect: removeRoles.map((roleId: string) => ({
+          id: roleId,
+        })),
+      };
+      populations['roles'] = true;
     }
 
     const user = await prisma.user.update({

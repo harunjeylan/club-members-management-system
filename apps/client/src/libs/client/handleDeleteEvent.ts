@@ -16,7 +16,7 @@ export default async function handleDeleteEvent(eventId: string | string[]) {
       },
     };
     let res: any;
-    if (eventId === 'string') {
+    if (typeof eventId === 'string') {
       res = await axios.delete(`${host}/events/${eventId}`, payload);
       handleRevalidate({
         'path[0]': '/events',

@@ -2,7 +2,7 @@
 
 import AssignUsersRoleForm from '@client/components/Forms/AssignUsersRoleForm';
 import CreateUserForm from '@client/components/Forms/CreateUserForm';
-import UpdateUserForm from '@client/components/Forms/UpdateUserForm';
+import UpdateUserForm from '@client/components/Forms/UserForm/UserForm';
 import UsersListTable from '@client/components/Tables/UserListTable';
 import Model from '@client/components/ui/Model';
 import handleAddUsersToSpace from '@client/libs/client/handleAddUsersToSpace';

@@ -1,8 +1,5 @@
 'use client';
-import {
-  default as handleAddToSpace,
-  default as handleAddUsersToSpace,
-} from '@client/libs/client/handleAddUsersToSpace';
+
 import { Space } from '@prisma/client';
 import { FormEvent, useEffect, useState } from 'react';
 import Alert, { AlertMessage } from '../ui/Alert';
@@ -40,24 +37,24 @@ function AddUsersToSpaceForm({ users, spaces }: PropsType) {
         title: 'Warning ',
       });
     }
-    const response = await handleAddUsersToSpace(selectedSpace, users);
-    if (response.space) {
-      setMessage({
-        type: 'success',
-        summery: 'Users are added to Space successfully',
-        title: 'Success ',
-      });
-    }
+    // const response = await handleAddUsersToSpace(selectedSpace, users);
+    // if (response.space) {
+    //   setMessage({
+    //     type: 'success',
+    //     summery: 'Users are added to Space successfully',
+    //     title: 'Success ',
+    //   });
+    // }
 
-    console.log({ response });
+    // console.log({ response });
 
-    if (response?.error) {
-      setMessage({
-        type: 'error',
-        summery: response?.error,
-        title: 'Error ',
-      });
-    }
+    // if (response?.error) {
+    //   setMessage({
+    //     type: 'error',
+    //     summery: response?.error,
+    //     title: 'Error ',
+    //   });
+    // }
   }
   return (
     <form onSubmit={onSubmit} className="w-full grid grid-cols-2 gap-4 p-4">

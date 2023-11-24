@@ -11,6 +11,7 @@ import {
   MdDashboard,
   MdEvent,
   MdWorkspaces,
+  MdCategory
 } from 'react-icons/md';
 import { useSelector } from 'react-redux';
 type PropsType = {
@@ -110,6 +111,17 @@ const linkGroups = [
         accessedFor: [
           { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
           { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+        ],
+      },
+      {
+        name: 'Categories',
+        link: '/categories',
+        Icon: MdCategory,
+        accessedFor: [
+          { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+          { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+          { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+          { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
         ],
       },
       {
