@@ -2,15 +2,13 @@ import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
-export default async function deleteSpaceEventApi(req, res) {
-  const { eventId, spaceName } = req.params;
+export default async function deleteEventApi(req, res) {
+  const { eventId } = req.params;
   const { eventIds } = req.body;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-      { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: spaceName },
-      { scop: RoleScop.SPACE, code: RoleCode.EDITOR, spaceName: spaceName },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
@@ -20,14 +18,12 @@ export default async function deleteSpaceEventApi(req, res) {
       await prisma.event.delete({
         where: {
           id: eventId,
-          spaceName: spaceName,
         },
       });
     }
     if (eventIds?.length) {
       await prisma.event.deleteMany({
         where: {
-          spaceName: spaceName,
           id: {
             in: eventIds,
           },

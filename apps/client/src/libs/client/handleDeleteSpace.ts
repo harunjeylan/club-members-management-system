@@ -1,6 +1,8 @@
 import { host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import handleRevalidate from './handleRevalidate';
 
 export default async function handleDeleteSpace(spaceName: string | string[]) {
   try {
@@ -17,16 +19,26 @@ export default async function handleDeleteSpace(spaceName: string | string[]) {
     let res: any;
     if (spaceName === 'string') {
       res = await axios.delete(`${host}/spaces/${spaceName}`, payload);
+      handleRevalidate({
+        'path[0]': '/spaces',
+        'path[1]': `/spaces/${spaceName}`,
+        'tag[0]': 'getSpaces',
+        'tag[1]': `getSpaceDetails/${spaceName}`,
+      });
     } else {
       res = await axios.put(
         `${host}/spaces`,
         { spaceNames: spaceName },
         payload
       );
+      handleRevalidate({
+        path: '/spaces',
+        tag: 'getSpaces',
+      });
     }
+
     return res.data;
-  } catch (error) {
-    //@ts-ignore
-    return { error: error?.response?.data?.message ?? 'Unknown Error' };
+  } catch (error: any) {
+    return error?.response?.data ?? { error: 'Unknown Error' };
   }
 }

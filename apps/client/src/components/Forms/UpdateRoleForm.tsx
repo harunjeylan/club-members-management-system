@@ -43,12 +43,18 @@ function UpdateRoleForm({ role }: { role: Role }) {
     console.log({ values });
 
     const response = await handleUpdateRole(role.id, values);
-    console.log({ response });
-
-    if (response?.error) {
+    
+    if (response.role) {
+      setMessage({
+        type: 'success',
+        summery: 'Role created successfully',
+        title: 'Success ',
+      });
+    }
+    if (response?.message) {
       setMessage({
         type: 'error',
-        summery: response?.error,
+        summery: response?.message,
         title: 'Error ',
       });
     }

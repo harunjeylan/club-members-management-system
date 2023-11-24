@@ -1,19 +1,30 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextRequest } from 'next/server';
+import getArrayValues from '@libs/utils/getArrayValues';
 
 export async function GET(req: NextRequest) {
-  const tag = req.nextUrl.searchParams.get('tag');
-  const path = req.nextUrl.searchParams.get('path');
   const type = req.nextUrl.searchParams.get('type');
-  let revalidatedTag = false;
-  let revalidatedPath = false;
-  if (typeof tag === 'string') {
-    revalidateTag(tag);
-    revalidatedTag = true;
-  }
-  if (typeof path === 'string') {
-    revalidatePath(path, type ? 'layout' : 'page');
-    revalidatedPath = true;
-  }
-  return Response.json({ revalidatedTag, revalidatedPath, now: Date.now() });
+
+  const tags: string[] = [];
+  const paths: string[] = [];
+  req.nextUrl.searchParams.forEach((value, key) => {
+    if (key.startsWith('tag')) {
+      tags.push(value);
+    }
+    if (key.startsWith('path')) {
+      paths.push(value);
+    }
+  });
+
+  let revalidatedTags: string[] = [];
+  let revalidatedPaths: string[] = [];
+  paths.forEach((item: string) => {
+    revalidatePath(item, type ? 'layout' : 'page');
+    revalidatedPaths.push(item);
+  });
+  tags.forEach((item: string) => {
+    revalidateTag(item);
+    revalidatedTags.push(item);
+  });
+  return Response.json({ revalidatedTags, revalidatedPaths, now: Date.now() });
 }

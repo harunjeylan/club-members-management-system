@@ -1,15 +1,20 @@
 import { host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import handleRevalidate from './handleRevalidate';
 
-export default async function handleUpdateUser(userId:string, values: {
-  first_name: string;
-  last_name: string;
-  username: string;
-  email: string;
-  roles: string[];
-  spaces: string[];
-}) {
+export default async function handleUpdateUser(
+  userId: string,
+  values: {
+    first_name: string;
+    last_name: string;
+    username: string;
+    email: string;
+    roles: string[];
+    spaces: string[];
+  }
+) {
   try {
     const token = getCookie('token');
     const url = `${host}/users/${userId}`;
@@ -31,9 +36,15 @@ export default async function handleUpdateUser(userId:string, values: {
       },
     };
     const res = await axios.put(url, payloadData, payload);
+
+    handleRevalidate({
+      'path[0]': '/users',
+      'path[1]': `/users/${userId}`,
+      'tag[0]': 'getUsers',
+      'tag[1]': `getUserDetails/${userId}`,
+    });
     return res.data;
-  } catch (error) {
-    //@ts-ignore
-    return { error: error?.response?.data?.message ?? 'Unknown Error' };
+  } catch (error: any) {
+    return error?.response?.data ?? { error: 'Unknown Error' };
   }
 }

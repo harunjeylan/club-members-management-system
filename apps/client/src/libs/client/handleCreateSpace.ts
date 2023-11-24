@@ -2,6 +2,8 @@ import { getCookie } from 'cookies-next';
 import { host } from '@client/config/host.config';
 import { Role, Space } from '@prisma/client';
 import axios from 'axios';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import handleRevalidate from './handleRevalidate';
 
 export default async function handleCreateSpace(values: Partial<Space>) {
   try {
@@ -22,9 +24,12 @@ export default async function handleCreateSpace(values: Partial<Space>) {
       },
     };
     const res = await axios.post(url, payloadData, payload);
+    handleRevalidate({
+      path: '/spaces',
+      tag: 'getSpaces',
+    });
     return res.data;
-  } catch (error) {
-    //@ts-ignore
-    return { error: error?.response?.data?.message ?? 'Unknown Error' };
+  } catch (error: any) {
+    return error?.response?.data ?? { error: 'Unknown Error' };
   }
 }

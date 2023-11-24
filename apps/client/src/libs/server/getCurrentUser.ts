@@ -29,7 +29,9 @@ async function getCurrentUser() {
       return null;
     }
   } else {
-    revalidateTag('user-data');
+    try {
+      revalidateTag('getCurrentUser');
+    } catch (e) {}
     return null;
   }
 }

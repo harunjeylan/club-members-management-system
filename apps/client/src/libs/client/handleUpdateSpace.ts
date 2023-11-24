@@ -2,8 +2,13 @@ import { getCookie } from 'cookies-next';
 import { host } from '@client/config/host.config';
 import { Role, Space } from '@prisma/client';
 import axios from 'axios';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import handleRevalidate from './handleRevalidate';
 
-export default async function handleUpdateSpace(spaceName:string,values: Partial<Space>) {
+export default async function handleUpdateSpace(
+  spaceName: string,
+  values: Partial<Space>
+) {
   try {
     const token = getCookie('token');
     const url = `${host}/spaces/${spaceName}`;
@@ -22,9 +27,15 @@ export default async function handleUpdateSpace(spaceName:string,values: Partial
       },
     };
     const res = await axios.put(url, payloadData, payload);
+
+    handleRevalidate({
+      'path[0]': '/spaces',
+      'path[1]': `/spaces/${spaceName}`,
+      'tag[0]': 'getSpaces',
+      'tag[1]': `getSpaceDetails/${spaceName}`,
+    });
     return res.data;
-  } catch (error) {
-    //@ts-ignore
-    return { error: error?.response?.data?.message ?? 'Unknown Error' };
+  } catch (error: any) {
+    return error?.response?.data ?? { error: 'Unknown Error' };
   }
 }

@@ -1,6 +1,8 @@
 import { host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import handleRevalidate from './handleRevalidate';
 
 export default async function handleRemoveUsersFromSpace(
   spaceName: string,
@@ -22,9 +24,13 @@ export default async function handleRemoveUsersFromSpace(
       },
     };
     const res = await axios.put(url, payloadData, payload);
+
+    handleRevalidate({
+      path: '/spaces',
+      tag: 'getSpaces',
+    });
     return res.data;
-  } catch (error) {
-    //@ts-ignore
-    return { error: error?.response?.data?.message ?? 'Unknown Error' };
+  } catch (error: any) {
+    return error?.response?.data ?? { error: 'Unknown Error' };
   }
 }

@@ -1,6 +1,8 @@
 import { host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import handleRevalidate from './handleRevalidate';
 
 export default async function handleCreateUser(values: {
   first_name: string;
@@ -29,9 +31,13 @@ export default async function handleCreateUser(values: {
       },
     };
     const res = await axios.post(url, payloadData, payload);
+    handleRevalidate({
+      path: '/users',
+      tag: 'getUsers',
+    });
+    
     return res.data;
-  } catch (error) {
-    //@ts-ignore
-    return { error: error?.response?.data?.message ?? 'Unknown Error' };
+  } catch (error: any) {
+    return error?.response?.data ?? { error: 'Unknown Error' };
   }
 }

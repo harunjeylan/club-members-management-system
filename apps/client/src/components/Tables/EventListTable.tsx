@@ -1,29 +1,24 @@
 'use client';
 
-import { User } from '@prisma/client';
+import { Event } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
-import React, { useState } from 'react';
-import { UserWithProfileAndRoles } from 'types/user';
+import React, { Dispatch } from 'react';
 import DataTable from '../ui/DataTable';
 import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
 import { fuzzySort } from '../ui/DataTable/helperFns';
 
-function EventListTable({
-  users,
-  baseUrl,
-}: {
+type PropsType = {
   baseUrl: string;
-  users: UserWithProfileAndRoles[];
-}) {
-  const [selected, setSelected] = useState<User[]>([]);
-  console.log(selected);
-
-  const columns = React.useMemo<ColumnDef<UserWithProfileAndRoles, any>[]>(
+  events: Event[];
+  setSelected: Dispatch<React.SetStateAction<Event[]>>;
+};
+function EventListTable({ events, baseUrl, setSelected }: PropsType) {
+  const columns = React.useMemo<ColumnDef<Event, any>[]>(
     () => [
       {
-        accessorFn: (row) => row.first_name,
-        id: 'first_name',
+        accessorFn: (row) => row.title,
+        id: 'title',
         header: ({ table }) => {
           return (
             <div className="flex gap-2 items-center">
@@ -44,7 +39,7 @@ function EventListTable({
                   },
                 }}
               />
-              <span>First Name</span>
+              <span>Title</span>
             </div>
           );
         },
@@ -82,30 +77,57 @@ function EventListTable({
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row.last_name,
-        id: 'last_name',
-        cell: (info) => info.getValue(),
-        header: () => <span>Last Name</span>,
+        accessorFn: (row) => row.published,
+        id: 'published',
+        cell: (info) => (
+          <>
+            {info.getValue() ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-1 text-xs font-semibold text-violet-600">
+                Published
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 px-2 py-1 text-xs font-semibold text-fuchsia-600">
+                Unpublished
+              </span>
+            )}
+          </>
+        ),
+        header: () => <span>Published</span>,
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row.username,
-        id: 'username',
-        cell: (info) => info.getValue(),
-        header: () => <span>Username</span>,
+        accessorFn: (row) => row.spaceName,
+        id: 'spaceName',
+        cell: (info) => (
+          <>
+            {info.getValue() ?? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 px-2 py-1 text-xs font-semibold text-fuchsia-600">
+                Null
+              </span>
+            )}
+          </>
+        ),
+        header: () => <span>Space Name</span>,
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row.email,
-        id: 'email',
+        accessorFn: (row) => row.startAt,
+        id: 'startAt',
         cell: (info) => info.getValue(),
-        header: () => <span>Email</span>,
+        header: () => <span>Start At</span>,
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorFn: (row) => row.endAt,
+        id: 'endAt',
+        cell: (info) => info.getValue(),
+        header: () => <span>End At</span>,
         footer: (props) => props.column.id,
       },
       {
         accessorFn: (row) => `${row.createdAt}`,
         id: 'createdAt',
-        header: () => <span>Join At</span>,
+        header: () => <span>Created At</span>,
         cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
         filterFn: 'fuzzy',
@@ -115,30 +137,7 @@ function EventListTable({
     []
   );
 
-  return (
-    <div>
-      <div className="flex justify-between w-full ">
-        <div>
-          {selected.length ? (
-            <div className="flex gap-2">
-              <button className="btn-danger py-1 px-4">Delete</button>
-              <button className="btn-success py-1 px-4">Add to Space</button>
-              <button className="btn-success py-1 px-4">Assign Role</button>
-            </div>
-          ) : (
-            ''
-          )}
-        </div>
-
-        <Link href={'/admin/users/new'} className="btn-primary py-2 px-4">
-          Add User
-        </Link>
-      </div>
-      <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
-        <DataTable<UserWithProfileAndRoles> data={users} columns={columns} />
-      </div>
-    </div>
-  );
+  return <DataTable<Event> data={events} columns={columns} />;
 }
 
 export default EventListTable;

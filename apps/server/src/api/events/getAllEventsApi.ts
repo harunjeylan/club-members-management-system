@@ -1,36 +1,30 @@
 import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
-import getArrayValues from '@libs/utils/getArrayValues';
 
-export default async function getOneRoleApi(req, res) {
-  const { roleId } = req.params;
-  const { populate } = req.query;
-
+export default async function getAllEventsApi(req, res) {
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+      { scop: RoleScop.SUPER, code: RoleCode.MEMBER },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+      { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+      { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
     ]);
 
     if (!userAccessRoles.length) {
-      return res.sendStatus(403);
+      const events = await prisma.event.findMany({
+        where: { published: true },
+      });
+      return res.status(200).json({
+        events: events,
+      });
     }
-    let populations = {};
-    getArrayValues(populate).forEach((item: string) => {
-      if (item === 'users') {
-        populations['users'] = true;
-      }
-    });
-    const role = await prisma.role.findFirst({
-      where: { id: roleId },
-      include: populations,
-    });
-    if (!role) {
-      return res.sendStatus(404);
-    }
+
+    const events = await prisma.event.findMany();
     return res.status(200).json({
-      role: role,
+      events: events,
     });
   } catch (error) {
     console.log(error);

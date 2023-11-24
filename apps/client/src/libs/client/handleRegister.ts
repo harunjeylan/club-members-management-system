@@ -27,8 +27,7 @@ export default async function handleRegister(
     if (res?.data?.message) {
       return { error: res?.data?.message ?? 'Unknown Error' };
     }
-  } catch (error) {
-    //@ts-ignore
-    return { error: error?.response?.data?.message ?? 'Unknown Error' };
+  } catch (error: any) {
+    return error?.response?.data ?? { error: 'Unknown Error' };
   }
 }

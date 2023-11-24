@@ -1,7 +1,7 @@
 import { RoleCode, RoleScop } from '@prisma/client';
 import {getUserAccessRoles} from "@libs/utils/getUserAccessRoles"
 import prisma from '../../../prisma/PrismaClient';
-import getArrayValues from '../../../utils/getArrayValues';
+import getArrayValues from '@libs/utils/getArrayValues';
 
 export default async function getOneSpaceUserApi(req, res) {
   const { userId, spaceName } = req.params;

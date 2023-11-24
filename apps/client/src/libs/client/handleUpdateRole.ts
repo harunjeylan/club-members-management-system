@@ -1,7 +1,8 @@
-import { getCookie } from 'cookies-next';
 import { host } from '@client/config/host.config';
 import { Role } from '@prisma/client';
 import axios from 'axios';
+import { getCookie } from 'cookies-next';
+import handleRevalidate from './handleRevalidate';
 
 export default async function handleUpdateRole(
   roleId: string,
@@ -26,9 +27,15 @@ export default async function handleUpdateRole(
       },
     };
     const res = await axios.put(url, payloadData, payload);
+
+    handleRevalidate({
+      'path[0]': '/roles',
+      'path[1]': `/roles/${roleId}`,
+      'tag[0]': 'getRoles',
+      'tag[1]': `getRoleDetails/${roleId}`,
+    });
     return res.data;
-  } catch (error) {
-    //@ts-ignore
-    return { error: error?.response?.data?.message ?? 'Unknown Error' };
+  } catch (error: any) {
+    return error?.response?.data ?? { error: 'Unknown Error' };
   }
 }

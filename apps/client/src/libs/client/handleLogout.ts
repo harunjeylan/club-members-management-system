@@ -9,7 +9,6 @@ export default function handleLogout(
   callback = () => {}
 ) {
   deleteCookie('token');
-  // revalidateTag("user-data");
   if (dispatch) {
     dispatch(removeUser());
     dispatch(removeToken());

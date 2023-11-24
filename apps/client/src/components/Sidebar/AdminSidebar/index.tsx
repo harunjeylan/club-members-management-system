@@ -1,7 +1,9 @@
 'use client';
 import Sidebar from '@client/components/ui/Sidebar';
 import { selectCurrentUser } from '@client/libs/features/userSlice';
+import { Role, RoleCode, RoleScop } from '@prisma/client';
 import Link from 'next/link';
+import { useEffect, useId, useState } from 'react';
 import { AiFillSetting } from 'react-icons/ai';
 import { FaUsers } from 'react-icons/fa';
 import {
@@ -11,80 +13,57 @@ import {
   MdWorkspaces,
 } from 'react-icons/md';
 import { useSelector } from 'react-redux';
-import { UserWithProfileAndRoles } from 'types/user';
 type PropsType = {
-  user: UserWithProfileAndRoles | null;
+  userRoles: Partial<Role>[];
 };
-function AdminSidebar() {
+function AdminSidebar({ userRoles }: PropsType) {
+  const [searchLink, setSearchLink] = useState('');
   const userData = useSelector(selectCurrentUser);
+  const [groups, setGroups] = useState(getLinks(userRoles, searchLink));
+
+  useEffect(() => {
+    setGroups(getLinks(userRoles, searchLink));
+  }, [searchLink]);
+
   return (
     <Sidebar className="h-[calc(100vh_-_70px)]">
       <div
         className={`relative w-full h-full flex flex-col justify-between gap-2 bg-secondary-100 dark:bg-secondary-900`}
       >
         <div className="h-full overflow-y-auto flex flex-col gap-1 ">
-          <div className="px-4 py-4 bg-secondary-200 dark:bg-secondary-800">
-            <div className="text-xl font-bold">Admin Dashboard</div>
+          <div className="mb-2">
+            <input
+              value={searchLink}
+              onChange={(e) => setSearchLink(e.target.value)}
+              className="input px-2 py-2"
+              placeholder="search..."
+            />
           </div>
 
           <ul className="flex flex-col gap-1">
-            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <Link
-                href={'/dashboard'}
-                className="w-full py-2 px-4  flex gap-2 items-center"
-              >
-                <MdDashboard size={20} />
-                Dashboard
-              </Link>
-            </li>
-            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <Link
-                href={'/spaces'}
-                className="w-full py-2 px-4  flex gap-2 items-center"
-              >
-                <MdWorkspaces size={20} />
-                Spaces
-              </Link>
-            </li>
-            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <Link
-                href={'/users'}
-                className="w-full py-2 px-4  flex gap-2 items-center"
-              >
-                <FaUsers size={20} />
-                Users
-              </Link>
-            </li>
-            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <Link
-                href={'/events'}
-                className="w-full py-2 px-4  flex gap-2 items-center"
-              >
-                <MdEvent size={20} />
-                Events
-              </Link>
-            </li>
-            <li className="w-full flex  px-4 py-2 bg-secondary-200 dark:bg-secondary-800">
-              <div className="font-extralight ">Administrations</div>
-            </li>
-            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <Link
-                href={'/roles'}
-                className="w-full py-2 px-4 flex gap-2 items-center"
-              >
-                <MdAdminPanelSettings size={20} />
-                Roles
-              </Link>
-            </li>
-            <li className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700">
-              <Link
-                href={'/settings'}
-                className="w-full py-2 px-4 flex gap-2 items-center"
-              >
-                <AiFillSetting size={20} />
-                Setting
-              </Link>
-            </li>
+            {groups.map((group, ind) => (
+              <li key={ind}>
+                <div className="w-full flex  px-4 py-2 bg-secondary-200 dark:bg-secondary-800">
+                  <div className="font-extralight ">{group.name}</div>
+                </div>
+                <ul className="flex flex-col gap-1">
+                  {group.links.map(({ Icon, name, link }, ind2) => (
+                    <li
+                      key={`${ind}-${ind2}`}
+                      className="w-full flex ps-4 hover:bg-secondary-200 dark:hover:bg-secondary-700"
+                    >
+                      <Link
+                        href={link}
+                        className="w-full py-2 flex gap-2 items-center"
+                      >
+                        <Icon size={20} />
+                        {name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
           </ul>
         </div>
         {userData && (
@@ -102,29 +81,91 @@ function AdminSidebar() {
     </Sidebar>
   );
 }
-{
-  /* {userData?.profile?.image.name && (
-                <figure className="p-2 flex flex-col gap-2 items-center">
-                  <Image
-                    src={userData?.profile?.image.name}
-                    width={300}
-                    height={300}
-                    alt="userData avatar"
-                    className="rounded-full overflow-hidden bg-secondary-500 w-32 h-32"
-                  />
-                </figure>
-              )} */
-}
-//  const button = (
-//   <div className="w-full bg-secondary-100 dark:bg-secondary-900 flex gap-2 items-center lg:hidden p-2">
-//     <button
-//       onClick={() => setShow((prev) => !prev)}
-//       className={`flex btn-icon`}
-//     >
-//       {show ? <AiOutlineClose size={20} /> : <AiOutlineMenuFold size={20} />}
-//     </button>
-//     <div>Profile</div>
-//   </div>
-// );
+const linkGroups = [
+  {
+    name: 'Main',
+    links: [
+      {
+        name: 'Dashboard',
+        link: '/dashboard',
+        Icon: MdDashboard,
+        accessedFor: [
+          { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+          { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+        ],
+      },
+      {
+        name: 'Spaces',
+        link: '/spaces',
+        Icon: MdWorkspaces,
+        accessedFor: [
+          { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+          { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+        ],
+      },
+      {
+        name: 'Users',
+        link: '/users',
+        Icon: FaUsers,
+        accessedFor: [
+          { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+          { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+        ],
+      },
+      {
+        name: 'Events',
+        link: '/events',
+        Icon: MdEvent,
+        accessedFor: [
+          { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+          { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'Administrations',
+    links: [
+      {
+        name: 'Roles',
+        link: '/roles',
+        Icon: MdAdminPanelSettings,
+        accessedFor: [{ scop: RoleScop.SUPER, code: RoleCode.ADMIN }],
+      },
+      {
+        name: 'Settings',
+        link: '/settings',
+        Icon: AiFillSetting,
+        accessedFor: [{ scop: RoleScop.SUPER, code: RoleCode.ADMIN }],
+      },
+    ],
+  },
+];
+function getLinks(userRoles: Partial<Role>[], searchLink: string) {
+  let allowedGroups: typeof linkGroups = [];
+  linkGroups.forEach((group) => {
+    let allowedLinks: typeof group.links = [];
+    group.links.forEach((groupRole) => {
+      const isAllowed = !!groupRole.accessedFor.find(
+        (groupRole) =>
+          !!userRoles.find(
+            (userRole) =>
+              userRole.code === groupRole.code &&
+              userRole.scop === groupRole.scop
+          )
+      );
+      const searchMatch =
+        groupRole.name.toLowerCase().includes(searchLink.toLowerCase()) ||
+        groupRole.link.toLowerCase().includes(searchLink.toLowerCase());
 
+      if (isAllowed && searchMatch) {
+        allowedLinks.push(groupRole);
+      }
+    });
+    if (allowedLinks.length) {
+      allowedGroups.push({ ...group, links: allowedLinks });
+    }
+  });
+  return allowedGroups;
+}
 export default AdminSidebar;

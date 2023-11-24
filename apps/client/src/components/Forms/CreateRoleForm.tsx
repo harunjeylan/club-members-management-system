@@ -44,7 +44,13 @@ function CreateRoleForm() {
 
     const response = await handleCreateRole(values);
     console.log({ response });
-
+    if (response.role) {
+      setMessage({
+        type: 'success',
+        summery: 'Role created successfully',
+        title: 'Success ',
+      });
+    }
     if (response?.error) {
       setMessage({
         type: 'error',

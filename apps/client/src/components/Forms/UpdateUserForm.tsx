@@ -73,9 +73,9 @@ function UpdateUserForm({ user, roles, spaces }: PropsType) {
     }
     if (response?.error) {
       setMessage({
-        type: 'warning',
+        type: 'error',
         summery: response?.error,
-        title: 'Warning ',
+        title: 'Error ',
       });
     }
   }

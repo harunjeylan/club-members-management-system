@@ -1,3 +1,4 @@
+import CreateEventForm from '@client/components/Forms/CreateEventForm';
 import RoleForm from '@client/components/Forms/CreateRoleForm';
 import Header2 from '@client/components/ui/Header2';
 import Link from 'next/link';
@@ -8,7 +9,7 @@ async function Page() {
     <section className="w-full ">
       <div className="flex justify-start">
         <Link
-          href={'/admin/roles'}
+          href={'/events'}
           className=" py-2 px-4 flex gap-2 items-center text-primary-500"
         >
           <AiOutlineArrowLeft />
@@ -16,12 +17,11 @@ async function Page() {
         </Link>
       </div>
       <div className="w-full px-4 mx-auto mt-4">
-        <div className="w-full">
-          <Header2 title="New Roles" />
-        </div>
-
-        <div className="flex w-full max-w-4xl mx-auto h-full max-h-fit my-auto p-4">
-          <RoleForm />
+        <div className="max-w-4xl mx-auto flex flex-col w-full gap-4 p-8 bg-secondary-100 dark:bg-secondary-900 rounded">
+          <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
+            <div className="text-xl font-bold">Event Creation Form</div>
+            <CreateEventForm />
+          </div>
         </div>
       </div>
     </section>

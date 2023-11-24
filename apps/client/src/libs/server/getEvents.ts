@@ -1,8 +1,8 @@
+import { Event } from '@prisma/client';
 import { cookies } from 'next/headers';
-import { host } from '../../config/host.config';
-import 'server-only';
 import { redirect } from 'next/navigation';
-import { Role } from '@prisma/client';
+import 'server-only';
+import { host } from '../../config/host.config';
 
 async function getEvents() {
   const cookieStore = cookies();
@@ -26,8 +26,8 @@ async function getEvents() {
     throw new Error('Failed to fetch data');
   }
 
-  const { roles } = (await res.json()) as { roles: Role[] };
-  return roles;
+  const { events } = (await res.json()) as { events: Event[] };
+  return events;
 }
 
 export default getEvents;

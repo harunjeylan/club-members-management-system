@@ -17,12 +17,13 @@ export default async function Layout({ children }: PropsType) {
   if (!user) {
     return redirect('/auth/login');
   }
-  const superAdminRole = getUserAccessRoles(user.roles, [
+  const userRoles = getUserAccessRoles(user.roles, [
     { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+    { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
   ]);
   return (
     <main className="flex h-full w-full ">
-      {superAdminRole.length ? <AdminSidebar /> : ''}
+      <AdminSidebar userRoles={userRoles} />
       <div className="w-full max-w-[100vw] overflow-x-auto mt-12">
         {children}
       </div>

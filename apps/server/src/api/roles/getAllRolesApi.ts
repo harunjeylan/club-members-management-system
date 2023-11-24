@@ -6,6 +6,7 @@ export default async function getAllRolesApi(req, res) {
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+      { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
     ]);
 
     if (!userAccessRoles.length) {

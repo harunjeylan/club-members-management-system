@@ -67,12 +67,14 @@ function Profile() {
           ''
         )}
         <ul className="flex flex-col gap-1">
-          {allowedRoles.length && (
+          {allowedRoles.length ? (
             <li className="flex hover:bg-secondary-200 dark:hover:bg-secondary-700">
               <Link href={'/dashboard'} className="w-full py-2 px-2 ">
                 Dashboard
               </Link>
             </li>
+          ) : (
+            ''
           )}
 
           <li className="border-b border-secondary-500 mb-2"></li>

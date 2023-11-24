@@ -23,8 +23,7 @@ export default async function handleAssignUsersRole(
     };
     const res = await axios.put(url, payloadData, payload);
     return res.data;
-  } catch (error) {
-    //@ts-ignore
-    return { error: error?.response?.data?.message ?? 'Unknown Error' };
+  } catch (error: any) {
+    return error?.response?.data ?? { error: 'Unknown Error' };
   }
 }

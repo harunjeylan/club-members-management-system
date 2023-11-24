@@ -20,7 +20,9 @@ export async function POST(req: NextRequest) {
     const { user, jwt } = response.data;
     cookies().set('token', jwt.access);
     cookies().set('userId', user.id);
-    revalidateTag('currentUserDetails');
+    try {
+      revalidateTag('currentUserDetails');
+    } catch (e) {}
     return Response.json({ user, jwt });
   } catch (error: any) {
     if (error?.response?.data?.error) {

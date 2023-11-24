@@ -14,6 +14,9 @@ import addUsersToSpaceApi from '@server/api/spaces/users/addUsersToSpaceApi';
 import removeUsersFromSpaceApi from '@server/api/spaces/users/removeUsersFromSpaceApi';
 import updateSpaceApi from '@server/api/spaces/updateSpaceApi';
 import deleteSpaceApi from '@server/api/spaces/deleteSpaceApi';
+import createSpaceEventApi from '@server/api/spaces/events/createSpaceEventApi';
+import deleteSpaceEventApi from '@server/api/spaces/events/deleteSpaceEventApi';
+import updateSpaceEventApi from '@server/api/spaces/events/updateSpaceEventApi';
 
 const router = express.Router();
 router.get('/', authenticateToken, getAllSpacesApi);
@@ -34,10 +37,11 @@ router.get('/:spaceName/roles/:roleId', authenticateToken, getOneSpaceRoleApi);
 router.get('/:spaceName/roles/:roleId/users', authenticateToken, addSpaceUsersToRole);
 
 router.get('/:spaceName/events', authenticateToken, getAllSpaceEventsApi);
-router.get(
-  '/:spaceName/events/:eventId',
-  authenticateToken,
-  getOneSpaceEventApi
-);
+router.post('/:spaceName/events', authenticateToken, createSpaceEventApi);
+router.put('/:spaceName/events', authenticateToken, deleteSpaceEventApi);
+
+router.get('/:spaceName/events/:eventId', authenticateToken, getOneSpaceEventApi);
+router.put('/:spaceName/events/:eventId', authenticateToken, updateSpaceEventApi);
+router.delete('/:spaceName/events/:eventId', authenticateToken, deleteSpaceEventApi);
 
 export default router;

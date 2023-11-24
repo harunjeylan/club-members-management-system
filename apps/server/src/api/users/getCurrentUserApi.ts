@@ -1,5 +1,5 @@
 import prisma from '../../prisma/PrismaClient';
-import getArrayValues from '../../utils/getArrayValues';
+import getArrayValues from '@libs/utils/getArrayValues';
 
 export default async function getCurrentUserApi(req, res) {
   const { populate } = req.query;

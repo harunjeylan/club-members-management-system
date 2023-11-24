@@ -23,7 +23,7 @@ export default async function Layout({ children, params }: PropsType) {
               Private
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 px-2 py-1 text-xs font-semibold text-bg-fuchsia-600">
+            <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 px-2 py-1 text-xs font-semibold text-fuchsia-600">
               Public
             </span>
           )}

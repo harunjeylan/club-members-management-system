@@ -1,4 +1,4 @@
-import { Role, RoleCode, RoleScop } from "@prisma/client";
+import { Role, RoleCode, RoleScop } from '@prisma/client';
 
 export function getUserAccessRoles(
   userRoles: Partial<Role>[],
@@ -10,11 +10,10 @@ export function getUserAccessRoles(
 ) {
   return userRoles.filter((userRole) => {
     return roles.find((role) => {
-      if (
-        !(role.scop === userRole.scop && role.code === userRole.code) &&
-        !(!role.spaceName || role.spaceName === userRole.spaceName)
-      ) {
-        return false;
+      if (!(role.scop === userRole.scop && role.code === userRole.code)) {
+        if (!(role.spaceName && role.spaceName === userRole.spaceName)) {
+          return false;
+        }
       }
       return true;
     });
