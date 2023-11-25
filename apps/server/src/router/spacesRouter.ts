@@ -8,6 +8,7 @@ import getAllSpacesApi from '@server/api/spaces/getAllSpacesApi';
 
 const router = express.Router();
 router.get('/', authenticateToken, getAllSpacesApi);
+router.get('/', authenticateToken, getAllSpacesApi);
 router.post('/', authenticateToken, createSpaceApi);
 router.put('/', authenticateToken, deleteSpaceApi);
 

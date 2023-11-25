@@ -57,7 +57,7 @@ model Space {
   settings    Setting[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  Event       Event[]
+  events      Event[]
   fileModelId String?
 }
 

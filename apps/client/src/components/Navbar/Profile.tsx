@@ -25,9 +25,7 @@ function Profile() {
     if (user && user.roles) {
       const superAdminRole = getUserAccessRoles(user.roles, [
         { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
-        { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
         { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-        { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
       ]);
       if (superAdminRole?.length) {
         setAllowedRoles(superAdminRole);

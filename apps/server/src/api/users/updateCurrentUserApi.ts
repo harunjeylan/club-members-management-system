@@ -30,7 +30,7 @@ export default async function updateCurrentUserApi(req, res) {
         code: 'register-user',
       });
     }
-    const populate = {};
+    const populations = {};
     if (profile) {
       const userProfile = profile;
       if (profile['image']) {
@@ -44,7 +44,7 @@ export default async function updateCurrentUserApi(req, res) {
         },
         data: userProfile,
       });
-      populate['profile'] = true;
+      populations['profile'] = true;
     }
 
     const user = await prisma.user.update({
@@ -52,7 +52,7 @@ export default async function updateCurrentUserApi(req, res) {
         id: req.user.id,
       },
       data: fieldsData,
-      include: populate,
+      include: populations,
     });
 
     return res.status(200).json({

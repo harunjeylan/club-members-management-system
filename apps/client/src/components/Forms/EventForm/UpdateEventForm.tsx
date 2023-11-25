@@ -3,25 +3,34 @@ import handleUpdateEvent from '@client/libs/client/handleUpdateEvent';
 import { Category, Event, Repeat } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { AlertMessage } from '../../ui/Alert';
-import EventForm from './EventForm';
+import EventForm, { EventFormType } from './EventForm';
 function UpdateEventForm({
   event,
   categories,
+  spaceName,
 }: {
   event: Event;
   categories: Category[];
+  spaceName?: string;
 }) {
   const [message, setMessage] = useState<AlertMessage>();
-  const initialValues: Partial<Event> = {
+  const initialValues: EventFormType = {
     title: event.title ?? '',
-    startAt: new Date(event.startAt),
-    endAt: new Date(event.endAt),
+    startAt:
+      event.startAt instanceof Date
+        ? event.startAt.toISOString().slice(0, 16)
+        : new Date(event.startAt).toISOString().slice(0, 16),
+    endAt:
+      event.endAt instanceof Date
+        ? event.endAt.toISOString().slice(0, 16)
+        : new Date(event.startAt).toISOString().slice(0, 16),
     fullDay: event.fullDay ?? false,
     repeat: event.repeat ?? Repeat.NO_REPEAT,
     published: event.published ?? false,
     location: event.location ?? '',
     description: event.description ?? '',
     categoryId: event.categoryId ?? '',
+    spaceName: spaceName ?? '',
   };
 
   useEffect(() => {
@@ -36,10 +45,12 @@ function UpdateEventForm({
     };
   }, [message]);
 
-  async function onSubmit(values: Partial<Event>) {
+  async function onSubmit(values: EventFormType) {
     console.log({ values });
-
-    const response = await handleUpdateEvent(event.id, values);
+    const revalidateTags = [
+      ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
+    ];
+    const response = await handleUpdateEvent(event.id, values, {tags:revalidateTags});
     console.log({ response });
     if (response.event) {
       setMessage({

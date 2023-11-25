@@ -6,6 +6,7 @@ import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
 export default async function createUserApi(req, res) {
   const { username, first_name, last_name, email, password } = req.body;
+  const { addSpaces, addRoles } = req.body;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
@@ -62,15 +63,35 @@ export default async function createUserApi(req, res) {
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
+    const fieldsData = {
+      username,
+      first_name,
+      last_name,
+      email,
+      password: hashedPassword,
+    };
+    let populations = {};
+
+    if (addSpaces?.length) {
+      fieldsData['spaces'] = {
+        connect: addSpaces.map((spaceName: string) => ({
+          name: spaceName,
+        })),
+      };
+      populations['spaces'] = true;
+    }
+    if (addRoles?.length) {
+      fieldsData['roles'] = {
+        connect: addRoles.map((roleId: string) => ({
+          id: roleId,
+        })),
+      };
+      populations['roles'] = true;
+    }
 
     const user = await prisma.user.create({
-      data: {
-        username,
-        first_name,
-        last_name,
-        email,
-        password: hashedPassword,
-      },
+      data: fieldsData,
+      include: populations,
     });
     const profile = await prisma.profile.create({
       data: {

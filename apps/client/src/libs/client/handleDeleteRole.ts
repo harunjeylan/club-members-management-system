@@ -22,6 +22,7 @@ export default async function handleDeleteRole(roleId: string | string[]) {
       handleRevalidate({
         'path[0]': '/roles',
         'path[1]': `/roles/${roleId}`,
+        'path[2]': '/spaces',
         'tag[0]': 'getRoles',
         'tag[1]': `getRoleDetails/${roleId}`,
       });

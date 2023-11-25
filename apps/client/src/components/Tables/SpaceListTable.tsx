@@ -7,6 +7,7 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import DataTable from '../ui/DataTable';
 import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
 import { fuzzySort } from '../ui/DataTable/helperFns';
+import formatDateTime from '@client/utils/formatDateTime';
 type PropsType = {
   baseUrl: string;
   spaces: Space[];
@@ -98,6 +99,15 @@ function SpaceListTable({ spaces, baseUrl, setSelected }: PropsType) {
         accessorFn: (row) => `${row.description}`,
         id: 'description',
         header: 'Description',
+        cell: (info) => info.getValue(),
+        footer: (props) => props.column.id,
+        filterFn: 'fuzzy',
+        sortingFn: fuzzySort,
+      },
+      {
+        accessorFn: (row) => `${formatDateTime(row.createdAt)}`,
+        id: 'createdAt',
+        header: () => <span>Created At</span>,
         cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
         filterFn: 'fuzzy',

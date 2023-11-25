@@ -21,6 +21,9 @@ export default async function handleDeleteUser(userId: string | string[]) {
       handleRevalidate({
         'path[0]': '/users',
         'path[1]': `/users/${userId}`,
+        'path[2]': '/spaces',
+        'path[3]': '/roles',
+
         'tag[0]': 'getUsers',
         'tag[1]': `getUserDetails/${userId}`,
       });

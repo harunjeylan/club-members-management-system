@@ -7,17 +7,22 @@ import UserForm, { UserFormType } from './UserForm';
 type PropsType = {
   roles?: Role[];
   spaces?: Space[];
+  spaceName?: string;
 };
-export function CreateUserForm({ roles, spaces }: PropsType) {
+export default function CreateUserForm({
+  roles,
+  spaces,
+  spaceName,
+}: PropsType) {
   const [message, setMessage] = useState<AlertMessage>();
-  const initialValues = {
+  const initialValues: UserFormType = {
     first_name: '',
     last_name: '',
     username: '',
     email: '',
     password: '',
-    roles: [],
-    spaces: [],
+    addRoles: [],
+    addSpaces: spaceName ? [spaceName] : [],
   };
 
   useEffect(() => {
@@ -36,8 +41,20 @@ export function CreateUserForm({ roles, spaces }: PropsType) {
     if (!values.password) {
       return;
     }
+
+    const revalidateTags = [
+      ...(values.addRoles?.map(
+        (spaceName) => `getSpaceDetails/${spaceName}`
+      ) ?? []),
+      ...(values.addSpaces?.map((roleId) => `getRoleDetails/${roleId}`) ?? []),
+      ...(spaceName ? [`getSpaceDetails/${spaceName}`] : []),
+    ];
+
     const response = await handleCreateUser(
-      values as UserFormType & { password: string }
+      values as UserFormType & { password: string },
+      {
+        tags: revalidateTags,
+      }
     );
     if (response.user) {
       setMessage({

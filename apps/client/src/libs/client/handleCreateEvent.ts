@@ -1,11 +1,26 @@
-import { getCookie } from 'cookies-next';
+import { EventFormType } from '@client/components/Forms/EventForm/EventForm';
 import { host } from '@client/config/host.config';
-import { Event } from '@prisma/client';
 import axios from 'axios';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { getCookie } from 'cookies-next';
 import handleRevalidate from './handleRevalidate';
+import { Repeat } from '@prisma/client';
 
-export default async function handleCreateEvent(values: Partial<Event>) {
+export default async function handleCreateEvent(
+  values: {
+    title: string;
+    startAt: string;
+    endAt: string;
+    fullDay: boolean;
+    repeat: Repeat;
+    published: boolean;
+    location: string;
+    description: string;
+    categoryId: string;
+    spaceName?: string;
+    fileModelId?: string;
+  },
+  revalidateOptions?: { paths?: string[]; tags?: string[] }
+) {
   try {
     const token = getCookie('token');
     const url = `${host}/events`;
@@ -19,6 +34,7 @@ export default async function handleCreateEvent(values: Partial<Event>) {
       description: values.description,
       categoryId: values.categoryId,
       published: values.published,
+      spaceName:values.spaceName
     };
     if (typeof token === 'undefined') {
       return;
@@ -30,11 +46,17 @@ export default async function handleCreateEvent(values: Partial<Event>) {
       },
     };
     const res = await axios.post(url, payloadData, payload);
-
-    handleRevalidate({
+    const revalidate: any = {
       path: '/events',
       tag: 'getEvents',
+    };
+    revalidateOptions?.tags?.forEach((tag, ind) => {
+      revalidate['tag[' + (6 + ind) + ']'] = tag;
     });
+    revalidateOptions?.paths?.forEach((path, ind) => {
+      revalidate['path[' + (6 + ind) + ']'] = path;
+    });
+    handleRevalidate(revalidate);
     return res.data;
   } catch (error: any) {
     return error?.response?.data ?? { error: 'Unknown Error' };

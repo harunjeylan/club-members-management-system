@@ -1,8 +1,8 @@
 'use client';
 
-import { Event } from '@prisma/client';
+import formatDateTime from '@client/utils/formatDateTime';
+import { Category, Event } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
-import Link from 'next/link';
 import React, { Dispatch } from 'react';
 import DataTable from '../ui/DataTable';
 import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
@@ -10,11 +10,15 @@ import { fuzzySort } from '../ui/DataTable/helperFns';
 
 type PropsType = {
   baseUrl: string;
-  events: Event[];
-  setSelected: Dispatch<React.SetStateAction<Event[]>>;
+  events: (Event & { category: Category })[];
+  setSelected: Dispatch<
+    React.SetStateAction<(Event & { category: Category })[]>
+  >;
 };
 function EventListTable({ events, baseUrl, setSelected }: PropsType) {
-  const columns = React.useMemo<ColumnDef<Event, any>[]>(
+  const columns = React.useMemo<
+    ColumnDef<Event & { category: Category }, any>[]
+  >(
     () => [
       {
         accessorFn: (row) => row.title,
@@ -65,12 +69,7 @@ function EventListTable({ events, baseUrl, setSelected }: PropsType) {
                   },
                 }}
               />
-              <Link
-                className="link-text"
-                href={`${baseUrl ?? ''}/events/${row.original.id}`}
-              >
-                {getValue()}
-              </Link>
+              {getValue()}
             </div>
           </div>
         ),
@@ -100,32 +99,61 @@ function EventListTable({ events, baseUrl, setSelected }: PropsType) {
         id: 'spaceName',
         cell: (info) => (
           <>
-            {info.getValue() ?? (
+            {
               <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 px-2 py-1 text-xs font-semibold text-fuchsia-600">
-                Null
+                {info.getValue() ?? 'Null'}
               </span>
-            )}
+            }
           </>
         ),
         header: () => <span>Space Name</span>,
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row.startAt,
+        accessorFn: (row) => row.category?.name,
+        id: 'categoryId',
+        cell: (info) => (
+          <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 px-2 py-1 text-xs font-semibold text-fuchsia-600">
+            {info.getValue() ?? 'Null'}
+          </span>
+        ),
+        header: () => <span>Category</span>,
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorFn: (row) => formatDateTime(row.startAt),
         id: 'startAt',
         cell: (info) => info.getValue(),
         header: () => <span>Start At</span>,
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row.endAt,
+        accessorFn: (row) => formatDateTime(row.endAt),
         id: 'endAt',
         cell: (info) => info.getValue(),
         header: () => <span>End At</span>,
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => `${row.createdAt}`,
+        accessorFn: (row) => row.repeat,
+        id: 'repeat',
+        cell: (info) => info.getValue(),
+        header: () => <span>Repeat</span>,
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorFn: (row) => row.fullDay,
+        id: 'fullDay',
+        cell: (info) => (
+          <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 px-2 py-1 text-xs font-semibold text-fuchsia-600">
+            {info.getValue() ? 'Full Day' : 'No Full Day'}
+          </span>
+        ),
+        header: () => <span>Full Day</span>,
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorFn: (row) => `${formatDateTime(row.createdAt)}`,
         id: 'createdAt',
         header: () => <span>Created At</span>,
         cell: (info) => info.getValue(),
@@ -137,7 +165,12 @@ function EventListTable({ events, baseUrl, setSelected }: PropsType) {
     []
   );
 
-  return <DataTable<Event> data={events} columns={columns} />;
+  return (
+    <DataTable<Event & { category: Category }>
+      data={events}
+      columns={columns}
+    />
+  );
 }
 
 export default EventListTable;

@@ -21,6 +21,8 @@ export default async function createEventApi(req, res) {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: spaceName },
+      { scop: RoleScop.SPACE, code: RoleCode.EDITOR, spaceName: spaceName },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
@@ -75,22 +77,14 @@ export default async function createEventApi(req, res) {
       location,
       description,
       published,
+      categoryId,
+      spaceName,
     };
     let populations = {};
-    if (categoryId?.length) {
-      fieldsData['category'] = {
-        connect: {
-          id: categoryId,
-        },
-      };
+    if (fieldsData['categoryId']?.length) {
       populations['category'] = true;
     }
-    if (spaceName?.length) {
-      fieldsData['space'] = {
-        connect: {
-          name: spaceName,
-        },
-      };
+    if (fieldsData['spaceName']?.length) {
       populations['space'] = true;
     }
 

@@ -15,14 +15,17 @@ export default async function updateEventApi(req, res) {
     'location',
     'description',
     'published',
+    'categoryId',
+    'spaceName',
   ];
   const fieldsData = getFieldsData(req.body, fields);
-  const { categoryId, spaceName } = req.body;
 
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: fieldsData["spaceName"] },
+      { scop: RoleScop.SPACE, code: RoleCode.EDITOR, spaceName: fieldsData["spaceName"] },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
@@ -67,20 +70,10 @@ export default async function updateEventApi(req, res) {
       fieldsData['endAt'] = new Date(fieldsData['endAt']).toISOString();
     }
     let populations = {};
-    if (categoryId?.length) {
-      fieldsData['category'] = {
-        set: {
-          id: categoryId,
-        },
-      };
+    if (fieldsData['categoryId']?.length) {
       populations['category'] = true;
     }
-    if (spaceName?.length) {
-      fieldsData['space'] = {
-        set: {
-          name: spaceName,
-        },
-      };
+    if (fieldsData['spaceName']?.length) {
       populations['space'] = true;
     }
     const event = await prisma.event.update({

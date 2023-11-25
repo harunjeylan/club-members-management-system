@@ -1,7 +1,6 @@
-import UserSidebar from '@client/components/Sidebar/UserSidebar';
 import getCurrentUser from '@client/libs/server/getCurrentUser';
 import { cookies } from 'next/headers';
-import { ReactNode, Suspense } from 'react';
+import { ReactNode } from 'react';
 
 export const metadata = {
   title: 'Create Next App',
@@ -14,12 +13,5 @@ export default async function Layout({ children }: PropsType) {
   const user = await getCurrentUser();
   const cookieStore = cookies();
   const token = cookieStore.has('token');
-  return (
-    <main className="flex h-full">
-      <UserSidebar />
-      <section className="w-full px-4 py-4 mx-auto">
-        <div className="w-full max-w-7xl mx-auto">{children}</div>
-      </section>
-    </main>
-  );
+  return <main>{children}</main>;
 }

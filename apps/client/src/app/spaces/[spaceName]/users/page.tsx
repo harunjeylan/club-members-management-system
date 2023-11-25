@@ -1,15 +1,11 @@
-import UsersListTable from '@client/components/Tables/UserListTable';
-import getSpaceUsers from '@client/libs/server/getSpaceUsers';
-import { Suspense } from 'react';
+import getSpaceDetails from '@client/libs/server/getSpaceDetails';
 import UsersManager from './UsersManager';
-import getSpaceRoles from '@client/libs/server/getSpaceRoles';
 
 async function Page({ params }: { params: { spaceName: string } }) {
-  const users = await getSpaceUsers(params.spaceName);
-  const roles = await getSpaceRoles(params.spaceName);
+  const space = await getSpaceDetails(params.spaceName);
   return (
     <section className="w-full ">
-      <UsersManager roles={roles} users={users} spaceName={params.spaceName} />
+      <UsersManager roles={space.roles} users={space.users} spaceName={params.spaceName} />
     </section>
   );
 }

@@ -4,13 +4,22 @@ import UpdateSpaceForm from '@client/components/Forms/SpaceForm/UpdateSpaceForm'
 import SpaceListTable from '@client/components/Tables/SpaceListTable';
 import Model from '@client/components/ui/Model';
 import handleDeleteSpace from '@client/libs/client/handleDeleteSpace';
-import { Space } from '@prisma/client';
+import handleRevalidate from '@client/libs/client/handleRevalidate';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
+import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
 import { Suspense, useEffect, useState } from 'react';
+import { UserWithAll } from 'types/user';
 enum FormType {
   UPDATE_SPACE,
   CREATE_SPACE,
 }
-function SpacesManager({ spaces }: { spaces: Space[] }) {
+function SpacesManager({
+  spaces,
+  user,
+}: {
+  spaces: Space[];
+  user: UserWithAll;
+}) {
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
   const [selected, setSelected] = useState<Space[]>([]);
@@ -18,6 +27,10 @@ function SpacesManager({ spaces }: { spaces: Space[] }) {
     undefined
   );
   console.log(selected);
+  const superAdminRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+    { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+  ]);
 
   useEffect(() => {
     if (activeModel === FormType.CREATE_SPACE) {
@@ -47,6 +60,10 @@ function SpacesManager({ spaces }: { spaces: Space[] }) {
       //   title: 'Error ',
       // });
     }
+    handleRevalidate({
+      path: '/spaces',
+      tag: 'getSpaces',
+    });
   }
   return (
     <div>
@@ -56,7 +73,7 @@ function SpacesManager({ spaces }: { spaces: Space[] }) {
         className=" p-4 bg-secondary-100 dark:bg-secondary-900 rounded"
         expandUrl={expandUrl}
       >
-        {activeModel === FormType.CREATE_SPACE && (
+        {!!superAdminRoles.length && activeModel === FormType.CREATE_SPACE && (
           <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
             <div className="text-xl font-bold">Create Form</div>
             <CreateSpaceForm />
@@ -64,7 +81,7 @@ function SpacesManager({ spaces }: { spaces: Space[] }) {
         )}
         {activeModel === FormType.UPDATE_SPACE && selected.length === 1 && (
           <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
-            <div className="text-xl font-bold">Updade Space</div>
+            <div className="text-xl font-bold">Update Space</div>
             <Suspense fallback={<div>Loading..</div>}>
               <UpdateSpaceForm space={selected[0]} />
             </Suspense>
@@ -76,9 +93,11 @@ function SpacesManager({ spaces }: { spaces: Space[] }) {
         <div>
           {selected.length ? (
             <div className="flex flex-wrap gap-2">
-              <button className="btn-danger py-1 px-4" onClick={deleteSpaces}>
-                delete
-              </button>
+              {!!superAdminRoles.length && (
+                <button className="btn-danger py-1 px-4" onClick={deleteSpaces}>
+                  delete
+                </button>
+              )}
 
               {selected.length === 1 && (
                 <button
@@ -96,16 +115,17 @@ function SpacesManager({ spaces }: { spaces: Space[] }) {
             ''
           )}
         </div>
-
-        <button
-          onClick={() => {
-            setActiveModel(FormType.CREATE_SPACE);
-            setShow(true);
-          }}
-          className="btn-primary py-2 px-4 whitespace-nowrap h-fit"
-        >
-          Add Space
-        </button>
+        {!!superAdminRoles.length && (
+          <button
+            onClick={() => {
+              setActiveModel(FormType.CREATE_SPACE);
+              setShow(true);
+            }}
+            className="btn-primary py-2 px-4 whitespace-nowrap h-fit"
+          >
+            Add Space
+          </button>
+        )}
       </div>
       <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
         <Suspense fallback={<div>Loading..</div>}>

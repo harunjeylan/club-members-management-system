@@ -1,27 +1,45 @@
+import { UserFormType } from '@client/components/Forms/UserForm/UserForm';
 import { host } from '@client/config/host.config';
+import getFieldsData from '@libs/utils/getFieldsData';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
-import { revalidatePath, revalidateTag } from 'next/cache';
 import handleRevalidate from './handleRevalidate';
-import { UserWithAll } from 'types/user';
-import { UserFormType } from '@client/components/Forms/UserForm/UserForm';
 
 export default async function handleUpdateUser(
   userId: string,
-  values: UserFormType
+  values: {
+    first_name?: string;
+    last_name?: string;
+    username?: string;
+    email?: string;
+    password?: string | undefined;
+    addSpaces?: string[];
+    addRoles?: string[];
+    removeSpaces?: string[];
+    removeRoles?: string[];
+    setSpaces?: string[];
+    setRoles?: string[];
+  },
+  revalidateOptions?: { paths?: string[]; tags?: string[] }
 ) {
   try {
     const token = getCookie('token');
     const url = `${host}/users/${userId}`;
+    const fields = [
+      'first_name',
+      'last_name',
+      'username',
+      'email',
+      'password',
+      'addSpaces',
+      'addRoles',
+      'removeSpaces',
+      'removeRoles',
+      'setSpaces',
+      'setRoles',
+    ];
+    const payloadData = getFieldsData(values, fields);
 
-    const payloadData = {
-      first_name: values.first_name,
-      last_name: values.last_name,
-      username: values.username,
-      email: values.email,
-      roles: values.roles,
-      spaces: values.spaces,
-    };
     if (typeof token === 'undefined') {
       return;
     }
@@ -32,7 +50,7 @@ export default async function handleUpdateUser(
     };
     const res = await axios.put(url, payloadData, payload);
 
-    handleRevalidate({
+    const revalidate: any = {
       'path[0]': '/users',
       'path[1]': `/users/${userId}`,
       'path[2]': `/roles`,
@@ -41,7 +59,15 @@ export default async function handleUpdateUser(
       'path[5]': `/spaces/users`,
       'tag[0]': 'getUsers',
       'tag[1]': `getUserDetails/${userId}`,
+    };
+    revalidateOptions?.tags?.forEach((tag, ind) => {
+      revalidate['tag[' + (6 + ind) + ']'] = tag;
     });
+    revalidateOptions?.paths?.forEach((path, ind) => {
+      revalidate['path[' + (6 + ind) + ']'] = path;
+    });
+
+    handleRevalidate(revalidate);
     return res.data;
   } catch (error: any) {
     return error?.response?.data ?? { error: 'Unknown Error' };

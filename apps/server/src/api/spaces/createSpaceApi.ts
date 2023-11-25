@@ -5,6 +5,7 @@ import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
 export default async function createSpaceApi(req, res) {
   const { name, isPrivate, description } = req.body;
+  const { addUsers, addRoles } = req.body;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
@@ -45,13 +46,36 @@ export default async function createSpaceApi(req, res) {
         .status(409)
         .json({ message: 'Space already exists', code: 'create-space' });
     }
+    const fieldsData = {
+      name,
+      isPrivate,
+      description,
+    };
+    let populations = {};
+
+    if (addUsers?.length) {
+      fieldsData['users'] = {
+        connect: addUsers.map((userId: string) => ({
+          id: userId,
+        })),
+      };
+      populations['users'] = {
+        include: {
+          profile: true,
+        },
+      };
+    }
+    if (addRoles?.length) {
+      fieldsData['roles'] = {
+        connect: addRoles.map((roleId: string) => ({
+          id: roleId,
+        })),
+      };
+    }
 
     const space = await prisma.space.create({
-      data: {
-        name,
-        isPrivate,
-        description,
-      },
+      data: fieldsData,
+      include: populations,
     });
     return res.status(200).json({
       space: space,
@@ -61,5 +85,5 @@ export default async function createSpaceApi(req, res) {
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });
-  } 
+  }
 }

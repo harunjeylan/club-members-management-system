@@ -1,15 +1,15 @@
 'use client';
 
 import AssignUsersRoleForm from '@client/components/Forms/AssignUsersRoleForm';
-import CreateUserForm from '@client/components/Forms/CreateUserForm';
-import UpdateUserForm from '@client/components/Forms/UserForm/UserForm';
+import CreateUserForm from '@client/components/Forms/UserForm/CreateUserForm';
+import UpdateUserForm from '@client/components/Forms/UserForm/UpdateUserForm';
 import UsersListTable from '@client/components/Tables/UserListTable';
 import Model from '@client/components/ui/Model';
-import handleAddUsersToSpace from '@client/libs/client/handleAddUsersToSpace';
-import handleRemoveUsersFromSpace from '@client/libs/client/handleRemoveUsersFromSpace';
-import { Role } from '@prisma/client';
+import handleRevalidate from '@client/libs/client/handleRevalidate';
+import handleUpdateSpace from '@client/libs/client/handleUpdateSpace';
+import { Role, User } from '@prisma/client';
 import { Dispatch, SetStateAction, Suspense, useEffect, useState } from 'react';
-import { UserWithAll, UserWithProfileAndRoles } from 'types/user';
+import { UserWithAll } from 'types/user';
 enum FormType {
   ASSIGN_ROLE,
   ADD_TO_SPACE,
@@ -17,14 +17,14 @@ enum FormType {
   CREATE_USER,
 }
 type PropsType = {
-  users: UserWithProfileAndRoles[];
+  users: User[];
   roles: Role[];
   spaceName: string;
 };
 function UsersManager({ users, roles, spaceName }: PropsType) {
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
-  const [selected, setSelected] = useState<UserWithProfileAndRoles[]>([]);
+  const [selected, setSelected] = useState<User[]>([]);
   const [activeModel, setActiveModel] = useState<FormType | undefined>(
     undefined
   );
@@ -32,17 +32,16 @@ function UsersManager({ users, roles, spaceName }: PropsType) {
 
   useEffect(() => {
     if (activeModel === FormType.CREATE_USER) {
-      setExpandUrl('/admin/users/new');
+      setExpandUrl(`/spaces/${spaceName}/users/new`);
     } else {
       setExpandUrl(undefined);
     }
   }, [activeModel]);
 
   async function removeUsersFromSpace() {
-    const response = await handleRemoveUsersFromSpace(
-      spaceName,
-      selected.map((user) => user.id)
-    );
+    const response = await handleUpdateSpace(spaceName, {
+      removeUsers: selected.map((user) => user.id),
+    });
     if (response.space) {
       // setMessage({
       //   type: 'success',
@@ -60,6 +59,11 @@ function UsersManager({ users, roles, spaceName }: PropsType) {
       //   title: 'Error ',
       // });
     }
+    handleRevalidate({
+      path: '/users',
+      tag: 'getUsers',
+      'tag[1]': `getSpaceDetails/${spaceName}`,
+    });
   }
 
   return (
@@ -73,7 +77,7 @@ function UsersManager({ users, roles, spaceName }: PropsType) {
         {activeModel === FormType.CREATE_USER && (
           <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
             <div className="text-xl font-bold">User Creation Form</div>
-            <CreateUserForm />
+            <CreateUserForm roles={roles} spaceName={spaceName} />
           </div>
         )}
 
@@ -92,7 +96,7 @@ function UsersManager({ users, roles, spaceName }: PropsType) {
           <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
             <div className="text-xl font-bold">Assign Role to Users</div>
             <Suspense fallback={<div>Loading..</div>}>
-              <UpdateUserForm user={selected[0]} roles={roles} />
+              <UpdateUserForm user={selected[0]} roles={roles} spaceName={spaceName} />
             </Suspense>
           </div>
         )}

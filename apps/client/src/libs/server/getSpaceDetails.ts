@@ -1,8 +1,9 @@
-import { Space } from '@prisma/client';
+import { Category, Event, Role, Space, User } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
 import { host } from '../../config/host.config';
+import { UserWithProfile } from 'types/user';
 
 async function getSpaceDetails(spaceName: string) {
   const cookieStore = cookies();
@@ -12,10 +13,10 @@ async function getSpaceDetails(spaceName: string) {
   const token = cookieStore.get('token') as { value: string };
   const url = `${host}/spaces/${spaceName}?populate=users&populate=roles&populate=events`;
   console.log(url);
-  
+
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: [`getSpaceDetails/${spaceName}`] ,  revalidate: 3600 * 12  },
+    next: { tags: [`getSpaceDetails/${spaceName}`], revalidate: 3600 * 12 },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
@@ -28,7 +29,13 @@ async function getSpaceDetails(spaceName: string) {
     throw new Error('Failed to fetch data');
   }
 
-  const { space } = (await res.json()) as { space: Space };
+  const { space } = (await res.json()) as {
+    space: Space & {
+      users: UserWithProfile[];
+      roles: Role[];
+      events: (Event & { category: Category })[];
+    };
+  };
   return space;
 }
 

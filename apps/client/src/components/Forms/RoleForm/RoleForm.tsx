@@ -5,13 +5,22 @@ import Alert, { AlertMessage } from '@client/components/ui/Alert';
 import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
 import { ErrorMessage, Formik, FormikHelpers } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
-
+export type RoleFormType = {
+  name: string;
+  description: string;
+  scop: RoleScop;
+  code: RoleCode;
+  spaceName?: string;
+  addUsers?: string[];
+  removeUsers?: string[];
+  setUsers?: string[];
+};
 type PropsType = {
   onSubmit: (values: any, formikHelpers: FormikHelpers<any>) => void;
-  initialValues: Partial<Role>;
+  initialValues: RoleFormType;
   message?: AlertMessage;
   setMessage: Dispatch<SetStateAction<AlertMessage | undefined>>;
-  spaces: Space[];
+  spaces?: Space[];
 };
 export default function RoleForm({
   spaces,
@@ -20,7 +29,7 @@ export default function RoleForm({
   message,
   setMessage,
 }: PropsType) {
-  let yupSchema = yup.object<Partial<Role>>({
+  let yupSchema = yup.object<RoleFormType>({
     name: yup.string().required(),
     code: yup
       .string()
@@ -118,7 +127,9 @@ export default function RoleForm({
               value={values.scop}
             >
               <option value={RoleScop.SPACE}>Space</option>
-              <option value={RoleScop.SUPER}>Super</option>
+              {!values.spaceName && (
+                <option value={RoleScop.SUPER}>Super</option>
+              )}
             </select>
             <ErrorMessage
               name="scop"
@@ -126,7 +137,7 @@ export default function RoleForm({
               className="text-red-500 dark:text-red-300"
             />
           </div>
-          {values.scop === RoleScop.SPACE && (
+          {values.scop === RoleScop.SPACE && spaces && (
             <div className="col-span-2 flex flex-col gap-1 w-full">
               <label>Space</label>
               <select

@@ -5,7 +5,7 @@ import UpdateEventForm from '@client/components/Forms/EventForm/UpdateEventForm'
 import EventListTable from '@client/components/Tables/EventListTable';
 import Model from '@client/components/ui/Model';
 import handleDeleteEvent from '@client/libs/client/handleDeleteEvent';
-import handleDeleteRole from '@client/libs/client/handleDeleteRole';
+import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { Category, Event } from '@prisma/client';
 import { Suspense, useEffect, useState } from 'react';
 enum FormType {
@@ -13,13 +13,15 @@ enum FormType {
   CREATE_EVENT,
 }
 type PropsType = {
-  events: Event[];
+  events: (Event & { category: Category })[];
   categories: Category[];
 };
 function EventsManager({ events, categories }: PropsType) {
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
-  const [selected, setSelected] = useState<Event[]>([]);
+  const [selected, setSelected] = useState<(Event & { category: Category })[]>(
+    []
+  );
   const [activeModel, setActiveModel] = useState<FormType | undefined>(
     undefined
   );
@@ -52,6 +54,10 @@ function EventsManager({ events, categories }: PropsType) {
       //   title: 'Error ',
       // });
     }
+    handleRevalidate({
+      path: '/events',
+      tag: 'getEvents',
+    });
   }
   return (
     <div>

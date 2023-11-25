@@ -1,26 +1,43 @@
-import { getCookie } from 'cookies-next';
 import { host } from '@client/config/host.config';
-import { Role, Space } from '@prisma/client';
 import axios from 'axios';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { getCookie } from 'cookies-next';
 import handleRevalidate from './handleRevalidate';
+import getFieldsData from '@libs/utils/getFieldsData';
 
 export default async function handleUpdateSpace(
   spaceName: string,
-  values: Partial<Space>
+  values: Partial<{
+    name?: string;
+    isPrivate?: boolean;
+    description?: string | null;
+    fileModelId?: string | null;
+    addUsers?: string[];
+    addRoles?: string[];
+    removeUsers?: string[];
+    removeRoles?: string[];
+    setUsers?: string[];
+    setRoles?: string[];
+  }>
 ) {
   try {
     const token = getCookie('token');
     const url = `${host}/spaces/${spaceName}`;
-    const payloadData = {
-      name: values.name,
-      description: values.description,
-      isPrivate: values.isPrivate,
-    };
     if (typeof token === 'undefined') {
       return;
     }
-
+    const fields = [
+      'name',
+      'isPrivate',
+      'description',
+      'fileModelId',
+      'addUsers',
+      'addRoles',
+      'removeUsers',
+      'removeRoles',
+      'setUsers',
+      'setRoles',
+    ];
+    const payloadData = getFieldsData(values, fields);
     const payload = {
       headers: {
         Authorization: `Bearer ${token}`,

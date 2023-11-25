@@ -1,7 +1,6 @@
-import EventList from './EventList';
 
 async function Page() {
-  return <EventList />;
+  return <></>;
 }
 
 export default Page;

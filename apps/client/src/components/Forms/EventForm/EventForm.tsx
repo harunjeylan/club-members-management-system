@@ -5,10 +5,21 @@ import Alert, { AlertMessage } from '@client/components/ui/Alert';
 import { Category, Event, Repeat } from '@prisma/client';
 import { ErrorMessage, Formik, FormikHelpers } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
-
+export type EventFormType = {
+  title: string;
+  startAt: string;
+  endAt: string;
+  fullDay: boolean;
+  repeat: Repeat;
+  published: boolean;
+  location: string;
+  description: string;
+  categoryId: string;
+  spaceName?: string;
+};
 type PropsType = {
   onSubmit: (values: any, formikHelpers: FormikHelpers<any>) => void;
-  initialValues: Partial<Event>;
+  initialValues: EventFormType;
   message?: AlertMessage;
   setMessage: Dispatch<SetStateAction<AlertMessage | undefined>>;
   categories: Category[];
@@ -21,7 +32,7 @@ export default function EventForm({
   setMessage,
   categories,
 }: PropsType) {
-  const yupSchema = yup.object<Partial<Event>>({
+  const yupSchema = yup.object<EventFormType>({
     title: yup.string().required(),
     repeat: yup
       .string()
@@ -41,6 +52,7 @@ export default function EventForm({
     location: yup.string(),
     categoryId: yup.string(),
   });
+
   return (
     <Formik
       onSubmit={onSubmit}
@@ -60,6 +72,12 @@ export default function EventForm({
           onSubmit={handleSubmit}
           className=" w-full grid grid-cols-2 gap-4"
         >
+          <>
+            {console.log({
+              initialValues: initialValues.endAt,
+              values: values.endAt,
+            })}
+          </>
           {message && (
             <div className="col-span-2">
               <Alert
@@ -127,7 +145,7 @@ export default function EventForm({
               }`}
               onChange={handleChange}
               onBlur={handleBlur}
-              value={values.startAt as unknown as string}
+              value={values.startAt}
             />
             <ErrorMessage
               name="startAt"
@@ -147,7 +165,7 @@ export default function EventForm({
               }`}
               onChange={handleChange}
               onBlur={handleBlur}
-              value={values.endAt as unknown as string}
+              value={values.endAt}
             />
             <ErrorMessage
               name="endAt"

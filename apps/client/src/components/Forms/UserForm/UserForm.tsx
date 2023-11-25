@@ -11,8 +11,10 @@ export type UserFormType = {
   username: string;
   email: string;
   password?: string;
-  roles: string[];
-  spaces: string[];
+  setRoles?: string[];
+  setSpaces?: string[];
+  addRoles?: string[];
+  addSpaces?: string[];
 };
 
 type PropsType = {
@@ -36,8 +38,8 @@ export default function UserForm({
     last_name: yup.string().required(),
     username: yup.string().required(),
     email: yup.string().required(),
-    roles: yup.array(yup.string()),
-    spaces: yup.array(yup.string()),
+    setRoles: yup.array(yup.string()),
+    setSpaces: yup.array(yup.string()),
     password: yup.string(),
   });
   return (
@@ -147,84 +149,151 @@ export default function UserForm({
               className="text-red-500 dark:text-red-300"
             />
           </div>
-          <div className="col-span-2 flex flex-col gap-1 w-full">
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              className={`input ${
-                !!touched.password && !!errors.password
-                  ? 'bg-red-300/50 border border-red-500'
-                  : ''
-              }`}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.password}
-            />
-            <ErrorMessage
-              name="password"
-              component="div"
-              className="text-red-500 dark:text-red-300"
-            />
-          </div>
-          {spaces?.length ? (
+          {Object.keys(values).includes('password') && (
             <div className="col-span-2 flex flex-col gap-1 w-full">
-              <label>Space</label>
-              <select
-                name="spaces"
-                className={`input py-2 px-2  ${
-                  !!touched.spaces && !!errors.spaces
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                className={`input ${
+                  !!touched.password && !!errors.password
                     ? 'bg-red-300/50 border border-red-500'
                     : ''
                 }`}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                value={values.spaces}
-                multiple
-              >
-                {spaces.map((space) => (
-                  <option key={space.name} value={space.name}>
-                    {space.name}
-                  </option>
-                ))}
-              </select>
+                value={values.password}
+              />
               <ErrorMessage
-                name="first_name"
+                name="password"
                 component="div"
                 className="text-red-500 dark:text-red-300"
               />
             </div>
+          )}
+          {spaces?.length ? (
+            <>
+              {Object.keys(values).includes('setSpaces') && (
+                <div className="col-span-2 flex flex-col gap-1 w-full">
+                  <label>Set Space</label>
+                  <select
+                    name="setSpaces"
+                    className={`input py-2 px-2  ${
+                      !!touched.setSpaces && !!errors.setSpaces
+                        ? 'bg-red-300/50 border border-red-500'
+                        : ''
+                    }`}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.setSpaces}
+                    multiple
+                  >
+                    {spaces.map((space) => (
+                      <option key={space.name} value={space.name}>
+                        {space.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ErrorMessage
+                    name="setSpaces"
+                    component="div"
+                    className="text-red-500 dark:text-red-300"
+                  />
+                </div>
+              )}
+              {Object.keys(values).includes('addSpaces') && (
+                <div className="col-span-2 flex flex-col gap-1 w-full">
+                  <label>Add Space</label>
+                  <select
+                    name="addSpaces"
+                    className={`input py-2 px-2  ${
+                      !!touched.addSpaces && !!errors.addSpaces
+                        ? 'bg-red-300/50 border border-red-500'
+                        : ''
+                    }`}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.addSpaces}
+                    multiple
+                  >
+                    {spaces.map((space) => (
+                      <option key={space.name} value={space.name}>
+                        {space.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ErrorMessage
+                    name="addSpaces"
+                    component="div"
+                    className="text-red-500 dark:text-red-300"
+                  />
+                </div>
+              )}
+            </>
           ) : (
             ''
           )}
           {roles?.length ? (
-            <div className="col-span-2 flex flex-col gap-1 w-full">
-              <label>Role</label>
-              <select
-                name="roles"
-                className={`input py-2 px-2  ${
-                  !!touched.roles && !!errors.roles
-                    ? 'bg-red-300/50 border border-red-500'
-                    : ''
-                }`}
-                multiple
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.roles}
-              >
-                {roles.map((role) => (
-                  <option key={role.id} value={role.id}>
-                    {role.spaceName ? role.spaceName + ' -> ' : ''}
-                    {role.name}
-                  </option>
-                ))}
-              </select>
-              <ErrorMessage
-                name="first_name"
-                component="div"
-                className="text-red-500 dark:text-red-300"
-              />
-            </div>
+            <>
+              {Object.keys(values).includes('setRoles') && (
+                <div className="col-span-2 flex flex-col gap-1 w-full">
+                  <label>Set Role</label>
+                  <select
+                    name="setRoles"
+                    className={`input py-2 px-2  ${
+                      !!touched.setRoles && !!errors.setRoles
+                        ? 'bg-red-300/50 border border-red-500'
+                        : ''
+                    }`}
+                    multiple
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.setRoles}
+                  >
+                    {roles.map((role) => (
+                      <option key={role.id} value={role.id}>
+                        {role.spaceName ? role.spaceName + ' -> ' : ''}
+                        {role.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ErrorMessage
+                    name="setRoles"
+                    component="div"
+                    className="text-red-500 dark:text-red-300"
+                  />
+                </div>
+              )}
+              {Object.keys(values).includes('addRoles') && (
+                <div className="col-span-2 flex flex-col gap-1 w-full">
+                  <label>Add Role</label>
+                  <select
+                    name="addRoles"
+                    className={`input py-2 px-2  ${
+                      !!touched.addRoles && !!errors.addRoles
+                        ? 'bg-red-300/50 border border-red-500'
+                        : ''
+                    }`}
+                    multiple
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.addRoles}
+                  >
+                    {roles.map((role) => (
+                      <option key={role.id} value={role.id}>
+                        {role.spaceName ? role.spaceName + ' -> ' : ''}
+                        {role.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ErrorMessage
+                    name="addRoles"
+                    component="div"
+                    className="text-red-500 dark:text-red-300"
+                  />
+                </div>
+              )}
+            </>
           ) : (
             ''
           )}

@@ -11,17 +11,23 @@ type PropsType = {
   user: Partial<UserWithProfileAndRoles & { spaces: Space[] }>;
   roles?: Role[];
   spaces?: Space[];
+  spaceName?: string;
 };
 
-export function UpdateUserForm({ user, roles, spaces }: PropsType) {
+export default function UpdateUserForm({
+  user,
+  roles,
+  spaces,
+  spaceName,
+}: PropsType) {
   const [message, setMessage] = useState<AlertMessage>();
-  const initialValues = {
+  const initialValues: UserFormType = {
     first_name: user.first_name ?? '',
     last_name: user.last_name ?? '',
     username: user.username ?? '',
     email: user.email ?? '',
-    roles: user.roles?.map((role) => role.id) ?? [],
-    spaces: user.spaces?.map((role) => role.name) ?? [],
+    setRoles: user.roles?.map((role) => role.id) ?? [],
+    setSpaces: user.spaces?.map((role) => role.name) ?? [],
   };
 
   useEffect(() => {
@@ -44,7 +50,19 @@ export function UpdateUserForm({ user, roles, spaces }: PropsType) {
         title: 'Warning ',
       });
     }
-    const response = await handleUpdateUser(user.id, values);
+    
+    const revalidateTags = [
+      ...(values.setSpaces?.map(
+        (spaceName) => `getSpaceDetails/${spaceName}`
+      ) ?? []),
+      ...(values.setRoles?.map((roleId) => `getRoleDetails/${roleId}`) ?? []),
+      ...(spaceName ? [`getSpaceDetails/${spaceName}`] : []),
+    ];
+
+    const response = await handleUpdateUser(user.id, values, {
+      tags: revalidateTags,
+    });
+
     console.log(response.user);
 
     if (response.user) {

@@ -1,15 +1,14 @@
-import RoleListTable from '@client/components/Tables/RoleListTable';
-import getRoles from '@client/libs/server/getRoles';
-import getSpaceRoles from '@client/libs/server/getSpaceRoles';
+import getSpaceDetails from '@client/libs/server/getSpaceDetails';
 import { Suspense } from 'react';
+import RolesManager from './RolesManager';
 
 async function Page({ params }: { params: { spaceName: string } }) {
-  const roles = await getSpaceRoles(params.spaceName);
+  const space = await getSpaceDetails(params.spaceName);
   return (
     <section className="w-full ">
       <Suspense fallback={<div>Loading..</div>}>
-          <RoleListTable roles={roles} />
-        </Suspense>
+        <RolesManager spaceName={params.spaceName} roles={space.roles} />
+      </Suspense>
     </section>
   );
 }

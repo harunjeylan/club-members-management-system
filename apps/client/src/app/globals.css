@@ -33,13 +33,19 @@
   .checkbox {
     @apply p-4;
   }
+  .vertical-timeline-element-content {
+    @apply p-0;
+  }
 }
 /* 
 * {
   transition: background-color 300ms ease-in-out;
 } */
 
-* {
+*,
+::before,
+::after {
+  border-width: 0;
   margin: 0;
   padding: 0;
   box-sizing: border-box;

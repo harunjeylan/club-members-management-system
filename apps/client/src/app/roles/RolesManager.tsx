@@ -5,6 +5,7 @@ import UpdateRoleForm from '@client/components/Forms/RoleForm/UpdateRoleForm';
 import RoleListTable from '@client/components/Tables/RoleListTable';
 import Model from '@client/components/ui/Model';
 import handleDeleteRole from '@client/libs/client/handleDeleteRole';
+import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { Role, Space } from '@prisma/client';
 import React, { Suspense, useEffect, useState } from 'react';
 enum FormType {
@@ -51,6 +52,10 @@ function RolesManager({ roles, spaces }: PropsType) {
       //   title: 'Error ',
       // });
     }
+    handleRevalidate({
+      path: '/roles',
+      tag: 'getRoles',
+    });
   }
   return (
     <div>

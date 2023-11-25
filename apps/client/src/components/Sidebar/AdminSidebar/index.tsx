@@ -21,13 +21,14 @@ function AdminSidebar({ userRoles }: PropsType) {
   const [searchLink, setSearchLink] = useState('');
   const userData = useSelector(selectCurrentUser);
   const [groups, setGroups] = useState(getLinks(userRoles, searchLink));
+console.log(groups, userRoles);
 
   useEffect(() => {
     setGroups(getLinks(userRoles, searchLink));
   }, [searchLink]);
 
   return (
-    <Sidebar className="h-[calc(100vh_-_70px)]">
+    <Sidebar className="h-[calc(100vh_-_68px)]">
       <div
         className={`relative w-full h-full flex flex-col justify-between gap-2 bg-secondary-100 dark:bg-secondary-900`}
       >
@@ -102,6 +103,8 @@ const linkGroups = [
         accessedFor: [
           { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
           { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+          { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+          { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
         ],
       },
       {

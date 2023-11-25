@@ -4,20 +4,19 @@ import { redirect } from 'next/navigation';
 import 'server-only';
 import { host } from '../../config/host.config';
 
-async function getEvents() {
+async function getEvents(eventId: string) {
   const cookieStore = cookies();
   if (!cookieStore.has('token')) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/events?populate=space&populate=category`;
+  const url = `${host}/events/${eventId}?populate=space&populate=category`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getEvents'],   revalidate: 3600 * 12  },
+    next: { tags: [`getEventDetails/${eventId}`], revalidate: 3600 * 12 },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
-    
   });
 
   if (!res.ok) {

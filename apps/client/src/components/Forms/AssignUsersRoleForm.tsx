@@ -2,6 +2,7 @@
 import { Role } from '@prisma/client';
 import { FormEvent, useEffect, useState } from 'react';
 import Alert, { AlertMessage } from '../ui/Alert';
+import handleUpdateRole from '@client/libs/client/handleUpdateRole';
 function AssignUsersRoleForm({
   users,
   roles,
@@ -10,7 +11,9 @@ function AssignUsersRoleForm({
   roles: Role[];
 }) {
   const [message, setMessage] = useState<AlertMessage>();
-  const [selectedRole, setSelectedRole] = useState<string>(roles.length ? roles?.[0].name : '');
+  const [selectedRole, setSelectedRole] = useState<string>(
+    roles.length ? roles?.[0].name : ''
+  );
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -33,23 +36,23 @@ function AssignUsersRoleForm({
         title: 'Warning ',
       });
     }
-    // const response = await handleAssignUsersRole(selectedRole, users);
-    // console.log({ response });
+    const response = await handleUpdateRole(selectedRole, { addUsers: users });
+    console.log({ response });
 
-    // if (response.role) {
-    //   setMessage({
-    //     type: 'success',
-    //     summery: 'Role Assigned to Users successfully',
-    //     title: 'Success ',
-    //   });
-    // }
-    // if (response?.error) {
-    //   setMessage({
-    //     type: 'warning',
-    //     summery: response?.error,
-    //     title: 'Warning ',
-    //   });
-    // }
+    if (response.role) {
+      setMessage({
+        type: 'success',
+        summery: 'Role Assigned to Users successfully',
+        title: 'Success ',
+      });
+    }
+    if (response?.error) {
+      setMessage({
+        type: 'warning',
+        summery: response?.error,
+        title: 'Warning ',
+      });
+    }
   }
   return (
     <form onSubmit={onSubmit} className="w-full grid grid-cols-2 gap-4 p-4">
@@ -69,6 +72,7 @@ function AssignUsersRoleForm({
           >
             {roles.map((role) => (
               <option key={role.id} value={role.id}>
+                {role.spaceName ? role.spaceName + ' -> ' : ''}
                 {role.name}
               </option>
             ))}

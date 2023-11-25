@@ -6,12 +6,13 @@ import getFieldsData from '@libs/utils/getFieldsData';
 
 export default async function updateRoleApi(req, res) {
   const { roleId } = req.params;
-  const fields = ['name', 'code', 'scop', 'description'];
+  const fields = ['name', 'code', 'scop', 'description', 'spaceName'];
   const fieldsData = getFieldsData(req.body, fields);
-  const { addUsers, removeUsers, setUsers, spaceName } = req.body;
+  const { addUsers, removeUsers, setUsers } = req.body;
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: fieldsData["spaceName"] },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
@@ -64,10 +65,8 @@ export default async function updateRoleApi(req, res) {
       };
       populations['users'] = true;
     }
-    if (spaceName?.length) {
-      fieldsData['space'] = {
-        set: { name: spaceName },
-      };
+    if (fieldsData['spaceName']?.length) {
+      fieldsData["scop"] = RoleScop.SPACE
       populations['space'] = true;
     }
 

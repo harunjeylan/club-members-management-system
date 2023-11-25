@@ -21,6 +21,9 @@ export default async function Layout({ children }: PropsType) {
     { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
     { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
   ]);
+  if (!userRoles.length) {
+    return redirect('/auth/login');
+  }
   return (
     <main className="flex h-full w-full ">
       <AdminSidebar userRoles={userRoles} />

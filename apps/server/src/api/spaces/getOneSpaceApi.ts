@@ -8,31 +8,74 @@ export default async function getOneSpaceApi(req, res) {
   const { populate } = req.query;
 
   try {
-    const userAccessRoles = getUserAccessRoles(req.user.roles, [
+    const adminAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
     ]);
-    if (!userAccessRoles.length) {
+    const memberAccessRoles = getUserAccessRoles(req.user.roles, [
+      { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+      { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+      { scop: RoleScop.SUPER, code: RoleCode.MEMBER },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+      { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+      { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
+    ]);
+    if (![...adminAccessRoles, ...memberAccessRoles].length) {
       return res.sendStatus(403);
     }
     let populations = {};
     getArrayValues(populate).forEach((item: string) => {
       if (item === 'users') {
-        populations['users'] = true;
+        populations['users'] = {
+          include: {
+            profile: true,
+          },
+        };
       }
       if (item === 'roles') {
         populations['roles'] = true;
       }
       if (item === 'events') {
-        populations['events'] = true;
+        populations['events'] = {
+          include: {
+            category: true,
+          },
+        };
       }
     });
-    const space = await prisma.space.findFirst({
-      include: populations,
-      where: {
-        name: spaceName,
-      },
-    });
+    let space = null;
+    if (adminAccessRoles.length) {
+      space = await prisma.space.findFirst({
+        where: {
+          name: spaceName,
+        },
+        include: populations,
+      });
+    } else if (memberAccessRoles) {
+      space = await prisma.space.findFirst({
+        include: populations,
+        where: {
+          name: spaceName,
+          users: {
+            some: {
+              id: req.user.id,
+            },
+          },
+        },
+      });
+    } else {
+      space = await prisma.space.findFirst({
+        include: populations,
+        where: {
+          name: spaceName,
+          isPrivate: false,
+        },
+      });
+    }
+    if (!space) {
+      res.sendStatus(404);
+    }
+
     return res.status(200).json({
       space: space,
     });

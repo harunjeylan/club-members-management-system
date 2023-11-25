@@ -3,7 +3,7 @@ import handleCreateRole from '@client/libs/client/handleCreateRole';
 import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { AlertMessage } from '../../ui/Alert';
-import RoleForm from './RoleForm';
+import RoleForm, { RoleFormType } from './RoleForm';
 function CreateRoleForm({
   spaces,
   spaceName,
@@ -12,7 +12,7 @@ function CreateRoleForm({
   spaceName?: string;
 }) {
   const [message, setMessage] = useState<AlertMessage>();
-  const initialValues: Partial<Role> = {
+  const initialValues: RoleFormType = {
     name: '',
     scop: RoleScop.SPACE,
     code: RoleCode.MEMBER,
@@ -32,10 +32,12 @@ function CreateRoleForm({
     };
   }, [message]);
 
-  async function onSubmit(values: Partial<Role>) {
+  async function onSubmit(values: RoleFormType) {
     console.log({ values });
-
-    const response = await handleCreateRole(values);
+    const revalidateTags = [
+      ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
+    ];
+    const response = await handleCreateRole(values, { tags: revalidateTags });
     console.log({ response });
     if (response.role) {
       setMessage({
@@ -54,7 +56,7 @@ function CreateRoleForm({
   }
   return (
     <RoleForm
-      spaces={spaces ?? []}
+      spaces={spaces}
       onSubmit={onSubmit}
       initialValues={initialValues}
       message={message}

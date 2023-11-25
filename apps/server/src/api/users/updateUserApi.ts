@@ -16,6 +16,8 @@ export default async function updateUserApi(req, res) {
     setSpaces,
     setRoles,
   } = req.body;
+  
+
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
@@ -98,6 +100,7 @@ export default async function updateUserApi(req, res) {
         id: userId,
       },
       data: fieldsData,
+      include: populations,
     });
 
     return res.status(200).json({

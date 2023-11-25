@@ -3,14 +3,12 @@ import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import handleRevalidate from './handleRevalidate';
+import { UserFormType } from '@client/components/Forms/UserForm/UserForm';
 
-export default async function handleCreateUser(values: {
-  first_name: string;
-  last_name: string;
-  username: string;
-  email: string;
-  password: string;
-}) {
+export default async function handleCreateUser(
+  values: UserFormType,
+  revalidateOptions?: { paths?: string[]; tags?: string[] }
+) {
   try {
     const token = getCookie('token');
     const url = `${host}/users`;
@@ -21,6 +19,10 @@ export default async function handleCreateUser(values: {
       username: values.username,
       email: values.email,
       password: values.password,
+      setRoles: values?.setRoles,
+      setSpaces: values?.setSpaces,
+      addRoles: values?.addRoles,
+      addSpaces: values?.addSpaces,
     };
     if (typeof token === 'undefined') {
       return;
@@ -31,11 +33,18 @@ export default async function handleCreateUser(values: {
       },
     };
     const res = await axios.post(url, payloadData, payload);
-    handleRevalidate({
+    const revalidate: any = {
       path: '/users',
       tag: 'getUsers',
+    };
+    revalidateOptions?.tags?.forEach((tag, ind) => {
+      revalidate['tag[' + (6 + ind) + ']'] = tag;
     });
-    
+    revalidateOptions?.paths?.forEach((path, ind) => {
+      revalidate['path[' + (6 + ind) + ']'] = path;
+    });
+    handleRevalidate(revalidate);
+
     return res.data;
   } catch (error: any) {
     return error?.response?.data ?? { error: 'Unknown Error' };

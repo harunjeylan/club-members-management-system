@@ -4,43 +4,26 @@ import { Category, Event, Repeat } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { AlertMessage } from '../../ui/Alert';
-import EventForm from './EventForm';
+import EventForm, { EventFormType } from './EventForm';
 type PropsType = {
   categories: Category[];
+  spaceName?: string;
 };
-function CreateEventForm({ categories }: PropsType) {
+function CreateEventForm({ categories, spaceName }: PropsType) {
   const [message, setMessage] = useState<AlertMessage>();
-  const initialValues: Partial<Event> = {
+  const initialValues: EventFormType = {
     title: '',
-    startAt: new Date(),
-    endAt: new Date(),
+    startAt: new Date().toISOString().slice(0, 16),
+    endAt: new Date().toISOString().slice(0, 16),
     fullDay: false,
     repeat: Repeat.NO_REPEAT,
     published: false,
     location: '',
     description: '',
     categoryId: '',
+    spaceName: spaceName ?? '',
   };
-  let yupSchema = yup.object({
-    title: yup.string().required(),
-    repeat: yup
-      .string()
-      .equals([
-        Repeat.NO_REPEAT,
-        Repeat.EVERY_DAY,
-        Repeat.EVERY_WEEK,
-        Repeat.EVERY_MONTH,
-        Repeat.EVERY_YEAR,
-      ])
-      .required(),
-    startAt: yup.date().required(),
-    endAt: yup.date().required(),
-    fullDay: yup.boolean().required(),
-    published: yup.boolean().required(),
-    description: yup.string(),
-    location: yup.string(),
-    categoryId: yup.string(),
-  });
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (message) {
@@ -53,10 +36,12 @@ function CreateEventForm({ categories }: PropsType) {
     };
   }, [message]);
 
-  async function onSubmit(values: Partial<Event>) {
+  async function onSubmit(values: EventFormType) {
     console.log({ values });
-
-    const response = await handleCreateEvent(values);
+    const revalidateTags = [
+      ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
+    ];
+    const response = await handleCreateEvent(values, {tags:revalidateTags});
     console.log({ response });
     if (response.event) {
       setMessage({

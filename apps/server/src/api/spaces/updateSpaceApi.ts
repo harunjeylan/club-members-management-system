@@ -14,6 +14,8 @@ export default async function updateSpaceApi(req, res) {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: spaceName },
+      { scop: RoleScop.SPACE, code: RoleCode.EDITOR, spaceName: spaceName },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
@@ -54,7 +56,11 @@ export default async function updateSpaceApi(req, res) {
           id: userId,
         })),
       };
-      populations['users'] = true;
+      populations['users'] = {
+        include: {
+          profile: true,
+        },
+      };
     }
     if (setRoles?.length) {
       fieldsData['roles'] = {
@@ -70,7 +76,11 @@ export default async function updateSpaceApi(req, res) {
           id: userId,
         })),
       };
-      populations['users'] = true;
+      populations['users'] = {
+        include: {
+          profile: true,
+        },
+      };
     }
     if (addRoles?.length) {
       fieldsData['roles'] = {
@@ -85,7 +95,11 @@ export default async function updateSpaceApi(req, res) {
           id: userId,
         })),
       };
-      populations['users'] = true;
+      populations['users'] = {
+        include: {
+          profile: true,
+        },
+      };
     }
     if (removeRoles?.length) {
       fieldsData['roles'] = {
@@ -100,6 +114,7 @@ export default async function updateSpaceApi(req, res) {
         name: spaceName,
       },
       data: fieldsData,
+      include: populations,
     });
 
     return res.status(200).json({

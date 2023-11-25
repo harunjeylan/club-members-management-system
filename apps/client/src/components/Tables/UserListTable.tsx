@@ -7,6 +7,7 @@ import { UserWithAll, UserWithProfileAndRoles } from 'types/user';
 import DataTable from '../ui/DataTable';
 import IndeterminateCheckbox from '../ui/DataTable/IndeterminateCheckbox';
 import { fuzzySort } from '../ui/DataTable/helperFns';
+import formatDateTime from '@client/utils/formatDateTime';
 
 type PropsType = {
   baseUrl: string;
@@ -66,7 +67,10 @@ function UsersListTable({ users, baseUrl, setSelected }: PropsType) {
                     },
                   }}
                 />
-                <Link className="link-text" href={`${baseUrl ?? ''}/users/${row.original.id}`}>
+                <Link
+                  className="link-text"
+                  href={`${baseUrl ?? ''}/users/${row.original.id}`}
+                >
                   {getValue()}
                 </Link>
               </div>
@@ -97,7 +101,8 @@ function UsersListTable({ users, baseUrl, setSelected }: PropsType) {
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => `${row.createdAt}`,
+        accessorFn: (row) =>
+          `${row.createdAt ? formatDateTime(row.createdAt) : ''}`,
         id: 'createdAt',
         header: () => <span>Join At</span>,
         cell: (info) => info.getValue(),

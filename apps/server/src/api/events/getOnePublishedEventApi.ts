@@ -1,9 +1,7 @@
-import { RoleCode, RoleScop } from '@prisma/client';
-import prisma from 'apps/server/src/prisma/PrismaClient';
-import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import getArrayValues from '@libs/utils/getArrayValues';
+import prisma from 'apps/server/src/prisma/PrismaClient';
 
-export default async function getOnePublicEventApi(req, res) {
+export default async function getOnePublishedEventApi(req, res) {
   const { eventId } = req.params;
   const { populate } = req.query;
   try {

@@ -11,7 +11,12 @@ export function getUserAccessRoles(
   return userRoles.filter((userRole) => {
     return roles.find((role) => {
       if (!(role.scop === userRole.scop && role.code === userRole.code)) {
-        if (!(role.spaceName && role.spaceName === userRole.spaceName)) {
+        if (
+          !(
+            Object.keys(role).includes('spaceName') &&
+            role.spaceName === userRole.spaceName
+          )
+        ) {
           return false;
         }
       }

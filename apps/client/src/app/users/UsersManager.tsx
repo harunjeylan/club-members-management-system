@@ -2,11 +2,12 @@
 
 import AddUsersToSpaceForm from '@client/components/Forms/AddUsersToSpaceForm';
 import AssignUsersRoleForm from '@client/components/Forms/AssignUsersRoleForm';
-import { CreateUserForm } from '@client/components/Forms/UserForm/CreateUserForm';
-import { UpdateUserForm } from '@client/components/Forms/UserForm/UpdateUserForm';
+import CreateUserForm from '@client/components/Forms/UserForm/CreateUserForm';
+import UpdateUserForm from '@client/components/Forms/UserForm/UpdateUserForm';
 import UsersListTable from '@client/components/Tables/UserListTable';
 import Model from '@client/components/ui/Model';
 import handleDeleteUser from '@client/libs/client/handleDeleteUser';
+import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { Role, Space } from '@prisma/client';
 import { Suspense, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
@@ -57,6 +58,10 @@ function UsersManager({ users, roles, spaces }: PropsType) {
       //   title: 'Error ',
       // });
     }
+    handleRevalidate({
+      path: '/users',
+      tag: 'getUsers',
+    });
   }
   return (
     <div>

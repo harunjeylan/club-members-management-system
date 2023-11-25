@@ -8,6 +8,7 @@ export default async function createRoleApi(req, res) {
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: spaceName },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
@@ -50,6 +51,7 @@ export default async function createRoleApi(req, res) {
           name: spaceName,
         },
       };
+      fieldsData["scop"] = RoleScop.SPACE
       populations['space'] = true;
     }
     if (users?.length) {

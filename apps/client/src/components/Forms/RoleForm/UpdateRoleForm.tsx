@@ -3,18 +3,18 @@ import handleUpdateRole from '@client/libs/client/handleUpdateRole';
 import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { AlertMessage } from '../../ui/Alert';
-import RoleForm from './RoleForm';
+import RoleForm, { RoleFormType } from './RoleForm';
 function UpdateRoleForm({
   role,
   spaces,
   spaceName,
 }: {
   role: Role;
-  spaces: Space[];
+  spaces?: Space[];
   spaceName?: string;
 }) {
   const [message, setMessage] = useState<AlertMessage>();
-  const initialValues: Partial<Role> = {
+  const initialValues: RoleFormType = {
     name: role.name ?? '',
     scop: role.scop ?? RoleScop.SPACE,
     code: role.code ?? RoleCode.MEMBER,
@@ -34,10 +34,16 @@ function UpdateRoleForm({
     };
   }, [message]);
 
-  async function onSubmit(values: Partial<Role>) {
+  async function onSubmit(values: RoleFormType) {
     console.log({ values });
 
-    const response = await handleUpdateRole(role.id, values);
+    const revalidateTags = [
+      ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
+    ];
+
+    const response = await handleUpdateRole(role.id, values, {
+      tags: revalidateTags,
+    });
 
     if (response.role) {
       setMessage({

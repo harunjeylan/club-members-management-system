@@ -1,4 +1,4 @@
-import { Event } from '@prisma/client';
+import { Category, Event } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
@@ -27,7 +27,7 @@ async function getEvents() {
     throw new Error('Failed to fetch data');
   }
 
-  const { events } = (await res.json()) as { events: Event[] };
+  const { events } = (await res.json()) as { events: (Event & { category: Category })[] };
   return events;
 }
 
