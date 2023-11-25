@@ -11,7 +11,7 @@ import {
   MdDashboard,
   MdEvent,
   MdWorkspaces,
-  MdCategory
+  MdCategory,
 } from 'react-icons/md';
 import { useSelector } from 'react-redux';
 type PropsType = {
@@ -21,7 +21,6 @@ function AdminSidebar({ userRoles }: PropsType) {
   const [searchLink, setSearchLink] = useState('');
   const userData = useSelector(selectCurrentUser);
   const [groups, setGroups] = useState(getLinks(userRoles, searchLink));
-console.log(groups, userRoles);
 
   useEffect(() => {
     setGroups(getLinks(userRoles, searchLink));
@@ -94,6 +93,9 @@ const linkGroups = [
         accessedFor: [
           { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
           { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+          { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+          { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+          { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
         ],
       },
       {
@@ -105,6 +107,7 @@ const linkGroups = [
           { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
           { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
           { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+          { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
         ],
       },
       {
@@ -134,6 +137,7 @@ const linkGroups = [
         accessedFor: [
           { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
           { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+          
         ],
       },
     ],

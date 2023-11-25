@@ -3,7 +3,9 @@ import * as yup from 'yup';
 import { ErrorMessage, Formik, FormikHelpers } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
 import Alert, { AlertMessage } from '../../ui/Alert';
-import { Role, Space } from '@prisma/client';
+import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
+import { UserWithAll } from 'types/user';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 
 export type UserFormType = {
   first_name: string;
@@ -18,20 +20,24 @@ export type UserFormType = {
 };
 
 type PropsType = {
+  user: UserWithAll;
   onSubmit: (values: any, formikHelpers: FormikHelpers<any>) => void;
   initialValues: UserFormType;
   message?: AlertMessage;
   setMessage: Dispatch<SetStateAction<AlertMessage | undefined>>;
   roles?: Role[];
   spaces?: Space[];
+  spaceName?: string;
 };
 export default function UserForm({
+  user,
   spaces,
   roles,
   onSubmit,
   initialValues,
   message,
   setMessage,
+  spaceName,
 }: PropsType) {
   const yupSchema = yup.object<UserFormType>({
     first_name: yup.string().required(),
@@ -42,6 +48,13 @@ export default function UserForm({
     setSpaces: yup.array(yup.string()),
     password: yup.string(),
   });
+  const superAdminRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+  ]);
+  const spaceAdminRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: spaceName },
+    { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+  ]);
   return (
     <Formik
       onSubmit={onSubmit}
@@ -233,7 +246,9 @@ export default function UserForm({
           ) : (
             ''
           )}
-          {roles?.length ? (
+          {((spaceName && !!spaceAdminRoles.length) ||
+            !!superAdminRoles.length) &&
+          roles?.length ? (
             <>
               {Object.keys(values).includes('setRoles') && (
                 <div className="col-span-2 flex flex-col gap-1 w-full">

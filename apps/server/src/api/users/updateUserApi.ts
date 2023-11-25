@@ -16,12 +16,14 @@ export default async function updateUserApi(req, res) {
     setSpaces,
     setRoles,
   } = req.body;
-  
 
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+    ]);
+    const adminRoles = getUserAccessRoles(req.user.roles, [
+      { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
@@ -54,7 +56,8 @@ export default async function updateUserApi(req, res) {
       };
       populations['spaces'] = true;
     }
-    if (setRoles?.length) {
+
+    if (!!adminRoles.length && setRoles?.length) {
       fieldsData['roles'] = {
         set: setRoles.map((roleId: string) => ({
           id: roleId,
@@ -70,7 +73,7 @@ export default async function updateUserApi(req, res) {
       };
       populations['spaces'] = true;
     }
-    if (addRoles?.length) {
+    if (!!adminRoles.length && addRoles?.length) {
       fieldsData['roles'] = {
         connect: addRoles.map((roleId: string) => ({
           id: roleId,
@@ -86,7 +89,7 @@ export default async function updateUserApi(req, res) {
       };
       populations['spaces'] = true;
     }
-    if (removeRoles?.length) {
+    if (!!adminRoles.length && removeRoles?.length) {
       fieldsData['roles'] = {
         disconnect: removeRoles.map((roleId: string) => ({
           id: roleId,

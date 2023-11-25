@@ -14,22 +14,32 @@ type PropsType = {
 };
 export default async function Layout({ children }: PropsType) {
   const user = await getCurrentUser();
-  
+
   if (!user) {
     return redirect('/auth/login');
   }
-  const userRoles = getUserAccessRoles(user.roles, [
+  const superAdminRoles = getUserAccessRoles(user.roles, [
     { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
     { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
   ]);
-  
-  if (!userRoles.length) {
+  const spaceRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+    { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+  ]);
+  const memberRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SUPER, code: RoleCode.MEMBER },
+    { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
+  ]);
+
+  if (![...superAdminRoles, ...spaceRoles, ...memberRoles].length) {
     return redirect('/auth/login');
   }
-  
+
   return (
     <main className="flex h-full w-full ">
-      <AdminSidebar userRoles={userRoles} />
+      <AdminSidebar
+        userRoles={[...superAdminRoles, ...spaceRoles, ...memberRoles]}
+      />
       <div className="w-full max-w-[100vw] overflow-x-auto mt-12">
         {children}
       </div>

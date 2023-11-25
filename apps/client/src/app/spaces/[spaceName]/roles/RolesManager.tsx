@@ -6,8 +6,10 @@ import RoleListTable from '@client/components/Tables/RoleListTable';
 import Model from '@client/components/ui/Model';
 import handleDeleteRole from '@client/libs/client/handleDeleteRole';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
-import { Role, Space } from '@prisma/client';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
+import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
 import React, { Suspense, useEffect, useState } from 'react';
+import { UserWithAll } from 'types/user';
 enum FormType {
   UPDATE_ROLE,
   CREATE_ROLE,
@@ -15,15 +17,22 @@ enum FormType {
 type PropsType = {
   roles: Role[];
   spaceName: string;
+  user: UserWithAll;
 };
-function RolesManager({ roles, spaceName }: PropsType) {
+function RolesManager({ roles, spaceName, user }: PropsType) {
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
   const [selected, setSelected] = useState<Role[]>([]);
   const [activeModel, setActiveModel] = useState<FormType | undefined>(
     undefined
   );
-  console.log(selected);
+  const superAdminRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+  ]);
+  const spaceAdminRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: spaceName },
+    { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+  ]);
 
   useEffect(() => {
     if (activeModel === FormType.CREATE_ROLE) {
@@ -58,6 +67,8 @@ function RolesManager({ roles, spaceName }: PropsType) {
       'tag[1]': `getSpaceDetails/${spaceName}`,
     });
   }
+  console.log(superAdminRoles, spaceAdminRoles);
+
   return (
     <div>
       <Model
@@ -66,25 +77,29 @@ function RolesManager({ roles, spaceName }: PropsType) {
         className=" p-4 bg-secondary-100 dark:bg-secondary-900 rounded"
         expandUrl={expandUrl}
       >
-        {activeModel === FormType.CREATE_ROLE && (
-          <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
-            <div className="text-xl font-bold">Create Role Form</div>
-            <CreateRoleForm spaceName={spaceName} />
-          </div>
-        )}
-        {activeModel === FormType.UPDATE_ROLE && selected.length === 1 && (
-          <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
-            <div className="text-xl font-bold">Update Role</div>
-            <Suspense fallback={<div>Loading..</div>}>
-              <UpdateRoleForm spaceName={spaceName} role={selected[0]} />
-            </Suspense>
-          </div>
-        )}
+        {(!!superAdminRoles.length || !!spaceAdminRoles.length) &&
+          activeModel === FormType.CREATE_ROLE && (
+            <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
+              <div className="text-xl font-bold">Create Role Form</div>
+              <CreateRoleForm spaceName={spaceName} />
+            </div>
+          )}
+        {(!!superAdminRoles.length || !!spaceAdminRoles.length) &&
+          activeModel === FormType.UPDATE_ROLE &&
+          selected.length === 1 && (
+            <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
+              <div className="text-xl font-bold">Update Role</div>
+              <Suspense fallback={<div>Loading..</div>}>
+                <UpdateRoleForm spaceName={spaceName} role={selected[0]} />
+              </Suspense>
+            </div>
+          )}
       </Model>
 
       <div className="flex justify-between w-full ">
         <div>
-          {selected.length ? (
+          {(!!superAdminRoles.length || !!spaceAdminRoles.length) &&
+          selected.length ? (
             <div className="flex flex-wrap gap-2">
               <button className="btn-danger py-1 px-4" onClick={deleteRoles}>
                 delete
@@ -106,16 +121,17 @@ function RolesManager({ roles, spaceName }: PropsType) {
             ''
           )}
         </div>
-
-        <button
-          onClick={() => {
-            setActiveModel(FormType.CREATE_ROLE);
-            setShow(true);
-          }}
-          className="btn-primary py-2 px-4 whitespace-nowrap h-fit"
-        >
-          Add Role
-        </button>
+        {(!!superAdminRoles.length || !!spaceAdminRoles.length) && (
+          <button
+            onClick={() => {
+              setActiveModel(FormType.CREATE_ROLE);
+              setShow(true);
+            }}
+            className="btn-primary py-2 px-4 whitespace-nowrap h-fit"
+          >
+            Add Role
+          </button>
+        )}
       </div>
       <div className="w-full my-2 p-2 overflow-x-auto bg-secondary-100 dark:bg-secondary-900">
         <Suspense fallback={<div>Loading..</div>}>

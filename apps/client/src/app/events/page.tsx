@@ -19,6 +19,8 @@ async function Page() {
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
     ]);
     events = await getEvents();
+    console.log({events});
+    
     categories = await getCategories();
   } else {
     events = await getPublishedEvents();

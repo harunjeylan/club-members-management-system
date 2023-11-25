@@ -10,6 +10,7 @@ import rolesRouter from './router/rolesRouter';
 import spacesRouter from './router/spacesRouter';
 import usersRouter from './router/usersRouter';
 import categoriesRouter from './router/categoriesRouter';
+import dashboardRouter from './router/dashboardRouter';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use('/roles', rolesRouter);
 app.use('/spaces', spacesRouter);
 app.use('/events', eventsRouter);
 app.use('/categories', categoriesRouter);
+app.use('/dashboard', dashboardRouter);
 
 const port = process.env.PORT || 8080;
 const server = app.listen(port, () => {

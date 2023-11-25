@@ -2,16 +2,25 @@
 
 import { AlertMessage } from '@client/components/ui/Alert';
 import handleUpdateUser from '@client/libs/client/handleUpdateUser';
-import { Role, Space } from '@prisma/client';
+import { Role, Space, User } from '@prisma/client';
 import { useEffect, useState } from 'react';
-import { UserWithProfileAndRoles } from 'types/user';
+import { UserWithAll } from 'types/user';
 import UserForm, { UserFormType } from './UserForm';
 
 type PropsType = {
-  user: Partial<UserWithProfileAndRoles & { spaces: Space[] }>;
+  user: UserWithAll;
   roles?: Role[];
   spaces?: Space[];
   spaceName?: string;
+  updateUser: {
+    first_name: string;
+    last_name: string;
+    username: string;
+    email: string;
+    password?: string | undefined;
+    roles?: Role[] | undefined;
+    spaces?: Space[] | undefined;
+  };
 };
 
 export default function UpdateUserForm({
@@ -19,15 +28,16 @@ export default function UpdateUserForm({
   roles,
   spaces,
   spaceName,
+  updateUser,
 }: PropsType) {
   const [message, setMessage] = useState<AlertMessage>();
   const initialValues: UserFormType = {
-    first_name: user.first_name ?? '',
-    last_name: user.last_name ?? '',
-    username: user.username ?? '',
-    email: user.email ?? '',
-    setRoles: user.roles?.map((role) => role.id) ?? [],
-    setSpaces: user.spaces?.map((role) => role.name) ?? [],
+    first_name: updateUser.first_name ?? '',
+    last_name: updateUser.last_name ?? '',
+    username: updateUser.username ?? '',
+    email: updateUser.email ?? '',
+    setRoles: updateUser.roles?.map((role) => role.id) ?? [],
+    setSpaces: updateUser.spaces?.map((role) => role.name) ?? [],
   };
 
   useEffect(() => {
@@ -50,7 +60,7 @@ export default function UpdateUserForm({
         title: 'Warning ',
       });
     }
-    
+
     const revalidateTags = [
       ...(values.setSpaces?.map(
         (spaceName) => `getSpaceDetails/${spaceName}`
@@ -83,12 +93,14 @@ export default function UpdateUserForm({
 
   return (
     <UserForm
+      user={user}
       roles={roles}
       spaces={spaces}
       onSubmit={onSubmit}
       initialValues={initialValues}
       message={message}
       setMessage={setMessage}
+      spaceName={spaceName}
     />
   );
 }

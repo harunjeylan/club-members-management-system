@@ -22,6 +22,8 @@ export default async function Layout({ children }: PropsType) {
     { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
     { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
     { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+    { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
+    { scop: RoleScop.SUPER, code: RoleCode.MEMBER },
   ]);
   return (
     <main className="flex h-full w-full ">

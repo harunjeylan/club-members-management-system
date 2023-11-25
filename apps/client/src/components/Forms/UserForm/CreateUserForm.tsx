@@ -4,12 +4,15 @@ import handleCreateUser from '@client/libs/client/handleCreateUser';
 import { Role, Space } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import UserForm, { UserFormType } from './UserForm';
+import { UserWithAll } from 'types/user';
 type PropsType = {
   roles?: Role[];
   spaces?: Space[];
   spaceName?: string;
+  user: UserWithAll;
 };
 export default function CreateUserForm({
+  user,
   roles,
   spaces,
   spaceName,
@@ -43,9 +46,8 @@ export default function CreateUserForm({
     }
 
     const revalidateTags = [
-      ...(values.addRoles?.map(
-        (spaceName) => `getSpaceDetails/${spaceName}`
-      ) ?? []),
+      ...(values.addRoles?.map((spaceName) => `getSpaceDetails/${spaceName}`) ??
+        []),
       ...(values.addSpaces?.map((roleId) => `getRoleDetails/${roleId}`) ?? []),
       ...(spaceName ? [`getSpaceDetails/${spaceName}`] : []),
     ];
@@ -74,12 +76,14 @@ export default function CreateUserForm({
 
   return (
     <UserForm
+      user={user}
       roles={roles}
       spaces={spaces}
       onSubmit={onSubmit}
       initialValues={initialValues}
       message={message}
       setMessage={setMessage}
+      spaceName={spaceName}
     />
   );
 }

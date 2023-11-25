@@ -1,4 +1,4 @@
-import { RoleCode, RoleScop } from '@prisma/client';
+import { Role, RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import getArrayValues from '@libs/utils/getArrayValues';
@@ -7,15 +7,6 @@ export default async function getOneEventApi(req, res) {
   const { eventId } = req.params;
   const { populate } = req.query;
   try {
-    const userAccessRoles = getUserAccessRoles(req.user.roles, [
-      { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
-      { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-      { scop: RoleScop.SUPER, code: RoleCode.MEMBER },
-      { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
-      { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
-      { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
-    ]);
-
     let populations = {};
     getArrayValues(populate).forEach((item: string) => {
       if (item === 'space') {
@@ -25,19 +16,34 @@ export default async function getOneEventApi(req, res) {
         populations['category'] = true;
       }
     });
-    if (!userAccessRoles.length) {
-      const events = await prisma.event.findFirst({
-        where: { id: eventId, published: true },
+    const superAdminRoles = getUserAccessRoles(req.user.roles, [
+      { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+      { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+    ]);
+    if (!!superAdminRoles.length) {
+      const event = await prisma.event.findFirst({
         include: populations,
+        where: { id: eventId },
       });
       return res.status(200).json({
-        events: events,
+        event: event,
       });
     }
     const event = await prisma.event.findFirst({
-      where: { id: eventId },
       include: populations,
+      where: {
+        id: eventId,
+        OR: [
+          {
+            spaceName: {
+              in: req.user.roles.map((member: Role) => member.name),
+            },
+          },
+          { published: true },
+        ],
+      },
     });
+
     return res.status(200).json({
       event: event,
     });

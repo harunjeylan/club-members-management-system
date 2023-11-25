@@ -9,18 +9,17 @@ export function getUserAccessRoles(
   }[]
 ) {
   return userRoles.filter((userRole) => {
-    return roles.find((role) => {
-      if (!(role.scop === userRole.scop && role.code === userRole.code)) {
-        if (
-          !(
-            Object.keys(role).includes('spaceName') &&
-            role.spaceName === userRole.spaceName
-          )
-        ) {
+    return !!roles.find((role) => {
+      if (role.scop === userRole.scop && role.code === userRole.code) {
+        if (Object.keys(role).includes('spaceName')) {
+          if (role.spaceName === userRole.spaceName) {
+            return true;
+          }
           return false;
         }
+        return true
       }
-      return true;
+      return false;
     });
   });
 }

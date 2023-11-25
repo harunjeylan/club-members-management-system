@@ -23,12 +23,21 @@ function Profile() {
 
   useEffect(() => {
     if (user && user.roles) {
-      const superAdminRole = getUserAccessRoles(user.roles, [
+      const superAdminRoles = getUserAccessRoles(user.roles, [
         { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
         { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
       ]);
-      if (superAdminRole?.length) {
-        setAllowedRoles(superAdminRole);
+      const spaceRoles = getUserAccessRoles(user.roles, [
+        { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+        { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+      ]);
+      const memberRoles = getUserAccessRoles(user.roles, [
+        { scop: RoleScop.SUPER, code: RoleCode.MEMBER },
+        { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
+      ]);
+
+      if ([...superAdminRoles, ...spaceRoles, ...memberRoles].length) {
+        setAllowedRoles([...superAdminRoles, ...spaceRoles, ...memberRoles]);
       }
     }
   }, [user?.roles]);
@@ -65,7 +74,7 @@ function Profile() {
           ''
         )}
         <ul className="flex flex-col gap-1">
-          {allowedRoles.length ? (
+          {!!allowedRoles.length ? (
             <li className="flex hover:bg-secondary-200 dark:hover:bg-secondary-700">
               <Link href={'/dashboard'} className="w-full py-2 px-2 ">
                 Dashboard
@@ -81,7 +90,7 @@ function Profile() {
               <li className="flex">
                 <button
                   onClick={() =>
-                    handleLogout(dispatch, () => router.push('auth/login'))
+                    handleLogout(dispatch, () => router.push('/auth/login'))
                   }
                   className="w-full btn-primary py-2 px-2"
                 >

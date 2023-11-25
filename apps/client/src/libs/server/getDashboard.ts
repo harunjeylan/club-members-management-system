@@ -1,19 +1,18 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
-import { UserWithAll } from 'types/user';
 import { host } from '../../config/host.config';
 
-async function getUsers() {
+export default async function getDashboard() {
   const cookieStore = cookies();
   if (!cookieStore.has('token')) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/users?populate=profile&populate=roles&populate=spaces`;
+  const url = `${host}/dashboard?populate=spaces&populate=categories&populate=users&populate=superAdmins&populate=superEditors&populate=spaceAdmins&populate=spaceEditors&populate=events`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getUsers'], revalidate: 3600 * 12 },
+    next: { tags: ['getDashboard'], revalidate: 3600 * 12 },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
@@ -26,8 +25,14 @@ async function getUsers() {
     throw new Error('Failed to fetch data');
   }
 
-  const { users } = (await res.json()) as { users: UserWithAll[] };
-  return users;
+  return (await res.json()) as {
+    spaces?: number;
+    categories?: number;
+    users?: number;
+    superAdmins?: number;
+    superEditors?: number;
+    spaceAdmins?: number;
+    spaceEditors?: number;
+    events?: number;
+  };
 }
-
-export default getUsers;

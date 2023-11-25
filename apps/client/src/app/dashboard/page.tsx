@@ -1,73 +1,50 @@
-import Header2 from '@client/components/ui/Header2';
-import { BiUserCircle } from 'react-icons/bi';
+import getCurrentUser from '@client/libs/server/getCurrentUser';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
+import { RoleCode, RoleScop } from '@prisma/client';
+import { redirect } from 'next/navigation';
+import SuperAdminDashboard from './SuperAdminDashboard';
+import SpaceAdminDashboard from './SpaceAdminDashboard';
+import MemberAdminDashboard from './MemberAdminDashboard';
 
 async function Page() {
-  return (
-    <main>
-      <section className="w-full flex flex-col gap-8 p-4">
-        <div className="flex justify-between w-full  border-b border-secondary-500 my-4 pb-2">
-          <Header2 title="Dashboard" />
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 xl:grid-cols-10 gap-4">
-          <div className="col-span-2 rounded-md bg-secondary-200 dark:bg-secondary-900">
-            <div className="flex flex-col gap-4 p-10 mx-auto mt-auto justify-center items-center">
-              <BiUserCircle size={80} />
-              <div className="flex items-center gap-2">
-                <div className="text-3xl font-extrabold">5</div>
-                <div className="text-2xl font-extrabold">Spaces</div>
-              </div>
-            </div>
-          </div>
-          <div className="col-span-2 rounded-md bg-secondary-200 dark:bg-secondary-900">
-            <div className="flex flex-col gap-4 p-10 mx-auto mt-auto justify-center items-center">
-              <BiUserCircle size={80} />
-              <div className="flex items-center gap-2">
-                <div className="text-3xl font-extrabold">5</div>
-                <div className="text-2xl font-extrabold">Members</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-span-2 rounded-md bg-secondary-200 dark:bg-secondary-900">
-            <div className="flex flex-col gap-4 p-10 mx-auto mt-auto justify-center items-center">
-              <BiUserCircle size={80} />
-              <div className="flex items-center gap-2">
-                <div className="text-3xl font-extrabold">5</div>
-                <div className="text-2xl font-extrabold">Admins</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-span-2 rounded-md bg-secondary-200 dark:bg-secondary-900">
-            <div className="flex flex-col gap-4 p-10 mx-auto mt-auto justify-center items-center">
-              <BiUserCircle size={80} />
-              <div className="flex items-center gap-2">
-                <div className="text-3xl font-extrabold">5</div>
-                <div className="text-2xl font-extrabold">Editors</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-span-2 rounded-md bg-secondary-200 dark:bg-secondary-900">
-            <div className="flex flex-col gap-4 p-10 mx-auto mt-auto justify-center items-center">
-              <BiUserCircle size={80} />
-              <div className="flex items-center gap-2">
-                <div className="text-3xl font-extrabold">5</div>
-                <div className="text-2xl font-extrabold">Events</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-full h-full flex rounded-md bg-secondary-200 dark:bg-secondary-900">
-          <div className="mx-auto h-80 flex items-center justify-center">
-            <div className="my-auto  text-xl md:text-4xl p-8 font-bold">
-              Manage Your Club Members
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  );
+  const user = await getCurrentUser();
+  if (!user) {
+    return redirect('/auth/login');
+  }
+  const superAdminRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+    { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+  ]);
+  if (!!superAdminRoles.length) {
+    return (
+      <main>
+        <SuperAdminDashboard />
+      </main>
+    );
+  }
+  const spaceRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+    { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+  ]);
+  if (!!spaceRoles.length) {
+    return (
+      <main>
+        <SpaceAdminDashboard />
+      </main>
+    );
+  }
+  const memberRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SUPER, code: RoleCode.MEMBER },
+    { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
+  ]);
+  if (!!memberRoles.length) {
+    return (
+      <main>
+        <MemberAdminDashboard />
+      </main>
+    );
+  }
+  return <main></main>;
 }
 
 export default Page;

@@ -17,16 +17,20 @@ export default async function Layout({ children }: PropsType) {
   if (!user) {
     return redirect('/auth/login');
   }
-  const userRoles = getUserAccessRoles(user.roles, [
+  const adminRoles = getUserAccessRoles(user.roles, [
     { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
     { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
   ]);
-  if (!userRoles.length) {
+  const userRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+    { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+  ]);
+  if (![...userRoles, ...adminRoles].length) {
     return redirect('/auth/login');
   }
   return (
     <main className="flex h-full w-full ">
-      <AdminSidebar userRoles={userRoles} />
+      {user && adminRoles.length ? <AdminSidebar userRoles={adminRoles} /> : ''}
       <div className="w-full max-w-[100vw] overflow-x-auto mt-12">
         {children}
       </div>

@@ -1,4 +1,4 @@
-import { Role, RoleCode, RoleScop } from '@prisma/client';
+import { Role, RoleCode, RoleScop, User } from '@prisma/client';
 import prisma from '../../prisma/PrismaClient';
 import getArrayValues from '@libs/utils/getArrayValues';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
@@ -11,6 +11,8 @@ export default async function getOneUserApi(req, res) {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+      { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
@@ -24,14 +26,15 @@ export default async function getOneUserApi(req, res) {
       if (item === 'profile') {
         populations['profile'] = {
           include: {
-            image:true
-          }
+            image: true,
+          },
         };
       }
       if (item === 'spaces') {
         populations['spaces'] = true;
       }
     });
+
     const user = await prisma.user.findFirst({
       where: {
         id: userId,
