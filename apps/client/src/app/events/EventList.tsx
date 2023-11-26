@@ -16,7 +16,7 @@ function EventList({ events }: { events: (Event & { category: Category })[] }) {
           <VerticalTimelineElement
             className="p-2"
             key={event.id}
-            date={`${formatDateTime(event.startAt)} - ${formatDateTime(
+            date={`${formatDateTime(event.startAt)} to ${formatDateTime(
               event.endAt
             )}`}
             iconStyle={{ background: '#3b82f6' }}
