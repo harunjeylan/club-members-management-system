@@ -82,9 +82,15 @@ export default async function adminDashboard(req, res) {
       populations['spaceEditors'] = spaceEditors;
     }
     if (populateArray.includes('events')) {
-      const events = await prisma.user.count();
+      const events = await prisma.event.count();
 
       populations['events'] = events;
+      console.log({ populations });
+    }
+    if (populateArray.includes('blogs')) {
+      const blogs = await prisma.blog.count();
+
+      populations['blogs'] = blogs;
       console.log({ populations });
     }
 

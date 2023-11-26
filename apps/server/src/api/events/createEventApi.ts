@@ -80,6 +80,14 @@ export default async function createEventApi(req, res) {
       categoryId,
       spaceName,
     };
+    
+    if (fieldsData['startAt']) {
+      fieldsData['startAt'] = new Date(fieldsData['startAt']).toISOString();
+    }
+    if (fieldsData['endAt']) {
+      fieldsData['endAt'] = new Date(fieldsData['endAt']).toISOString();
+    }
+
     let populations = {};
     if (fieldsData['categoryId']?.length) {
       populations['category'] = true;

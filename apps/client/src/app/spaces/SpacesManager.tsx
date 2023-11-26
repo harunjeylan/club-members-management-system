@@ -3,7 +3,7 @@ import CreateSpaceForm from '@client/components/Forms/SpaceForm/CreateSpaceForm'
 import UpdateSpaceForm from '@client/components/Forms/SpaceForm/UpdateSpaceForm';
 import SpaceListTable from '@client/components/Tables/SpaceListTable';
 import Model from '@client/components/ui/Model';
-import handleDeleteSpace from '@client/libs/client/handleDeleteSpace';
+import handleDeleteSpace from '@client/libs/client/space/handleDeleteSpace';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { Role, RoleCode, RoleScop, Space } from '@prisma/client';

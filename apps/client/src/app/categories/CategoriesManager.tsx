@@ -2,7 +2,7 @@
 
 import CreateCategoryForm from '@client/components/Forms/CreateCategoryForm';
 import Model from '@client/components/ui/Model';
-import handleDeleteCategory from '@client/libs/client/handleDeleteCategory';
+import handleDeleteCategory from '@client/libs/client/category/handleDeleteCategory';
 import { Category } from '@prisma/client';
 import { Suspense, useState } from 'react';
 type PropsType = {

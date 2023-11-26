@@ -1,7 +1,7 @@
 'use client';
 
 import { AlertMessage } from '@client/components/ui/Alert';
-import handleUpdateUser from '@client/libs/client/handleUpdateUser';
+import handleUpdateUser from '@client/libs/client/user/handleUpdateUser';
 import { Role, Space, User } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';

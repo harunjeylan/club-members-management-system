@@ -1,6 +1,6 @@
 'use client';
 import { setUser } from '@client/libs/features/userSlice';
-import handleLogin from '@client/libs/client/handleLogin';
+import handleLogin from '@client/libs/client/user/handleLogin';
 import { ErrorMessage, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';

@@ -3,7 +3,7 @@ import { ErrorMessage, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import Alert, { AlertMessage } from '../ui/Alert';
-import handleCreateCategory from '@client/libs/client/handleCreateCategory';
+import handleCreateCategory from '@client/libs/client/category/handleCreateCategory';
 import { Category } from '@prisma/client';
 function CreateCategoryForm({ categories }: { categories: Category[] }) {
   const [message, setMessage] = useState<AlertMessage>();

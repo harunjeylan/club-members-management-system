@@ -1,5 +1,5 @@
 'use client';
-import handleUpdateEvent from '@client/libs/client/handleUpdateEvent';
+import handleUpdateEvent from '@client/libs/client/event/handleUpdateEvent';
 import { Category, Event, Repeat } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { AlertMessage } from '../../ui/Alert';

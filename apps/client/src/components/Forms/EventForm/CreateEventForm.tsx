@@ -1,5 +1,5 @@
 'use client';
-import handleCreateEvent from '@client/libs/client/handleCreateEvent';
+import handleCreateEvent from '@client/libs/client/event/handleCreateEvent';
 import { Category, Event, Repeat } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import * as yup from 'yup';

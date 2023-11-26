@@ -72,12 +72,7 @@ export default function EventForm({
           onSubmit={handleSubmit}
           className=" w-full grid grid-cols-2 gap-4"
         >
-          <>
-            {console.log({
-              initialValues: initialValues.endAt,
-              values: values.endAt,
-            })}
-          </>
+         
           {message && (
             <div className="col-span-2">
               <Alert

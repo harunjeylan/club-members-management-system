@@ -22,6 +22,7 @@ async function Navbar() {
             <Profile />
           </div>
           <NavLink>
+            <Link href={'/blogs'}>Blogs</Link>
             <Link href={'/events'}>Events</Link>
             <Link href={'/about'}>About</Link>
             <Link href={'/contact'}>Contact</Link>

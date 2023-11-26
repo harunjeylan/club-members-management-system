@@ -1,5 +1,5 @@
 'use client';
-import handleCreateRole from '@client/libs/client/handleCreateRole';
+import handleCreateRole from '@client/libs/client/role/handleCreateRole';
 import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { AlertMessage } from '../../ui/Alert';

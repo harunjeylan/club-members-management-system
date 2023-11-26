@@ -4,7 +4,7 @@ import CreateEventForm from '@client/components/Forms/EventForm/CreateEventForm'
 import UpdateEventForm from '@client/components/Forms/EventForm/UpdateEventForm';
 import EventListTable from '@client/components/Tables/EventListTable';
 import Model from '@client/components/ui/Model';
-import handleDeleteEvent from '@client/libs/client/handleDeleteEvent';
+import handleDeleteEvent from '@client/libs/client/event/handleDeleteEvent';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { Category, Event } from '@prisma/client';
 import { Suspense, useEffect, useState } from 'react';

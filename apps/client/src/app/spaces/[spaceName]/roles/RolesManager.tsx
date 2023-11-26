@@ -4,7 +4,7 @@ import CreateRoleForm from '@client/components/Forms/RoleForm/CreateRoleForm';
 import UpdateRoleForm from '@client/components/Forms/RoleForm/UpdateRoleForm';
 import RoleListTable from '@client/components/Tables/RoleListTable';
 import Model from '@client/components/ui/Model';
-import handleDeleteRole from '@client/libs/client/handleDeleteRole';
+import handleDeleteRole from '@client/libs/client/role/handleDeleteRole';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { Role, RoleCode, RoleScop, Space } from '@prisma/client';

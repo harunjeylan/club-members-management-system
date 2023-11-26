@@ -6,7 +6,7 @@ async function getPublishedEventDetails(eventId: string) {
   const url = `${host}/events/${eventId}?populate=space&populate=category`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: [`getEventDetails/${eventId}`], revalidate: 3600 * 12 },
+    next: { tags: [`getPublishedEventDetails/${eventId}`], revalidate: 3600 * 12 },
   });
 
   if (!res.ok) {
@@ -16,8 +16,8 @@ async function getPublishedEventDetails(eventId: string) {
     throw new Error('Failed to fetch data');
   }
 
-  const { events } = (await res.json()) as { events: (Event & { category: Category })[] };
-  return events;
+  const { event } = (await res.json()) as { event: (Event & { category: Category })[] };
+  return event;
 }
 
 export default getPublishedEventDetails;

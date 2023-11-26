@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import Alert, { AlertMessage } from '../ui/Alert';
-import handleRegister from '@client/libs/client/handleRegister';
+import handleRegister from '@client/libs/client/user/handleRegister';
 function RegisterForm() {
   const router = useRouter();
   const dispatch = useDispatch();

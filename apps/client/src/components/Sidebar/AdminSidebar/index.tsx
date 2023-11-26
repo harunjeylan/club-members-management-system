@@ -3,16 +3,17 @@ import Sidebar from '@client/components/ui/Sidebar';
 import { selectCurrentUser } from '@client/libs/features/userSlice';
 import { Role, RoleCode, RoleScop } from '@prisma/client';
 import Link from 'next/link';
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiFillSetting } from 'react-icons/ai';
 import { FaUsers } from 'react-icons/fa';
 import {
   MdAdminPanelSettings,
+  MdCategory,
   MdDashboard,
   MdEvent,
   MdWorkspaces,
-  MdCategory,
 } from 'react-icons/md';
+import { TbBrandBlogger } from 'react-icons/tb';
 import { useSelector } from 'react-redux';
 type PropsType = {
   userRoles: Partial<Role>[];
@@ -137,7 +138,15 @@ const linkGroups = [
         accessedFor: [
           { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
           { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-          
+        ],
+      },
+      {
+        name: 'Blogs',
+        link: '/blogs',
+        Icon: TbBrandBlogger,
+        accessedFor: [
+          { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+          { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
         ],
       },
     ],

@@ -1,5 +1,5 @@
 'use client';
-import handleLogout from '@client/libs/client/handleLogout';
+import handleLogout from '@client/libs/client/user/handleLogout';
 import {
   selectCurrentUser,
   selectToken,

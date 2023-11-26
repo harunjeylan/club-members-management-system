@@ -1,6 +1,6 @@
 'use client';
 import { AlertMessage } from '@client/components/ui/Alert';
-import handleCreateUser from '@client/libs/client/handleCreateUser';
+import handleCreateUser from '@client/libs/client/user/handleCreateUser';
 import { Role, Space } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import UserForm, { UserFormType } from './UserForm';

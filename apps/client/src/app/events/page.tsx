@@ -6,7 +6,7 @@ import getCurrentUser from '@client/libs/server/getCurrentUser';
 import { Category, Event, Role, RoleCode, RoleScop } from '@prisma/client';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import getPublishedEvents from '@client/libs/server/getPublishedEvents';
-import EventList from './EventList';
+import EventList from '../../components/Event/EventList';
 
 async function Page() {
   const user = await getCurrentUser();

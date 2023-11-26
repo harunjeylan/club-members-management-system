@@ -11,6 +11,7 @@ import spacesRouter from './router/spacesRouter';
 import usersRouter from './router/usersRouter';
 import categoriesRouter from './router/categoriesRouter';
 import dashboardRouter from './router/dashboardRouter';
+import blogsRouter from './router/blogsRouter';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use('/users', usersRouter);
 app.use('/roles', rolesRouter);
 app.use('/spaces', spacesRouter);
 app.use('/events', eventsRouter);
+app.use('/blogs', blogsRouter);
 app.use('/categories', categoriesRouter);
 app.use('/dashboard', dashboardRouter);
 

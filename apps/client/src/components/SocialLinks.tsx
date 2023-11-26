@@ -21,7 +21,7 @@ export default function SocialLinks() {
         />
       </Link>
       <Link
-        target="_blank"
+        target="_blank "
         href={'https://et.linkedin.com/company/csec-astu'}
         className=""
       >

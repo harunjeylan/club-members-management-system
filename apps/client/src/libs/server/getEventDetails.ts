@@ -1,10 +1,10 @@
-import { Event } from '@prisma/client';
+import { Category, Event } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
 import { host } from '../../config/host.config';
 
-async function getEvents(eventId: string) {
+export default async function getEventDetails(eventId: string) {
   const cookieStore = cookies();
   if (!cookieStore.has('token')) {
     return redirect('/auth/login');
@@ -26,8 +26,7 @@ async function getEvents(eventId: string) {
     throw new Error('Failed to fetch data');
   }
 
-  const { events } = (await res.json()) as { events: Event[] };
-  return events;
+  const { event } = (await res.json()) as { event: (Event & { category: Category })[] };
+  return event;
 }
 
-export default getEvents;

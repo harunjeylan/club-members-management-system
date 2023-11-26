@@ -9,7 +9,7 @@ export default async function getDashboard() {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/dashboard?populate=spaces&populate=categories&populate=users&populate=superAdmins&populate=superEditors&populate=spaceAdmins&populate=spaceEditors&populate=events`;
+  const url = `${host}/dashboard?populate=spaces&populate=categories&populate=users&populate=superAdmins&populate=superEditors&populate=spaceAdmins&populate=spaceEditors&populate=events&populate=blogs`;
   const res = await fetch(url, {
     method: 'GET',
     next: { tags: ['getDashboard'], revalidate: 3600 * 12 },
@@ -28,6 +28,7 @@ export default async function getDashboard() {
   return (await res.json()) as {
     spaces?: number;
     categories?: number;
+    blogs?: number;
     users?: number;
     superAdmins?: number;
     superEditors?: number;

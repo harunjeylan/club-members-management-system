@@ -1,6 +1,6 @@
 'use client';
 import Sidebar from '@client/components/ui/Sidebar';
-import handleLogout from '@client/libs/client/handleLogout';
+import handleLogout from '@client/libs/client/user/handleLogout';
 import { selectCurrentUser } from '@client/libs/features/userSlice';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
