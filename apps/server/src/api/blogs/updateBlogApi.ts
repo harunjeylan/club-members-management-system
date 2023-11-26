@@ -5,7 +5,7 @@ import getFieldsData from '@libs/utils/getFieldsData';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 
 export default async function updateBlogApi(req, res) {
-  const { blogId } = req.params;
+  const { slug } = req.params;
   const fields = [
     'title',
     'slug',
@@ -61,6 +61,7 @@ export default async function updateBlogApi(req, res) {
       });
     }
 
+    
     if (fieldsData['published']) {
       fieldsData['publishedAt'] = new Date().toISOString();
     }
@@ -75,10 +76,11 @@ export default async function updateBlogApi(req, res) {
     if (fieldsData['fileModelId']?.length) {
       populations['image'] = true;
     }
+    console.log({fieldsData});
 
     const blog = await prisma.blog.update({
       where: {
-        id: blogId,
+        slug: slug,
       },
       data: fieldsData,
       include: populations,

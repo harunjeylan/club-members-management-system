@@ -23,7 +23,6 @@ function UpdateBlogForm({
     keyword: blog.keyword ?? '',
     categoryId: blog.categoryId ?? '',
     fileModelId: blog.fileModelId ?? '',
-    authorId: blog.authorId ?? '',
     spaceName: spaceName ?? blog.spaceName ?? '',
   };
 
@@ -44,7 +43,7 @@ function UpdateBlogForm({
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
-    const response = await handleUpdateBlog(blog.id, values, {
+    const response = await handleUpdateBlog(blog.slug, values, {
       tags: revalidateTags,
     });
     console.log({ response });

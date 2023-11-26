@@ -98,7 +98,7 @@ export default async function SuperAdminDashboard() {
             <MdEvent size={80} />
             <div className="flex items-center gap-2">
               <div className="text-3xl font-extrabold">
-                {dashboard.spaceAdmins}
+                {dashboard.events}
               </div>
               <div className="text-2xl font-extrabold">Events</div>
             </div>

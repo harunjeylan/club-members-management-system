@@ -2,48 +2,31 @@ import { host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import handleRevalidate from '../handleRevalidate';
+import { FileModel } from '@prisma/client';
 
-export default async function handleCreateBlog(
-  values: {
-    title: string;
-    slug: string;
-    published: boolean;
-    description: string;
-    content: string;
-    keyword: string;
-    categoryId: string;
-    spaceName: string;
-    fileModelId: string;
-  },
+export default async function handleUploadFile(
+  files: any,
   revalidateOptions?: { paths?: string[]; tags?: string[] }
 ) {
   try {
     const token = getCookie('token');
-    const url = `${host}/blogs`;
-    const payloadData = {
-      title: values.title,
-      slug: values.slug,
-      published: values.published,
-      description: values.description,
-      content: values.content,
-      keyword: values.keyword,
-      categoryId: values.categoryId,
-      spaceName: values.spaceName,
-      fileModelId: values.fileModelId,
-    };
     if (typeof token === 'undefined') {
       return;
     }
+    const formData = new FormData();
+    Object.keys(files).forEach((key) => {
+      formData.append(files.item(key).name, files.item(key));
+    });
 
     const payload = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.post(url, payloadData, payload);
+    const url = `${host}/files`;
+    const res = await axios.post(url, formData, payload);
     const revalidate: any = {
-      path: '/blogs',
-      tag: 'getBlogs',
+      'tag[0]': `getFiles`,
     };
     revalidateOptions?.tags?.forEach((tag, ind) => {
       revalidate['tag[' + (6 + ind) + ']'] = tag;
@@ -52,7 +35,8 @@ export default async function handleCreateBlog(
       revalidate['path[' + (6 + ind) + ']'] = path;
     });
     handleRevalidate(revalidate);
-    return res.data;
+
+    return res.data as { files: FileModel[] };
   } catch (error: any) {
     return error?.response?.data ?? { error: 'Unknown Error' };
   }

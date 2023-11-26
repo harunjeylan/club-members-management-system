@@ -1,10 +1,10 @@
 import CreateEventForm from '@client/components/Forms/EventForm/CreateEventForm';
-import RoleForm from '@client/components/Forms/RoleForm/CreateRoleForm';
-import Header2 from '@client/components/ui/Header2';
+import { Category } from '@prisma/client';
 import Link from 'next/link';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 
 async function Page() {
+  let categories: Category[] = [];
   return (
     <section className="w-full ">
       <div className="flex justify-start">
@@ -20,7 +20,7 @@ async function Page() {
         <div className="max-w-4xl mx-auto flex flex-col w-full gap-4 p-8 bg-secondary-100 dark:bg-secondary-900 rounded">
           <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
             <div className="text-xl font-bold">Event Creation Form</div>
-            <CreateEventForm />
+            <CreateEventForm categories={categories} />
           </div>
         </div>
       </div>

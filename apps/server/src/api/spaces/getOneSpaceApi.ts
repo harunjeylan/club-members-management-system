@@ -42,6 +42,17 @@ export default async function getOneSpaceApi(req, res) {
           },
         };
       }
+      if (item === 'blogs') {
+        populations['blogs'] = {
+          include: {
+            blogs: {
+              include: {
+                image: true,
+              },
+            },
+          },
+        };
+      }
     });
     let space = null;
     if (adminAccessRoles.length) {

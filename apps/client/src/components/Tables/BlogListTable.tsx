@@ -82,6 +82,20 @@ function BlogListTable({ blogs, baseUrl, setSelected }: PropsType) {
         footer: (props) => props.column.id,
       },
       {
+        accessorFn: (row) => row.slug,
+        id: 'slug',
+        cell: (info) => info.getValue(),
+        header: () => <span>Slug</span>,
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorFn: (row) => row.description,
+        id: 'description',
+        cell: (info) => info.getValue(),
+        header: () => <span>Description</span>,
+        footer: (props) => props.column.id,
+      },
+      {
         accessorFn: (row) => row.published,
         id: 'published',
         cell: (info) => (

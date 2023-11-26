@@ -15,6 +15,9 @@ export default async function getOneBlogApi(req, res) {
       if (item === 'category') {
         populations['category'] = true;
       }
+      if (item === 'image') {
+        populations['image'] = true;
+      }
     });
     const superAdminRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },

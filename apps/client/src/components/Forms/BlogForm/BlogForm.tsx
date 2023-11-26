@@ -5,6 +5,7 @@ import Alert, { AlertMessage } from '@client/components/ui/Alert';
 import { Category } from '@prisma/client';
 import { ErrorMessage, Formik, FormikHelpers } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
+import UploadFiles from '../UploadFiles';
 export type BlogFormType = {
   title: string;
   slug: string;
@@ -15,7 +16,6 @@ export type BlogFormType = {
   categoryId: string;
   spaceName: string;
   fileModelId: string;
-  authorId: string;
 };
 type PropsType = {
   onSubmit: (values: any, formikHelpers: FormikHelpers<any>) => void;
@@ -42,7 +42,6 @@ export default function BlogForm({
     categoryId: yup.string(),
     spaceName: yup.string(),
     fileModelId: yup.string(),
-    authorId: yup.string(),
   });
 
   return (
@@ -59,6 +58,7 @@ export default function BlogForm({
         handleBlur,
         handleSubmit,
         isSubmitting,
+        setFieldValue,
       }) => (
         <form
           onSubmit={handleSubmit}
@@ -73,7 +73,7 @@ export default function BlogForm({
             </div>
           )}
 
-          <div className="col-span-2 flex flex-col gap-1 w-full">
+          <div className="col-span-1 flex flex-col gap-1 w-full">
             <label>Title</label>
             <input
               type="text"
@@ -89,6 +89,26 @@ export default function BlogForm({
             />
             <ErrorMessage
               name="title"
+              component="div"
+              className="text-red-500 dark:text-red-300"
+            />
+          </div>
+          <div className="col-span-1 flex flex-col gap-1 w-full">
+            <label>Slug</label>
+            <input
+              type="text"
+              name="slug"
+              className={`input ${
+                !!touched.slug && !!errors.slug
+                  ? 'bg-red-300/50 border border-red-500'
+                  : ''
+              }`}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.slug}
+            />
+            <ErrorMessage
+              name="slug"
               component="div"
               className="text-red-500 dark:text-red-300"
             />
@@ -119,7 +139,25 @@ export default function BlogForm({
               className="text-red-500 dark:text-red-300"
             />
           </div>
-
+          <div className="col-span-1 py-2 flex items-center gap-1 w-full">
+            <label>Image</label>
+            <UploadFiles
+              onUpload={(files) => {
+                setFieldValue('fileModelId', files?.[0].id);
+              }}
+              title="Image"
+            >
+              {({ setShow }) => (
+                <button
+                  type="button"
+                  onClick={() => setShow((prev) => !prev)}
+                  className="btn-primary py-2 px-4"
+                >
+                  Upload Image
+                </button>
+              )}
+            </UploadFiles>
+          </div>
           <div className="col-span-1 py-2 flex items-center gap-1 w-full">
             <input
               checked={values.published}
@@ -166,6 +204,25 @@ export default function BlogForm({
             />
             <ErrorMessage
               name="description"
+              component="div"
+              className="text-red-500 dark:text-red-300"
+            />
+          </div>
+          <div className="col-span-2 flex flex-col gap-1 w-full">
+            <label>Content</label>
+            <textarea
+              name="content"
+              className={`input ${
+                !!touched.content && !!errors.content
+                  ? 'bg-red-300/50 border border-red-500'
+                  : ''
+              }`}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.content ?? ''}
+            />
+            <ErrorMessage
+              name="content"
               component="div"
               className="text-red-500 dark:text-red-300"
             />

@@ -11,7 +11,6 @@ import BlogsManager from './BlogsManager';
 async function Page() {
   const user = await getCurrentUser();
   let blogs: (Blog & { category: Category })[] = [];
-  let categories: Category[] = [];
   let userRoles: Partial<Role>[] = [];
   if (user) {
     userRoles = getUserAccessRoles(user.roles, [
@@ -19,9 +18,7 @@ async function Page() {
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
     ]);
     blogs = await getBlogs();
-    console.log({blogs});
     
-    categories = await getCategories();
   } else {
     blogs = await getPublishedBlogs();
   }

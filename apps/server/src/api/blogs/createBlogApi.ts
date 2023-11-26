@@ -2,20 +2,22 @@ import { RoleCode, RoleScop, Blog, Repeat } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { z } from 'zod';
+import getFieldsData from '@libs/utils/getFieldsData';
 
 export default async function createBlogApi(req, res) {
-  const {
-    title,
-    slug,
-    published,
-    description,
-    content,
-    keyword,
-    categoryId,
-    spaceName,
-    fileModelId,
-    authorId,
-  }: Blog = req.body;
+  const { spaceName }: Blog = req.body;
+  const fields = [
+    'title',
+    'slug',
+    'published',
+    'description',
+    'content',
+    'keyword',
+    'categoryId',
+    'spaceName',
+    'fileModelId',
+  ];
+  const fieldsData = getFieldsData(req.body, fields);
 
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
@@ -40,18 +42,7 @@ export default async function createBlogApi(req, res) {
     });
 
     //@ts-ignore: Unreachable code error
-    const { success, error } = zodSchema.safeParse({
-      title,
-      slug,
-      published,
-      description,
-      content,
-      keyword,
-      categoryId,
-      spaceName,
-      fileModelId,
-      authorId,
-    });
+    const { success, error } = zodSchema.safeParse(fieldsData);
 
     if (!success) {
       return res.status(409).json({
@@ -61,19 +52,8 @@ export default async function createBlogApi(req, res) {
       });
     }
 
-    const fieldsData = {
-      title,
-      slug,
-      published,
-      description,
-      content,
-      keyword,
-      categoryId,
-      spaceName,
-      fileModelId,
-      authorId: req.user.id,
-    };
-    
+    fieldsData['authorId'] = req.user.id;
+
     if (fieldsData['published']) {
       fieldsData['publishedAt'] = new Date().toISOString();
     }
@@ -88,9 +68,11 @@ export default async function createBlogApi(req, res) {
     if (fieldsData['fileModelId']?.length) {
       populations['image'] = true;
     }
+    console.log({fieldsData});
+    
 
     const blog = await prisma.blog.create({
-      data: fieldsData,
+      data: fieldsData as Blog,
       include: populations,
     });
     return res.status(200).json({

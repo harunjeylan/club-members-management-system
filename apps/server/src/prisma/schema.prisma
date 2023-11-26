@@ -107,10 +107,10 @@ model Blog {
   title       String
   slug        String     @unique
   author      User       @relation(fields: [authorId], references: [id])
-  published   Boolean?    @default(false)
+  published   Boolean?   @default(false)
   image       FileModel? @relation(fields: [fileModelId], references: [id])
   description String
-  content     String
+  content     String     @db.Text
   keyword     String?
   category    Category?  @relation(fields: [categoryId], references: [id])
   createdAt   DateTime   @default(now())

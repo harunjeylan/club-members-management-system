@@ -17,7 +17,6 @@ export default async function handleUpdateBlog(
     categoryId?: string;
     spaceName?: string;
     fileModelId?: string;
-    authorId?: string;
   },
   revalidateOptions?: { paths?: string[]; tags?: string[] }
 ) {
@@ -38,7 +37,6 @@ export default async function handleUpdateBlog(
       'categoryId',
       'spaceName',
       'fileModelId',
-      'authorId',
     ];
     const payloadData = getFieldsData(values, fields);
     const payload = {

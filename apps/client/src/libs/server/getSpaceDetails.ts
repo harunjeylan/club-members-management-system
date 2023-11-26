@@ -1,4 +1,4 @@
-import { Category, Event, Role, Space, User } from '@prisma/client';
+import { Blog, Category, Event, Role, Space, User } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
@@ -11,7 +11,7 @@ async function getSpaceDetails(spaceName: string) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/spaces/${spaceName}?populate=users&populate=roles&populate=events`;
+  const url = `${host}/spaces/${spaceName}?populate=users&populate=roles&populate=events&populate=blogs`;
   console.log(url);
 
   const res = await fetch(url, {
@@ -34,6 +34,7 @@ async function getSpaceDetails(spaceName: string) {
       users: UserWithProfile[];
       roles: Role[];
       events: (Event & { category: Category })[];
+      blogs: (Blog & { category: Category })[];
     };
   };
   return space;

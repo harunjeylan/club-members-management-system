@@ -10,7 +10,7 @@ export const metadata = {
 };
 type PropsType = {
   children: ReactNode | ReactNode[];
-  params: { spaceName: string };
+  params: { slug: string; spaceName: string };
 };
 export default async function Layout({ children, params }: PropsType) {
   const user = await getCurrentUser();

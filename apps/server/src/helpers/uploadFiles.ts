@@ -12,10 +12,10 @@ export default function uploadFiles(
       const uploadedFiles: Partial<Omit<FileModel, 'id'>[]> = [];
       Object.keys(files).forEach(async (key) => {
         let fileName = key;
-        if (fs.existsSync(path.join(__dirname, 'uploads', fileName))) {
+        if (fs.existsSync(path.join(__dirname, '../', 'uploads', fileName))) {
           fileName = rewriteFileName(fileName, uuidV4());
         }
-        const filePath = path.join(__dirname, 'uploads', fileName);
+        const filePath = path.join(__dirname, '../', 'uploads', fileName);
         fs.writeFileSync(filePath, fs.readFileSync(files[key].path));
         uploadedFiles.push({
           originalName: files[key].name,

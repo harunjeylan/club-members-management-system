@@ -19,7 +19,6 @@ function CreateBlogForm({ categories, spaceName }: PropsType) {
     keyword: '',
     categoryId: '',
     fileModelId: '',
-    authorId: '',
     spaceName: spaceName ?? '',
   };
 

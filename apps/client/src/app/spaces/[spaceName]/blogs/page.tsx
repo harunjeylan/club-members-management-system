@@ -1,6 +1,6 @@
 import getSpaceDetails from '@client/libs/server/getSpaceDetails';
 import { Suspense } from 'react';
-import EventsManager from './EventsManager';
+import BlogsManager from './BlogsManager';
 import getCategories from '@client/libs/server/getCategories';
 import getCurrentUser from '@client/libs/server/getCurrentUser';
 import { redirect } from 'next/navigation';
@@ -16,9 +16,9 @@ async function Page({ params }: { params: { spaceName: string } }) {
   return (
     <section className="w-full ">
       <Suspense fallback={<div>Loading..</div>}>
-        <EventsManager
+        <BlogsManager
           user={user}
-          events={space.events}
+          blogs={space.blogs}
           categories={categories}
           spaceName={params.spaceName}
         />

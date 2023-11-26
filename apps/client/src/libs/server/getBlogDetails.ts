@@ -1,4 +1,4 @@
-import { Blog, Category } from '@prisma/client';
+import { Blog, Category, FileModel, Space } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
@@ -10,7 +10,7 @@ export default async function getBlogDetails(slug: string) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/blogs/${slug}?populate=space&populate=category`;
+  const url = `${host}/blogs/${slug}?populate=space&populate=category&populate=image`;
   const res = await fetch(url, {
     method: 'GET',
     next: { tags: [`getBlogDetails/${slug}`], revalidate: 3600 * 12 },
@@ -27,7 +27,7 @@ export default async function getBlogDetails(slug: string) {
   }
 
   const { blog } = (await res.json()) as {
-    blog: Blog & { category: Category };
+    blog: Blog & { category: Category , space: Space , image: FileModel };
   };
   return blog;
 }

@@ -6,9 +6,18 @@ export default async function uploadFilesApi(req, res) {
   }
   try {
     const uploadedFiles = await uploadFiles(req.files);
-    const files = await prisma.fileModel.createMany({
-      data: uploadedFiles,
+    const filesPromise = []
+    uploadedFiles.forEach((uploadedFile) => {
+      const file = prisma.fileModel.create({
+        data: uploadedFile,
+      });
+      filesPromise.push(file)
     });
+
+
+    // Wait for the promises to resolve
+    const files = await Promise.all(filesPromise);
+
     return res.status(200).json({
       files: files,
     });
