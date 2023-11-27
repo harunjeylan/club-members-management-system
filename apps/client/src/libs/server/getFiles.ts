@@ -13,7 +13,7 @@ export default async function getFiles() {
   const url = `${host}/files`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: [`getFiles`], revalidate: 3600 * 12 },
+    next: { tags: [`getFiles`] },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
@@ -22,7 +22,7 @@ export default async function getFiles() {
   if (!res.ok) {
     console.log(res);
     if (res.status === 404) {
-      return redirect('/not-found')
+      return redirect('/not-found');
     }
     // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');
@@ -32,7 +32,7 @@ export default async function getFiles() {
     files: FileModel[];
   };
   if (!files) {
-    return redirect('/not-found')
+    return redirect('/not-found');
   }
   return files;
 }

@@ -1,4 +1,5 @@
 import Header2 from '@client/components/ui/Header2';
+import getCurrentUser from '@client/libs/server/getCurrentUser';
 import getDashboard from '@client/libs/server/getDashboard';
 import { FaUsers } from 'react-icons/fa';
 import {
@@ -8,7 +9,8 @@ import {
 } from 'react-icons/md';
 import { TbBrandBlogger } from 'react-icons/tb';
 export default async function SuperAdminDashboard() {
-  const dashboard = await getDashboard();
+  const user = await getCurrentUser()
+  const dashboard = await getDashboard(user);
   return (
     <section className="w-full flex flex-col gap-8 p-4">
       <div className="flex justify-between w-full  border-b border-secondary-500 my-4 pb-2">

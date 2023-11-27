@@ -13,7 +13,7 @@ export default async function getContacts() {
   const url = `${host}/contacts`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: [`getContacts`], revalidate: 3600 * 12 },
+    next: { tags: [`getContacts`] },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
@@ -22,7 +22,7 @@ export default async function getContacts() {
   if (!res.ok) {
     console.log(res);
     if (res.status === 404) {
-      return redirect('/not-found')
+      return redirect('/not-found');
     }
     // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');
@@ -32,7 +32,7 @@ export default async function getContacts() {
     contacts: Contact[];
   };
   if (!contacts) {
-    return redirect('/not-found')
+    return redirect('/not-found');
   }
   return contacts;
 }

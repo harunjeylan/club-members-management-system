@@ -13,7 +13,7 @@ async function getSpaces() {
   const url = `${host}/spaces`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getSpaces'], revalidate: 3600 * 12 },
+    next: { tags: ['getSpaces'] },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
@@ -22,7 +22,7 @@ async function getSpaces() {
   if (!res.ok) {
     console.log(res);
     if (res.status === 404) {
-      return redirect('/not-found')
+      return redirect('/not-found');
     }
     // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');
@@ -30,7 +30,7 @@ async function getSpaces() {
 
   const { spaces } = (await res.json()) as { spaces: Space[] };
   if (!spaces) {
-    return redirect('/not-found')
+    return redirect('/not-found');
   }
   return spaces;
 }

@@ -1,7 +1,7 @@
 import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import 'server-only';
-import { UserWithAll, UserWithProfileAndRoles } from 'types/user';
+import { UserWithAll } from 'types/user';
 import { host } from '../../config/host.config';
 
 async function getCurrentUser() {
@@ -16,8 +16,7 @@ async function getCurrentUser() {
         headers: {
           Authorization: `Bearer ${token.value}`,
         },
-        next: { tags: ['getCurrentUser'],  revalidate: 3600 * 12 },
-        
+        next: { tags: ['getCurrentUser'] },
       });
       if (!res.ok) {
         return null;
@@ -26,7 +25,6 @@ async function getCurrentUser() {
 
       return data.user;
     } catch (error) {
-
       return null;
     }
   } else {
@@ -37,4 +35,4 @@ async function getCurrentUser() {
   }
 }
 
-export default getCurrentUser
+export default getCurrentUser;

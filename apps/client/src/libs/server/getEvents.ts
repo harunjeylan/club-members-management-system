@@ -13,25 +13,26 @@ async function getEvents() {
   const url = `${host}/events?populate=space&populate=category`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getEvents'],   revalidate: 3600 * 12  },
+    next: { tags: ['getEvents'] },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
-    
   });
 
   if (!res.ok) {
     console.log(res);
     if (res.status === 404) {
-      return redirect('/not-found')
+      return redirect('/not-found');
     }
     // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');
   }
 
-  const { events } = (await res.json()) as { events: (Event & { category: Category })[] };
+  const { events } = (await res.json()) as {
+    events: (Event & { category: Category })[];
+  };
   if (!events) {
-    return redirect('/not-found')
+    return redirect('/not-found');
   }
   return events;
 }

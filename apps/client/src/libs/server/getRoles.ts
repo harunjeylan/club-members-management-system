@@ -1,8 +1,8 @@
-import { cookies } from 'next/headers';
-import { host } from '../../config/host.config';
-import 'server-only';
-import { redirect } from 'next/navigation';
 import { Role } from '@prisma/client';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import 'server-only';
+import { host } from '../../config/host.config';
 
 async function getRoles() {
   const cookieStore = cookies();
@@ -13,7 +13,7 @@ async function getRoles() {
   const url = `${host}/roles`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getRoles'],  revalidate: 3600 * 12   },
+    next: { tags: ['getRoles'],  },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
@@ -22,7 +22,7 @@ async function getRoles() {
   if (!res.ok) {
     console.log(res);
     if (res.status === 404) {
-      return redirect('/not-found')
+      return redirect('/not-found');
     }
     // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');
@@ -30,7 +30,7 @@ async function getRoles() {
 
   const { roles } = (await res.json()) as { roles: Role[] };
   if (!roles) {
-    return redirect('/not-found')
+    return redirect('/not-found');
   }
   return roles;
 }

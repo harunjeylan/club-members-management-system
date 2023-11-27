@@ -1,8 +1,8 @@
+import { Category } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
 import { host } from '../../config/host.config';
-import { Category } from '@prisma/client';
 
 async function getCategories() {
   const cookieStore = cookies();
@@ -13,17 +13,16 @@ async function getCategories() {
   const url = `${host}/categories`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getCategories'],  revalidate: 3600 * 12  },
+    next: { tags: ['getCategories'] },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
-    
   });
 
   if (!res.ok) {
     console.log(res);
     if (res.status === 404) {
-      return redirect('/not-found')
+      return redirect('/not-found');
     }
     // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');
@@ -38,7 +37,7 @@ async function getCategories() {
     }[];
   };
   if (!categories) {
-    return redirect('/not-found')
+    return redirect('/not-found');
   }
   return categories;
 }

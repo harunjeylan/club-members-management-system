@@ -13,11 +13,11 @@ export default function BlogCard({ blog }: PropsType) {
   console.log([blog]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 bg-secondary-100 dark:bg-secondary-900 p-2 rounded-lg">
       <div className={`flex rounded  `}>
         <Link
           href={`/blogs/${blog.slug}`}
-          className="w-full aspect-video max-h-[400px]"
+          className="w-full aspect-video max-h-[600px]"
         >
           {!!blog.image && (
             <Image
@@ -25,16 +25,16 @@ export default function BlogCard({ blog }: PropsType) {
               alt={blog.slug}
               width={400}
               height={400}
-              className="w-full object-cover rounded aspect-video max-h-[400px]"
+              className="w-full object-cover rounded aspect-video max-h-[600px]"
             />
           )}
         </Link>
       </div>
       {!!blog.publishedAt && <small>{formatDateTime(blog.publishedAt)}</small>}
       {!!blog.author && (
-        <div className="w-full flex flex-row items-center gap-2">
+        <div className="w-full flex flex-row items-center gap-4">
           <FaUserAlt size={20} />
-          <div className="text-start text-sm">
+          <div className="text-start text-sm flex flex-col gap-1">
             <div>
               {blog.author.first_name} {blog.author.last_name}
             </div>
