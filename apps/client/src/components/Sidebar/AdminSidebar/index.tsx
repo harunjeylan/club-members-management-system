@@ -5,7 +5,7 @@ import { Role, RoleCode, RoleScop } from '@prisma/client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { AiFillSetting } from 'react-icons/ai';
-import { FaUsers } from 'react-icons/fa';
+import { FaUserAlt, FaUsers } from 'react-icons/fa';
 import {
   MdAdminPanelSettings,
   MdCategory,
@@ -70,7 +70,7 @@ function AdminSidebar({ userRoles }: PropsType) {
         </div>
         {userData && (
           <div className="w-full flex flex-row items-center gap-2 py-4 px-4 bg-secondary-200 dark:bg-secondary-800">
-            <div className="aspect-square w-12 bg-primary-400 rounded-full" />
+            <FaUserAlt size={30} />
             <Link href={'/profile'} className="">
               <div className="text-start">
                 <div>{userData.username}</div>
@@ -85,7 +85,7 @@ function AdminSidebar({ userRoles }: PropsType) {
 }
 const linkGroups = [
   {
-    name: 'Main',
+    name: 'Management',
     links: [
       {
         name: 'Dashboard',
@@ -120,6 +120,11 @@ const linkGroups = [
           { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
         ],
       },
+    ],
+  },
+  {
+    name: 'Content',
+    links: [
       {
         name: 'Categories',
         link: '/categories',
@@ -152,6 +157,22 @@ const linkGroups = [
     ],
   },
   {
+    name: 'Media',
+    links: [
+      {
+        name: 'Files',
+        link: '/files',
+        Icon: MdAdminPanelSettings,
+        accessedFor: [
+          { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+          { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+          { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+          { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+        ],
+      },
+    ],
+  },
+  {
     name: 'Administrations',
     links: [
       {
@@ -164,6 +185,17 @@ const linkGroups = [
         name: 'Settings',
         link: '/settings',
         Icon: AiFillSetting,
+        accessedFor: [{ scop: RoleScop.SUPER, code: RoleCode.ADMIN }],
+      },
+    ],
+  },
+  {
+    name: 'Support',
+    links: [
+      {
+        name: 'Contacts',
+        link: '/contacts',
+        Icon: MdAdminPanelSettings,
         accessedFor: [{ scop: RoleScop.SUPER, code: RoleCode.ADMIN }],
       },
     ],

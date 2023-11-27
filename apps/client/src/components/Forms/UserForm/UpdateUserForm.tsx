@@ -3,9 +3,10 @@
 import { AlertMessage } from '@client/components/ui/Alert';
 import handleUpdateUser from '@client/libs/client/user/handleUpdateUser';
 import { Role, Space, User } from '@prisma/client';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
 import UserForm, { UserFormType } from './UserForm';
+import { TransitionContext } from '@client/context/TransitionContext';
 
 type PropsType = {
   user: UserWithAll;
@@ -30,6 +31,7 @@ export default function UpdateUserForm({
   spaceName,
   updateUser,
 }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [message, setMessage] = useState<AlertMessage>();
   const initialValues: UserFormType = {
     first_name: updateUser.first_name ?? '',
@@ -68,27 +70,28 @@ export default function UpdateUserForm({
       ...(values.setRoles?.map((roleId) => `getRoleDetails/${roleId}`) ?? []),
       ...(spaceName ? [`getSpaceDetails/${spaceName}`] : []),
     ];
+    handleServerMutation(async () => {
+      const response = await handleUpdateUser(user.id, values, {
+        tags: revalidateTags,
+      });
 
-    const response = await handleUpdateUser(user.id, values, {
-      tags: revalidateTags,
+      console.log(response.user);
+
+      if (response.user) {
+        setMessage({
+          type: 'success',
+          summery: 'User updated successfully',
+          title: 'Success ',
+        });
+      }
+      if (response?.error) {
+        setMessage({
+          type: 'error',
+          summery: response?.error,
+          title: 'Error ',
+        });
+      }
     });
-
-    console.log(response.user);
-
-    if (response.user) {
-      setMessage({
-        type: 'success',
-        summery: 'User updated successfully',
-        title: 'Success ',
-      });
-    }
-    if (response?.error) {
-      setMessage({
-        type: 'error',
-        summery: response?.error,
-        title: 'Error ',
-      });
-    }
   }
 
   return (

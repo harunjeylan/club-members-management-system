@@ -1,8 +1,7 @@
-import React, { CSSProperties, ReactNode } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import React, { CSSProperties } from 'react';
 import { InView } from 'react-intersection-observer';
-import './VerticalTimelineElement.css'
+import './VerticalTimelineElement.css';
 type PropTypes = {
   children?: any;
   className?: string;

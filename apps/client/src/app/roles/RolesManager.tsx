@@ -7,7 +7,8 @@ import Model from '@client/components/ui/Model';
 import handleDeleteRole from '@client/libs/client/role/handleDeleteRole';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { Role, Space } from '@prisma/client';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useContext, useEffect, useState } from 'react';
+import { TransitionContext } from '@client/context/TransitionContext';
 enum FormType {
   UPDATE_ROLE,
   CREATE_ROLE,
@@ -17,6 +18,7 @@ type PropsType = {
   spaces: Space[];
 };
 function RolesManager({ roles, spaces }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
   const [selected, setSelected] = useState<Role[]>([]);
@@ -34,27 +36,29 @@ function RolesManager({ roles, spaces }: PropsType) {
   }, [activeModel]);
 
   async function deleteRoles() {
-    const response = await handleDeleteRole(selected.map((role) => role.id));
-    if (response.space) {
-      // setMessage({
-      //   type: 'success',
-      //   summery: 'Users are added to Space successfully',
-      //   title: 'Success ',
-      // });
-    }
+    handleServerMutation(async () => {
+      const response = await handleDeleteRole(selected.map((role) => role.id));
+      if (response.space) {
+        // setMessage({
+        //   type: 'success',
+        //   summery: 'Users are added to Space successfully',
+        //   title: 'Success ',
+        // });
+      }
 
-    console.log({ response });
+      console.log({ response });
 
-    if (response?.error) {
-      // setMessage({
-      //   type: 'error',
-      //   summery: response?.error,
-      //   title: 'Error ',
-      // });
-    }
-    handleRevalidate({
-      path: '/roles',
-      tag: 'getRoles',
+      if (response?.error) {
+        // setMessage({
+        //   type: 'error',
+        //   summery: response?.error,
+        //   title: 'Error ',
+        // });
+      }
+      handleRevalidate({
+        path: '/roles',
+        tag: 'getRoles',
+      });
     });
   }
   return (

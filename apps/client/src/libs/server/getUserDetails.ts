@@ -26,7 +26,9 @@ export default async function getUserDetails(userId: string) {
 
   if (!res.ok) {
     console.log(res);
-
+    if (res.status === 404) {
+      return redirect('/not-found')
+    }
     // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');
   }
@@ -34,5 +36,8 @@ export default async function getUserDetails(userId: string) {
   const { user } = (await res.json()) as {
     user: UserWithAll & { users: User[] };
   };
+  if (!user) {
+    return redirect('/not-found')
+  }
   return user;
 }

@@ -7,6 +7,7 @@ import { Category, Event, Role, RoleCode, RoleScop } from '@prisma/client';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import getPublishedEvents from '@client/libs/server/getPublishedEvents';
 import EventList from '../../components/Event/EventList';
+import Footer from '@client/components/Footer';
 
 async function Page() {
   const user = await getCurrentUser();
@@ -19,21 +20,24 @@ async function Page() {
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
     ]);
     events = await getEvents();
-    console.log({events});
-    
+    console.log({ events });
+
     categories = await getCategories();
   } else {
     events = await getPublishedEvents();
   }
-  console.log({userRoles});
-  
+  console.log({ userRoles });
+
   if (!userRoles.length) {
     return (
-      <section className="w-full ">
-        <div className="w-full px-1 md:px-2 lg:px-4 mx-full ">
-          <EventList events={events} />
-        </div>
-      </section>
+      <>
+        <section className="w-full ">
+          <div className="w-full px-1 md:px-2 lg:px-4 mx-full ">
+            <EventList events={events} />
+          </div>
+        </section>
+        <Footer />
+      </>
     );
   }
   return (

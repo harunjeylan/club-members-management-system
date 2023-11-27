@@ -4,6 +4,7 @@ import handleLogout from '@client/libs/client/user/handleLogout';
 import { selectCurrentUser } from '@client/libs/features/userSlice';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { FaUserAlt } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { UserWithProfileAndRoles } from 'types/user';
 type PropsType = {
@@ -37,7 +38,7 @@ function UserSidebar() {
           </ul>
           {userData && (
             <div className="w-full flex flex-row items-center gap-2 py-4 px-4 bg-secondary-200 dark:bg-secondary-800">
-              <div className="aspect-square w-12 bg-primary-400 rounded-full" />
+              <FaUserAlt size={30} />
               <Link href={'/profile'} className="">
                 <div className="text-start">
                   <div>{userData.username}</div>

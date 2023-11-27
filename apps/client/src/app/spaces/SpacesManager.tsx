@@ -7,8 +7,9 @@ import handleDeleteSpace from '@client/libs/client/space/handleDeleteSpace';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useContext, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
+import { TransitionContext } from '@client/context/TransitionContext';
 enum FormType {
   UPDATE_SPACE,
   CREATE_SPACE,
@@ -20,6 +21,7 @@ function SpacesManager({
   spaces: Space[];
   user: UserWithAll;
 }) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
   const [selected, setSelected] = useState<Space[]>([]);
@@ -40,29 +42,31 @@ function SpacesManager({
     }
   }, [activeModel]);
   async function deleteSpaces() {
-    const response = await handleDeleteSpace(
-      selected.map((space) => space.name)
-    );
-    if (response.space) {
-      // setMessage({
-      //   type: 'success',
-      //   summery: 'Users are added to Space successfully',
-      //   title: 'Success ',
-      // });
-    }
+    handleServerMutation(async () => {
+      const response = await handleDeleteSpace(
+        selected.map((space) => space.name)
+      );
+      if (response.space) {
+        // setMessage({
+        //   type: 'success',
+        //   summery: 'Users are added to Space successfully',
+        //   title: 'Success ',
+        // });
+      }
 
-    console.log({ response });
+      console.log({ response });
 
-    if (response?.error) {
-      // setMessage({
-      //   type: 'error',
-      //   summery: response?.error,
-      //   title: 'Error ',
-      // });
-    }
-    handleRevalidate({
-      path: '/spaces',
-      tag: 'getSpaces',
+      if (response?.error) {
+        // setMessage({
+        //   type: 'error',
+        //   summery: response?.error,
+        //   title: 'Error ',
+        // });
+      }
+      handleRevalidate({
+        path: '/spaces',
+        tag: 'getSpaces',
+      });
     });
   }
   return (

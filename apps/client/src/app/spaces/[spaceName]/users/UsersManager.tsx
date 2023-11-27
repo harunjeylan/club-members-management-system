@@ -5,11 +5,19 @@ import CreateUserForm from '@client/components/Forms/UserForm/CreateUserForm';
 import UpdateUserForm from '@client/components/Forms/UserForm/UpdateUserForm';
 import UsersListTable from '@client/components/Tables/UserListTable';
 import Model from '@client/components/ui/Model';
+import { TransitionContext } from '@client/context/TransitionContext';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
-import handleUpdateSpace from '@client/libs/client/handleUpdateSpace';
+import handleUpdateSpace from '@client/libs/client/space/handleUpdateSpace';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { Role, RoleCode, RoleScop, User } from '@prisma/client';
-import { Dispatch, SetStateAction, Suspense, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  Suspense,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { UserWithAll } from 'types/user';
 enum FormType {
   ASSIGN_ROLE,
@@ -24,6 +32,7 @@ type PropsType = {
   user: UserWithAll;
 };
 function UsersManager({ users, roles, spaceName, user }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
   const [selected, setSelected] = useState<User[]>([]);
@@ -51,30 +60,32 @@ function UsersManager({ users, roles, spaceName, user }: PropsType) {
   }, [activeModel]);
 
   async function removeUsersFromSpace() {
-    const response = await handleUpdateSpace(spaceName, {
-      removeUsers: selected.map((user) => user.id),
-    });
-    if (response.space) {
-      // setMessage({
-      //   type: 'success',
-      //   summery: 'Users are added to Space successfully',
-      //   title: 'Success ',
-      // });
-    }
+    handleServerMutation(async () => {
+      const response = await handleUpdateSpace(spaceName, {
+        removeUsers: selected.map((user) => user.id),
+      });
+      if (response.space) {
+        // setMessage({
+        //   type: 'success',
+        //   summery: 'Users are added to Space successfully',
+        //   title: 'Success ',
+        // });
+      }
 
-    console.log({ response });
+      console.log({ response });
 
-    if (response?.error) {
-      // setMessage({
-      //   type: 'error',
-      //   summery: response?.error,
-      //   title: 'Error ',
-      // });
-    }
-    handleRevalidate({
-      path: '/users',
-      tag: 'getUsers',
-      'tag[1]': `getSpaceDetails/${spaceName}`,
+      if (response?.error) {
+        // setMessage({
+        //   type: 'error',
+        //   summery: response?.error,
+        //   title: 'Error ',
+        // });
+      }
+      handleRevalidate({
+        path: '/users',
+        tag: 'getUsers',
+        'tag[1]': `getSpaceDetails/${spaceName}`,
+      });
     });
   }
 

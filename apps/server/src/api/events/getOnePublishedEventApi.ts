@@ -18,6 +18,9 @@ export default async function getOnePublishedEventApi(req, res) {
       where: { id: eventId, published: true },
       include: populations,
     });
+    if (!event) {
+      return res.sendStatus(404)
+    }
     return res.status(200).json({
       event: event,
     });

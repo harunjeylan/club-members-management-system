@@ -15,7 +15,16 @@ router.put('/', authenticateToken, deleteBlogApi);
 
 router.get('/published', getAllPublishedBlogsApi);
 
-router.get('/:slug', authenticateToken, getOneBlogApi);
+router.get(
+  '/:slug',
+  (a, b, next) => {
+    console.log(a.params);
+
+    next();
+  },
+  authenticateToken,
+  getOneBlogApi
+);
 router.put('/:slug', authenticateToken, updateBlogApi);
 router.delete('/:slug', authenticateToken, deleteBlogApi);
 

@@ -1,11 +1,13 @@
 'use client';
 import { ErrorMessage, Formik } from 'formik';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import * as yup from 'yup';
 import Alert, { AlertMessage } from '../ui/Alert';
 import handleCreateCategory from '@client/libs/client/category/handleCreateCategory';
 import { Category } from '@prisma/client';
+import { TransitionContext } from '@client/context/TransitionContext';
 function CreateCategoryForm({ categories }: { categories: Category[] }) {
+  const { isPending, handleServerMutation } = useContext(TransitionContext);
   const [message, setMessage] = useState<AlertMessage>();
   const initialValues: Partial<Category & { isSubcategory: boolean }> = {
     name: '',
@@ -34,23 +36,24 @@ function CreateCategoryForm({ categories }: { categories: Category[] }) {
 
   async function onSubmit(values: Partial<Category>) {
     console.log({ values });
-
-    const response = await handleCreateCategory(values);
-    console.log({ response });
-    if (response.category) {
-      setMessage({
-        type: 'success',
-        summery: 'Category created successfully',
-        title: 'Success ',
-      });
-    }
-    if (response?.message) {
-      setMessage({
-        type: 'error',
-        summery: response?.message,
-        title: 'Error ',
-      });
-    }
+    handleServerMutation(async () => {
+      const response = await handleCreateCategory(values);
+      console.log({ response });
+      if (response.category) {
+        setMessage({
+          type: 'success',
+          summery: 'Category created successfully',
+          title: 'Success ',
+        });
+      }
+      if (response?.message) {
+        setMessage({
+          type: 'error',
+          summery: response?.message,
+          title: 'Error ',
+        });
+      }
+    });
   }
   return (
     <Formik

@@ -4,12 +4,13 @@ import CreateBlogForm from '@client/components/Forms/BlogForm/CreateBlogForm';
 import UpdateBlogForm from '@client/components/Forms/BlogForm/UpdateBlogForm';
 import BlogListTable from '@client/components/Tables/BlogListTable';
 import Model from '@client/components/ui/Model';
+import { TransitionContext } from '@client/context/TransitionContext';
 import handleDeleteBlog from '@client/libs/client/blog/handleDeleteEvent';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { Category, Blog, RoleCode, RoleScop } from '@prisma/client';
 import Link from 'next/link';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useContext, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
 enum FormType {
   UPDATE_EVENT,
@@ -22,6 +23,7 @@ type PropsType = {
   user: UserWithAll;
 };
 function BlogsManager({ blogs, categories, spaceName, user }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [selected, setSelected] = useState<(Blog & { category: Category })[]>(
     []
   );
@@ -36,28 +38,30 @@ function BlogsManager({ blogs, categories, spaceName, user }: PropsType) {
   ]);
 
   async function deleteBlogs() {
-    const response = await handleDeleteBlog(selected.map((blog) => blog.id));
-    if (response.space) {
-      // setMessage({
-      //   type: 'success',
-      //   summery: 'Users are added to Space successfully',
-      //   title: 'Success ',
-      // });
-    }
+    handleServerMutation(async () => {
+      const response = await handleDeleteBlog(selected.map((blog) => blog.id));
+      if (response.space) {
+        // setMessage({
+        //   type: 'success',
+        //   summery: 'Users are added to Space successfully',
+        //   title: 'Success ',
+        // });
+      }
 
-    console.log({ response });
+      console.log({ response });
 
-    if (response?.error) {
-      // setMessage({
-      //   type: 'error',
-      //   summery: response?.error,
-      //   title: 'Error ',
-      // });
-    }
-    handleRevalidate({
-      path: '/blogs',
-      tag: 'getBlogs',
-      'tag[1]': `getSpaceDetails/${spaceName}`,
+      if (response?.error) {
+        // setMessage({
+        //   type: 'error',
+        //   summery: response?.error,
+        //   title: 'Error ',
+        // });
+      }
+      handleRevalidate({
+        path: '/blogs',
+        tag: 'getBlogs',
+        'tag[1]': `getSpaceDetails/${spaceName}`,
+      });
     });
   }
   return (

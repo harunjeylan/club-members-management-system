@@ -4,11 +4,12 @@ import CreateEventForm from '@client/components/Forms/EventForm/CreateEventForm'
 import UpdateEventForm from '@client/components/Forms/EventForm/UpdateEventForm';
 import EventListTable from '@client/components/Tables/EventListTable';
 import Model from '@client/components/ui/Model';
+import { TransitionContext } from '@client/context/TransitionContext';
 import handleDeleteEvent from '@client/libs/client/event/handleDeleteEvent';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { Category, Event, RoleCode, RoleScop } from '@prisma/client';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useContext, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
 enum FormType {
   UPDATE_EVENT,
@@ -21,6 +22,7 @@ type PropsType = {
   user: UserWithAll;
 };
 function EventsManager({ events, categories, spaceName, user }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
   const [selected, setSelected] = useState<(Event & { category: Category })[]>(
@@ -47,28 +49,32 @@ function EventsManager({ events, categories, spaceName, user }: PropsType) {
   }, [activeModel]);
 
   async function deleteEvents() {
-    const response = await handleDeleteEvent(selected.map((event) => event.id));
-    if (response.space) {
-      // setMessage({
-      //   type: 'success',
-      //   summery: 'Users are added to Space successfully',
-      //   title: 'Success ',
-      // });
-    }
+    handleServerMutation(async () => {
+      const response = await handleDeleteEvent(
+        selected.map((event) => event.id)
+      );
+      if (response.space) {
+        // setMessage({
+        //   type: 'success',
+        //   summery: 'Users are added to Space successfully',
+        //   title: 'Success ',
+        // });
+      }
 
-    console.log({ response });
+      console.log({ response });
 
-    if (response?.error) {
-      // setMessage({
-      //   type: 'error',
-      //   summery: response?.error,
-      //   title: 'Error ',
-      // });
-    }
-    handleRevalidate({
-      path: '/events',
-      tag: 'getEvents',
-      'tag[1]': `getSpaceDetails/${spaceName}`,
+      if (response?.error) {
+        // setMessage({
+        //   type: 'error',
+        //   summery: response?.error,
+        //   title: 'Error ',
+        // });
+      }
+      handleRevalidate({
+        path: '/events',
+        tag: 'getEvents',
+        'tag[1]': `getSpaceDetails/${spaceName}`,
+      });
     });
   }
   return (

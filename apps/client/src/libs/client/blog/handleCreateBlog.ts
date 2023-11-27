@@ -17,6 +17,8 @@ export default async function handleCreateBlog(
   },
   revalidateOptions?: { paths?: string[]; tags?: string[] }
 ) {
+  console.log({values});
+  
   try {
     const token = getCookie('token');
     const url = `${host}/blogs`;

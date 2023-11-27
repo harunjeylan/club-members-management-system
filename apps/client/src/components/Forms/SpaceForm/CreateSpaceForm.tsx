@@ -1,11 +1,13 @@
 'use client';
-import handleCreateSpace from '@client/libs/client/handleCreateSpace';
 import { Space } from '@prisma/client';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { AlertMessage } from '../../ui/Alert';
 import SpaceForm from './SpaceForm';
+import handleCreateSpace from '@client/libs/client/space/handleCreateSpace';
+import { TransitionContext } from '@client/context/TransitionContext';
 function CreateSpaceForm() {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [message, setMessage] = useState<AlertMessage>();
   const initialValues: Partial<Space> = {
     name: '',
@@ -31,23 +33,24 @@ function CreateSpaceForm() {
 
   async function onSubmit(values: Partial<Space>) {
     console.log({ values });
-
-    const response = await handleCreateSpace(values);
-    console.log({ response });
-    if (response.space) {
-      setMessage({
-        type: 'success',
-        summery: 'Space created successfully',
-        title: 'Success ',
-      });
-    }
-    if (response?.error) {
-      setMessage({
-        type: 'error',
-        summery: response?.error,
-        title: 'Error ',
-      });
-    }
+    handleServerMutation(async () => {
+      const response = await handleCreateSpace(values);
+      console.log({ response });
+      if (response.space) {
+        setMessage({
+          type: 'success',
+          summery: 'Space created successfully',
+          title: 'Success ',
+        });
+      }
+      if (response?.error) {
+        setMessage({
+          type: 'error',
+          summery: response?.error,
+          title: 'Error ',
+        });
+      }
+    });
   }
   return (
     <SpaceForm

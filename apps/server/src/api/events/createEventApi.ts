@@ -78,9 +78,8 @@ export default async function createEventApi(req, res) {
       description,
       published,
       categoryId,
-      spaceName,
     };
-    
+
     if (fieldsData['startAt']) {
       fieldsData['startAt'] = new Date(fieldsData['startAt']).toISOString();
     }
@@ -92,7 +91,8 @@ export default async function createEventApi(req, res) {
     if (fieldsData['categoryId']?.length) {
       populations['category'] = true;
     }
-    if (fieldsData['spaceName']?.length) {
+    if (spaceName?.length) {
+      fieldsData['spaceName'] = spaceName;
       populations['space'] = true;
     }
 

@@ -1,16 +1,18 @@
 import CreateBlogForm from '@client/components/Forms/BlogForm/CreateBlogForm';
 import getCategories from '@client/libs/server/getCategories';
+import getFiles from '@client/libs/server/getFiles';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 
 async function Page() {
   const categories = await getCategories();
+  const files = await getFiles()
   return (
     <section className="w-full ">
       <div className="flex justify-start">
         <Link
-          href={'/events'}
+          href={'/blogs'}
           className=" py-2 px-4 flex gap-2 items-center text-primary-500"
         >
           <AiOutlineArrowLeft />
@@ -23,7 +25,7 @@ async function Page() {
             <div className="text-xl font-bold">Blog Creation Form</div>
 
             <Suspense fallback={<div>Loading..</div>}>
-              <CreateBlogForm categories={categories} />
+              <CreateBlogForm categories={categories} files={files}  />
             </Suspense>
           </div>
         </div>

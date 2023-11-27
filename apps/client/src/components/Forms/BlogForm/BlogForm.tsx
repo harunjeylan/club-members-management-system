@@ -1,11 +1,16 @@
 'use client';
-import * as yup from 'yup';
-
 import Alert, { AlertMessage } from '@client/components/ui/Alert';
-import { Category } from '@prisma/client';
+import { Category, FileModel } from '@prisma/client';
 import { ErrorMessage, Formik, FormikHelpers } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
-import UploadFiles from '../UploadFiles';
+import * as yup from 'yup';
+import UploadFiles from '../../File/UploadFiles';
+import 'react-quill/dist/quill.snow.css';
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(() => import('react-quill'), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 export type BlogFormType = {
   title: string;
   slug: string;
@@ -23,6 +28,7 @@ type PropsType = {
   message?: AlertMessage;
   setMessage: Dispatch<SetStateAction<AlertMessage | undefined>>;
   categories: Category[];
+  files: FileModel[];
 };
 
 export default function BlogForm({
@@ -31,6 +37,7 @@ export default function BlogForm({
   message,
   setMessage,
   categories,
+  files,
 }: PropsType) {
   const yupSchema = yup.object<BlogFormType>({
     title: yup.string(),
@@ -139,13 +146,17 @@ export default function BlogForm({
               className="text-red-500 dark:text-red-300"
             />
           </div>
-          <div className="col-span-1 py-2 flex items-center gap-1 w-full">
+          <div className="col-span-2 flex flex-col gap-1 w-full">
             <label>Image</label>
             <UploadFiles
+              defaultValues={files.filter(
+                (file) => file.id === initialValues.fileModelId
+              )}
+              multiple={false}
+              files={files}
               onUpload={(files) => {
                 setFieldValue('fileModelId', files?.[0].id);
               }}
-              title="Image"
             >
               {({ setShow }) => (
                 <button
@@ -158,7 +169,7 @@ export default function BlogForm({
               )}
             </UploadFiles>
           </div>
-          <div className="col-span-1 py-2 flex items-center gap-1 w-full">
+          <div className="col-span-2 py-2 flex items-center gap-1 w-full">
             <input
               checked={values.published}
               id="published"
@@ -210,16 +221,29 @@ export default function BlogForm({
           </div>
           <div className="col-span-2 flex flex-col gap-1 w-full">
             <label>Content</label>
-            <textarea
-              name="content"
-              className={`input ${
+            <ReactQuill
+              theme="snow"
+              value={values.content}
+              defaultValue={values.content}
+              className={`mb-8 ${
                 !!touched.content && !!errors.content
                   ? 'bg-red-300/50 border border-red-500'
                   : ''
               }`}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.content ?? ''}
+              modules={{
+                toolbar: [
+                  [{ font: [] }],
+                  [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                  ['bold', 'italic', 'underline', 'strike'],
+                  [{ list: 'ordered' }, { list: 'bullet' }],
+                  [{ indent: '-1' }, { indent: '+1' }, { align: [] }],
+                  [{ color: [] }, { background: [] }],
+                  [{ script: 'sub' }, { script: 'super' }],
+                  ['blockquote', 'code-block'],
+                  ['clean'],
+                ],
+              }}
+              onChange={(newValue) => setFieldValue('content', newValue)}
             />
             <ErrorMessage
               name="content"
@@ -227,7 +251,7 @@ export default function BlogForm({
               className="text-red-500 dark:text-red-300"
             />
           </div>
-          <div className="col-span-2 flex justify-end  gap-1 w-full">
+          <div className="col-span-2 flex justify-end  gap-1 w-full mt-8">
             <button
               type="submit"
               className="btn-primary py-2 px-4"

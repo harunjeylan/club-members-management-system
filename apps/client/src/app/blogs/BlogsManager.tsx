@@ -1,11 +1,12 @@
 'use client';
 
 import BlogListTable from '@client/components/Tables/BlogListTable';
+import { TransitionContext } from '@client/context/TransitionContext';
 import handleDeleteBlog from '@client/libs/client/blog/handleDeleteEvent';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { Blog, Category } from '@prisma/client';
 import Link from 'next/link';
-import { Suspense, useState } from 'react';
+import { Suspense, useContext, useState } from 'react';
 enum FormType {
   UPDATE_EVENT,
   CREATE_EVENT,
@@ -14,34 +15,33 @@ type PropsType = {
   blogs: (Blog & { category: Category })[];
 };
 function BlogsManager({ blogs }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [selected, setSelected] = useState<(Blog & { category: Category })[]>(
     []
   );
 
-  console.log(selected);
-
   async function deleteBlogs() {
-    const response = await handleDeleteBlog(selected.map((blog) => blog.id));
-    if (response.space) {
-      // setMessage({
-      //   type: 'success',
-      //   summery: 'Users are added to Space successfully',
-      //   title: 'Success ',
-      // });
-    }
+    handleServerMutation(async () => {
+      const response = await handleDeleteBlog(selected.map((blog) => blog.id));
+      if (response.space) {
+        // setMessage({
+        //   type: 'success',
+        //   summery: 'Users are added to Space successfully',
+        //   title: 'Success ',
+        // });
+      }
 
-    console.log({ response });
-
-    if (response?.error) {
-      // setMessage({
-      //   type: 'error',
-      //   summery: response?.error,
-      //   title: 'Error ',
-      // });
-    }
-    handleRevalidate({
-      path: '/blogs',
-      tag: 'getBlogs',
+      if (response?.error) {
+        // setMessage({
+        //   type: 'error',
+        //   summery: response?.error,
+        //   title: 'Error ',
+        // });
+      }
+      handleRevalidate({
+        path: '/blogs',
+        tag: 'getBlogs',
+      });
     });
   }
   return (

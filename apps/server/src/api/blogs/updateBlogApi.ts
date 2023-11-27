@@ -67,6 +67,15 @@ export default async function updateBlogApi(req, res) {
     }
 
     let populations = {};
+    populations['author'] = {
+      include: {
+        profile: {
+          include: {
+            image: true,
+          },
+        },
+      },
+    };
     if (fieldsData['categoryId']?.length) {
       populations['category'] = true;
     }

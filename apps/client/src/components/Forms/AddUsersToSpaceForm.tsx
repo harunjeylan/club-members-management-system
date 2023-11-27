@@ -1,15 +1,17 @@
 'use client';
 
 import { Space } from '@prisma/client';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useContext, useEffect, useState } from 'react';
 import Alert, { AlertMessage } from '../ui/Alert';
-import handleUpdateSpace from '@client/libs/client/handleUpdateSpace';
+import { TransitionContext } from '@client/context/TransitionContext';
+import handleUpdateSpace from '@client/libs/client/space/handleUpdateSpace';
 
 type PropsType = {
   users: string[];
   spaces: Space[];
 };
 function AddUsersToSpaceForm({ users, spaces }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [message, setMessage] = useState<AlertMessage>();
   const [selectedSpace, setSelectedSpace] = useState<string>(
     spaces.length ? spaces?.[0].name : ''
@@ -38,26 +40,28 @@ function AddUsersToSpaceForm({ users, spaces }: PropsType) {
         title: 'Warning ',
       });
     }
-    const response = await handleUpdateSpace(selectedSpace, {
-      addUsers: users,
+    handleServerMutation(async () => {
+      const response = await handleUpdateSpace(selectedSpace, {
+        addUsers: users,
+      });
+      if (response.space) {
+        setMessage({
+          type: 'success',
+          summery: 'Users are added to Space successfully',
+          title: 'Success ',
+        });
+      }
+
+      console.log({ response });
+
+      if (response?.error) {
+        setMessage({
+          type: 'error',
+          summery: response?.error,
+          title: 'Error ',
+        });
+      }
     });
-    if (response.space) {
-      setMessage({
-        type: 'success',
-        summery: 'Users are added to Space successfully',
-        title: 'Success ',
-      });
-    }
-
-    console.log({ response });
-
-    if (response?.error) {
-      setMessage({
-        type: 'error',
-        summery: response?.error,
-        title: 'Error ',
-      });
-    }
   }
   return (
     <form onSubmit={onSubmit} className="w-full grid grid-cols-2 gap-4 p-4">

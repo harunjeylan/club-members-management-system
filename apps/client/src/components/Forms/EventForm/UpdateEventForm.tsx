@@ -1,9 +1,10 @@
 'use client';
 import handleUpdateEvent from '@client/libs/client/event/handleUpdateEvent';
 import { Category, Event, Repeat } from '@prisma/client';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AlertMessage } from '../../ui/Alert';
 import EventForm, { EventFormType } from './EventForm';
+import { TransitionContext } from '@client/context/TransitionContext';
 function UpdateEventForm({
   event,
   categories,
@@ -13,6 +14,7 @@ function UpdateEventForm({
   categories: Category[];
   spaceName?: string;
 }) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [message, setMessage] = useState<AlertMessage>();
   const initialValues: EventFormType = {
     title: event.title ?? '',
@@ -50,23 +52,27 @@ function UpdateEventForm({
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
-    const response = await handleUpdateEvent(event.id, values, {tags:revalidateTags});
-    console.log({ response });
-    if (response.event) {
-      setMessage({
-        type: 'success',
-        summery: 'Event created successfully',
-        title: 'Success ',
+    handleServerMutation(async () => {
+      const response = await handleUpdateEvent(event.id, values, {
+        tags: revalidateTags,
       });
-    }
+      console.log({ response });
+      if (response.event) {
+        setMessage({
+          type: 'success',
+          summery: 'Event created successfully',
+          title: 'Success ',
+        });
+      }
 
-    if (response?.message) {
-      setMessage({
-        type: 'error',
-        summery: response?.message,
-        title: 'Error ',
-      });
-    }
+      if (response?.message) {
+        setMessage({
+          type: 'error',
+          summery: response?.message,
+          title: 'Error ',
+        });
+      }
+    });
   }
   return (
     <EventForm

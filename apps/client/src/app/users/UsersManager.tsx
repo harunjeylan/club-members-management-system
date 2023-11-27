@@ -10,8 +10,9 @@ import handleDeleteUser from '@client/libs/client/user/handleDeleteUser';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useContext, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
+import { TransitionContext } from '@client/context/TransitionContext';
 enum FormType {
   ASSIGN_ROLE,
   ADD_TO_SPACE,
@@ -25,6 +26,7 @@ type PropsType = {
   user: UserWithAll;
 };
 function UsersManager({ users, roles, spaces, user }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
   const [selected, setSelected] = useState<UserWithAll[]>([]);
@@ -44,27 +46,29 @@ function UsersManager({ users, roles, spaces, user }: PropsType) {
   }, [activeModel]);
 
   async function deleteUsers() {
-    const response = await handleDeleteUser(selected.map((user) => user.id));
-    if (response.space) {
-      // setMessage({
-      //   type: 'success',
-      //   summery: 'Users are added to Space successfully',
-      //   title: 'Success ',
-      // });
-    }
+    handleServerMutation(async () => {
+      const response = await handleDeleteUser(selected.map((user) => user.id));
+      if (response.space) {
+        // setMessage({
+        //   type: 'success',
+        //   summery: 'Users are added to Space successfully',
+        //   title: 'Success ',
+        // });
+      }
 
-    console.log({ response });
+      console.log({ response });
 
-    if (response?.error) {
-      // setMessage({
-      //   type: 'error',
-      //   summery: response?.error,
-      //   title: 'Error ',
-      // });
-    }
-    handleRevalidate({
-      path: '/users',
-      tag: 'getUsers',
+      if (response?.error) {
+        // setMessage({
+        //   type: 'error',
+        //   summery: response?.error,
+        //   title: 'Error ',
+        // });
+      }
+      handleRevalidate({
+        path: '/users',
+        tag: 'getUsers',
+      });
     });
   }
   return (

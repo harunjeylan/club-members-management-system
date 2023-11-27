@@ -1,10 +1,10 @@
 'use client';
 
 import UsersListTable from '@client/components/Tables/UserListTable';
-import handleRemoveUsersFromRole from '@client/libs/client/handleRemoveUsersFromRole';
+import handleUpdateRole from '@client/libs/client/role/handleUpdateRole';
 import { User } from '@prisma/client';
 import { Dispatch, SetStateAction, Suspense, useEffect, useState } from 'react';
-import { UserWithAll, } from 'types/user';
+import { UserWithAll } from 'types/user';
 enum FormType {
   ASSIGN_ROLE,
   ADD_TO_SPACE,
@@ -15,7 +15,7 @@ type PropsType = {
   users: User[];
   roleId: string;
 };
-function UsersManager({ users,  roleId }: PropsType) {
+function UsersManager({ users, roleId }: PropsType) {
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
   const [selected, setSelected] = useState<User[]>([]);
@@ -33,10 +33,9 @@ function UsersManager({ users,  roleId }: PropsType) {
   }, [activeModel]);
 
   async function removeUsersFromSpace() {
-    const response = await handleRemoveUsersFromRole(
-      roleId,
-      selected.map((user) => user.id)
-    );
+    const response = await handleUpdateRole(roleId, {
+      removeUsers: selected.map((user) => user.id),
+    });
     if (response.space) {
       // setMessage({
       //   type: 'success',

@@ -2,9 +2,10 @@
 
 import CreateCategoryForm from '@client/components/Forms/CreateCategoryForm';
 import Model from '@client/components/ui/Model';
+import { TransitionContext } from '@client/context/TransitionContext';
 import handleDeleteCategory from '@client/libs/client/category/handleDeleteCategory';
 import { Category } from '@prisma/client';
-import { Suspense, useState } from 'react';
+import { Suspense, useContext, useState } from 'react';
 type PropsType = {
   categories: {
     id: string;
@@ -14,29 +15,31 @@ type PropsType = {
   }[];
 };
 function CategoriesManager({ categories }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState<Category[]>([]);
   console.log({ categories });
-
   async function deleteRoles(categoryId: string) {
-    const response = await handleDeleteCategory(categoryId);
-    if (response.category) {
-      // setMessage({
-      //   type: 'success',
-      //   summery: 'Users are added to Space successfully',
-      //   title: 'Success ',
-      // });
-    }
+    handleServerMutation(async () => {
+      const response = await handleDeleteCategory(categoryId);
+      if (response.category) {
+        // setMessage({
+        //   type: 'success',
+        //   summery: 'Users are added to Space successfully',
+        //   title: 'Success ',
+        // });
+      }
 
-    console.log({ response });
+      console.log({ response });
 
-    if (response?.error) {
-      // setMessage({
-      //   type: 'error',
-      //   summery: response?.error,
-      //   title: 'Error ',
-      // });
-    }
+      if (response?.error) {
+        // setMessage({
+        //   type: 'error',
+        //   summery: response?.error,
+        //   title: 'Error ',
+        // });
+      }
+    });
   }
   return (
     <div>

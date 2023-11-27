@@ -18,6 +18,7 @@
       "@client/*": ["apps/client/src/*"],
       "@harunjeylan/next-timeline": ["libs/next-timeline/src/index.ts"],
       "@libs/*": ["libs/*"],
+      "@types/*": ["types/*"],
       "@server/*": ["apps/server/src/*"]
     }
   },

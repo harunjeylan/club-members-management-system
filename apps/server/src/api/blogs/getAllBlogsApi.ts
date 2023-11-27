@@ -14,15 +14,34 @@ export default async function getAllBlogsApi(req, res) {
       if (item === 'category') {
         populations['category'] = true;
       }
+      if (item === 'image') {
+        populations['image'] = true;
+      }
+      if (item === 'author') {
+        populations['author'] = {
+          include: {
+            profile: {
+              include: {
+                image: true,
+              },
+            },
+          },
+        };
+      }
     });
-
-    const superAdminRoles = getUserAccessRoles(req.user.roles, [
-      { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
-      { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-    ]);
-    if (!!superAdminRoles.length) {
+    let superAdminRoles = [];
+    if (req.user) {
+      superAdminRoles = getUserAccessRoles(req.user.roles, [
+        { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+        { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+        { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+        { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+      ]);
+    }
+    if (!req.user || !superAdminRoles.length) {
       const blogs = await prisma.blog.findMany({
         include: populations,
+        where: { published: true },
       });
       return res.status(200).json({
         blogs: blogs,
@@ -34,9 +53,7 @@ export default async function getAllBlogsApi(req, res) {
       where: {
         OR: [
           {
-            spaceName: {
-              in: req.user.roles.map((member: Role) => member.name),
-            },
+            authorId: req.user.id,
           },
           { published: true },
         ],

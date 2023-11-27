@@ -22,12 +22,17 @@ async function getEvents() {
 
   if (!res.ok) {
     console.log(res);
-
+    if (res.status === 404) {
+      return redirect('/not-found')
+    }
     // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');
   }
 
   const { events } = (await res.json()) as { events: (Event & { category: Category })[] };
+  if (!events) {
+    return redirect('/not-found')
+  }
   return events;
 }
 

@@ -18,6 +18,7 @@ export default async function createBlogApi(req, res) {
     'fileModelId',
   ];
   const fieldsData = getFieldsData(req.body, fields);
+console.log({fieldsData, body:req.body});
 
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
@@ -53,12 +54,21 @@ export default async function createBlogApi(req, res) {
     }
 
     fieldsData['authorId'] = req.user.id;
-
+    
     if (fieldsData['published']) {
       fieldsData['publishedAt'] = new Date().toISOString();
     }
-
+    
     let populations = {};
+    populations['author'] = {
+      include: {
+        profile: {
+          include: {
+            image: true,
+          },
+        },
+      },
+    };
     if (fieldsData['categoryId']?.length) {
       populations['category'] = true;
     }

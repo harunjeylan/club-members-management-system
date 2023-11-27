@@ -2,9 +2,10 @@
 import { AlertMessage } from '@client/components/ui/Alert';
 import handleCreateUser from '@client/libs/client/user/handleCreateUser';
 import { Role, Space } from '@prisma/client';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import UserForm, { UserFormType } from './UserForm';
 import { UserWithAll } from 'types/user';
+import { TransitionContext } from '@client/context/TransitionContext';
 type PropsType = {
   roles?: Role[];
   spaces?: Space[];
@@ -17,6 +18,7 @@ export default function CreateUserForm({
   spaces,
   spaceName,
 }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [message, setMessage] = useState<AlertMessage>();
   const initialValues: UserFormType = {
     first_name: '',
@@ -51,27 +53,28 @@ export default function CreateUserForm({
       ...(values.addSpaces?.map((roleId) => `getRoleDetails/${roleId}`) ?? []),
       ...(spaceName ? [`getSpaceDetails/${spaceName}`] : []),
     ];
-
-    const response = await handleCreateUser(
-      values as UserFormType & { password: string },
-      {
-        tags: revalidateTags,
+    handleServerMutation(async () => {
+      const response = await handleCreateUser(
+        values as UserFormType & { password: string },
+        {
+          tags: revalidateTags,
+        }
+      );
+      if (response.user) {
+        setMessage({
+          type: 'success',
+          summery: 'User created successfully',
+          title: 'Success ',
+        });
       }
-    );
-    if (response.user) {
-      setMessage({
-        type: 'success',
-        summery: 'User created successfully',
-        title: 'Success ',
-      });
-    }
-    if (response?.error) {
-      setMessage({
-        type: 'warning',
-        summery: response?.error,
-        title: 'Warning ',
-      });
-    }
+      if (response?.error) {
+        setMessage({
+          type: 'warning',
+          summery: response?.error,
+          title: 'Warning ',
+        });
+      }
+    });
   }
 
   return (

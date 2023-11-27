@@ -1,10 +1,13 @@
 'use client';
 import { ErrorMessage, Formik } from 'formik';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import * as yup from 'yup';
 import Alert, { AlertMessage } from '../ui/Alert';
+import handleCreateContact from '@client/libs/client/contact/handleCreateContact';
+import { TransitionContext } from '@client/context/TransitionContext';
 const phoneRegExp = /^\+?1?\d{9,15}$/;
 function ContactForm() {
+  const {  handleServerMutation } = useContext(TransitionContext);
   const [message, setMessage] = useState<AlertMessage>();
   const initialValues = {
     name: '',
@@ -39,23 +42,24 @@ function ContactForm() {
   }, [message]);
   async function onSubmit(values: typeof initialValues) {
     console.log({ values });
-
-    // const response = await handleCreateCategory(values);
-    // console.log({ response });
-    // if (response.category) {
-    //   setMessage({
-    //     type: 'success',
-    //     summery: 'Category created successfully',
-    //     title: 'Success ',
-    //   });
-    // }
-    // if (response?.message) {
-    //   setMessage({
-    //     type: 'error',
-    //     summery: response?.message,
-    //     title: 'Error ',
-    //   });
-    // }
+    handleServerMutation(async () => {
+      const response = await handleCreateContact(values);
+      if (response.contact) {
+        console.log({ response });
+        setMessage({
+          type: 'success',
+          summery: 'Message is sent successfully',
+          title: 'Success ',
+        });
+      }
+      if (response?.message) {
+        setMessage({
+          type: 'error',
+          summery: response?.message,
+          title: 'Error ',
+        });
+      }
+    });
   }
   return (
     <>
@@ -183,6 +187,15 @@ function ContactForm() {
                 component="div"
                 className="text-red-500 dark:text-red-300"
               />
+            </div>
+            <div className="col-span-2 flex justify-end  gap-1 w-full">
+              <button
+                type="submit"
+                className="btn-primary py-2 px-4"
+                disabled={isSubmitting}
+              >
+                Submit
+              </button>
             </div>
           </form>
         )}

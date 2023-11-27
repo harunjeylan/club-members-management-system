@@ -44,6 +44,11 @@ export default async function Layout({ children, params }: PropsType) {
               </Link>
             </li>
             <li className="link-text font-bold text-md">
+              <Link href={`/spaces/${params.spaceName}/blogs`}>
+                Blogs
+              </Link>
+            </li>
+            <li className="link-text font-bold text-md">
               <Link href={`/spaces/${params.spaceName}/events`}>
                 Events
               </Link>

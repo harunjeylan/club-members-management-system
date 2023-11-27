@@ -1,9 +1,10 @@
 'use client';
-import handleUpdateRole from '@client/libs/client/handleUpdateRole';
 import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AlertMessage } from '../../ui/Alert';
 import RoleForm, { RoleFormType } from './RoleForm';
+import handleUpdateRole from '@client/libs/client/role/handleUpdateRole';
+import { TransitionContext } from '@client/context/TransitionContext';
 function UpdateRoleForm({
   role,
   spaces,
@@ -13,6 +14,7 @@ function UpdateRoleForm({
   spaces?: Space[];
   spaceName?: string;
 }) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [message, setMessage] = useState<AlertMessage>();
   const initialValues: RoleFormType = {
     name: role.name ?? '',
@@ -40,25 +42,26 @@ function UpdateRoleForm({
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
+    handleServerMutation(async () => {
+      const response = await handleUpdateRole(role.id, values, {
+        tags: revalidateTags,
+      });
 
-    const response = await handleUpdateRole(role.id, values, {
-      tags: revalidateTags,
+      if (response.role) {
+        setMessage({
+          type: 'success',
+          summery: 'Role created successfully',
+          title: 'Success ',
+        });
+      }
+      if (response?.message) {
+        setMessage({
+          type: 'error',
+          summery: response?.message,
+          title: 'Error ',
+        });
+      }
     });
-
-    if (response.role) {
-      setMessage({
-        type: 'success',
-        summery: 'Role created successfully',
-        title: 'Success ',
-      });
-    }
-    if (response?.message) {
-      setMessage({
-        type: 'error',
-        summery: response?.message,
-        title: 'Error ',
-      });
-    }
   }
   return (
     <RoleForm

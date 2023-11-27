@@ -19,6 +19,8 @@ export default async function getAllEventsApi(req, res) {
     const superAdminRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+      { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
     ]);
     if (!!superAdminRoles.length) {
       const events = await prisma.event.findMany({
@@ -31,16 +33,6 @@ export default async function getAllEventsApi(req, res) {
 
     const events = await prisma.event.findMany({
       include: populations,
-      where: {
-        OR: [
-          {
-            spaceName: {
-              in: req.user.roles.map((member: Role) => member.name),
-            },
-          },
-          { published: true },
-        ],
-      },
     });
 
     return res.status(200).json({

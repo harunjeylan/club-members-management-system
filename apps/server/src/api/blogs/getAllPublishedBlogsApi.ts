@@ -12,6 +12,20 @@ export default async function getAllPublishedBlogsApi(req, res) {
       if (item === 'category') {
         populations['category'] = true;
       }
+      if (item === 'image') {
+        populations['image'] = true;
+      }
+      if (item === 'author') {
+        populations['author'] = {
+          include: {
+            profile: {
+              include: {
+                image: true,
+              },
+            },
+          },
+        };
+      }
     });
     const blogs = await prisma.blog.findMany({
       where: { published: true },

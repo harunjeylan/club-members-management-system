@@ -25,11 +25,16 @@ export default async function getRoleDetails(roleId: string) {
 
   if (!res.ok) {
     console.log(res);
-
+    if (res.status === 404) {
+      return redirect('/not-found')
+    }
     // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');
   }
 
   const { role } = (await res.json()) as { role: Role & { users: User[] } };
+  if (!role) {
+    return redirect('/not-found')
+  }
   return role;
 }

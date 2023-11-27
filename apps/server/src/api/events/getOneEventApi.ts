@@ -18,13 +18,18 @@ export default async function getOneEventApi(req, res) {
     });
     const superAdminRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
-      { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+        { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+        { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+        { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
     ]);
     if (!!superAdminRoles.length) {
       const event = await prisma.event.findFirst({
         include: populations,
         where: { id: eventId },
       });
+      if (!event) {
+        return res.sendStatus(404);
+      }
       return res.status(200).json({
         event: event,
       });
@@ -33,17 +38,11 @@ export default async function getOneEventApi(req, res) {
       include: populations,
       where: {
         id: eventId,
-        OR: [
-          {
-            spaceName: {
-              in: req.user.roles.map((member: Role) => member.name),
-            },
-          },
-          { published: true },
-        ],
       },
     });
-
+    if (!event) {
+      return res.sendStatus(404);
+    }
     return res.status(200).json({
       event: event,
     });

@@ -1,15 +1,19 @@
 'use client';
 import handleCreateBlog from '@client/libs/client/blog/handleCreateBlog';
-import { Category } from '@prisma/client';
-import { useEffect, useState } from 'react';
+import { Category, FileModel } from '@prisma/client';
+import { useContext, useEffect, useState } from 'react';
 import { AlertMessage } from '../../ui/Alert';
 import BlogForm, { BlogFormType } from './BlogForm';
+import { TransitionContext } from '@client/context/TransitionContext';
 type PropsType = {
   categories: Category[];
   spaceName?: string;
+  files: FileModel[];
 };
-function CreateBlogForm({ categories, spaceName }: PropsType) {
+function CreateBlogForm({ categories, spaceName, files }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [message, setMessage] = useState<AlertMessage>();
+
   const initialValues: BlogFormType = {
     title: '',
     slug: '',
@@ -39,23 +43,25 @@ function CreateBlogForm({ categories, spaceName }: PropsType) {
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
-    const response = await handleCreateBlog(values, { tags: revalidateTags });
-    console.log({ response });
-    if (response.event) {
-      setMessage({
-        type: 'success',
-        summery: 'Blog created successfully',
-        title: 'Success ',
-      });
-    }
+    handleServerMutation(async () => {
+      const response = await handleCreateBlog(values, { tags: revalidateTags });
+      console.log({ response });
+      if (response.blog) {
+        setMessage({
+          type: 'success',
+          summery: 'Blog created successfully',
+          title: 'Success ',
+        });
+      }
 
-    if (response?.error) {
-      setMessage({
-        type: 'error',
-        summery: response?.error,
-        title: 'Error ',
-      });
-    }
+      if (response?.error) {
+        setMessage({
+          type: 'error',
+          summery: response?.error,
+          title: 'Error ',
+        });
+      }
+    });
   }
   return (
     <BlogForm
@@ -64,6 +70,7 @@ function CreateBlogForm({ categories, spaceName }: PropsType) {
       initialValues={initialValues}
       message={message}
       setMessage={setMessage}
+      files={files}
     />
   );
 }

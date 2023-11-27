@@ -1,0 +1,55 @@
+'use client';
+import { TransitionContext } from '@client/context/TransitionContext';
+import getFileUrl from '@client/helpers/getFileUrl';
+import handleDeleteFile from '@client/libs/client/files/handleDeleteFile';
+import handleRevalidate from '@client/libs/client/handleRevalidate';
+import { FileModel } from '@prisma/client';
+import Image from 'next/image';
+import React, { useContext } from 'react';
+import { MdDelete } from 'react-icons/md';
+
+export default function FileCard({ file }: { file: FileModel }) {
+  const { handleServerMutation } = useContext(TransitionContext);
+  async function deleteFiles() {
+    handleServerMutation(async () => {
+      const response = await handleDeleteFile(file.name);
+      if (response.space) {
+        // setMessage({
+        //   type: 'success',
+        //   summery: 'Users are added to Space successfully',
+        //   title: 'Success ',
+        // });
+      }
+
+      console.log({ response });
+
+      if (response?.error) {
+        // setMessage({
+        //   type: 'error',
+        //   summery: response?.error,
+        //   title: 'Error ',
+        // });
+      }
+      handleRevalidate({
+        path: '/blogs',
+        tag: 'getFiles',
+      });
+    });
+  }
+  return (
+    <div key={file.id} className={`flex rounded relative `} onClick={() => {}}>
+      <Image
+        src={getFileUrl(file)}
+        alt={file.name}
+        width={400}
+        height={400}
+        className="w-full object-cover aspect-square rounded"
+      />
+      <div className="absolute top-2 right-2">
+        <button className="btn-icon" onClick={deleteFiles}>
+          <MdDelete size={20} color="red" />
+        </button>
+      </div>
+    </div>
+  );
+}

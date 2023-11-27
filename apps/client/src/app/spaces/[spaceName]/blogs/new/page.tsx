@@ -1,11 +1,13 @@
 import CreateBlogForm from '@client/components/Forms/BlogForm/CreateBlogForm';
 import getCategories from '@client/libs/server/getCategories';
+import getFiles from '@client/libs/server/getFiles';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 
 async function Page({ params }: { params: { spaceName: string } }) {
   const categories = await getCategories();
+  const files = await getFiles()
   return (
     <section className="w-full ">
       <div className="flex justify-start">
@@ -23,7 +25,7 @@ async function Page({ params }: { params: { spaceName: string } }) {
             <div className="text-xl font-bold">Event Creation Form</div>
 
             <Suspense fallback={<div>Loading..</div>}>
-              <CreateBlogForm categories={categories} />
+              <CreateBlogForm categories={categories} files={files} spaceName={params.spaceName} />
             </Suspense>
           </div>
         </div>

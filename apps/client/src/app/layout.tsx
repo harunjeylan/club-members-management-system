@@ -1,16 +1,19 @@
 import Navbar from '@client/components/Navbar';
+import { WebVitals } from '@client/components/WebVitals';
+import TransitionProvider from '@client/context/TransitionContext';
 import StoreProvider from '@client/libs/app/StoreProvider';
 import getCurrentUser from '@client/libs/server/getCurrentUser';
-import { Roboto } from 'next/font/google';
+import classNames from 'classnames';
+// import { Roboto } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { ReactNode } from 'react';
 import './globals.css';
 
 // const inter = Inter({ subsets: ["latin"] });
-const roboto = Roboto({
-  subsets: ['greek'],
-  weight: ['400'],
-});
+// const roboto = Roboto({
+//   subsets: ['greek'],
+//   weight: ['400'],
+// });
 
 export const metadata = {
   title: 'Create Next App',
@@ -29,12 +32,18 @@ export default async function RootLayout({ children }: PropsType) {
   return (
     <html className="dark" lang="en">
       <body
-        className={`${roboto.className} bg-secondary-50 dark:bg-secondary-950 text-slate-800 dark:text-slate-200`}
+        className={classNames(
+          // roboto.className,
+          ` bg-secondary-50 dark:bg-secondary-950 text-slate-800 dark:text-slate-200`
+        )}
       >
-        <StoreProvider user={user} token={token}>
-          <Navbar />
-          {children}
-        </StoreProvider>
+        <TransitionProvider>
+          <WebVitals />
+          <StoreProvider user={user} token={token}>
+            <Navbar />
+            {children}
+          </StoreProvider>
+        </TransitionProvider>
       </body>
     </html>
   );

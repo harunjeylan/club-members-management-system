@@ -8,8 +8,9 @@ import handleDeleteRole from '@client/libs/client/role/handleDeleteRole';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useContext, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
+import { TransitionContext } from '@client/context/TransitionContext';
 enum FormType {
   UPDATE_ROLE,
   CREATE_ROLE,
@@ -20,6 +21,7 @@ type PropsType = {
   user: UserWithAll;
 };
 function RolesManager({ roles, spaceName, user }: PropsType) {
+  const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
   const [selected, setSelected] = useState<Role[]>([]);
@@ -43,28 +45,30 @@ function RolesManager({ roles, spaceName, user }: PropsType) {
   }, [activeModel]);
 
   async function deleteRoles() {
-    const response = await handleDeleteRole(selected.map((role) => role.id));
-    if (response.space) {
-      // setMessage({
-      //   type: 'success',
-      //   summery: 'Users are added to Space successfully',
-      //   title: 'Success ',
-      // });
-    }
+    handleServerMutation(async () => {
+      const response = await handleDeleteRole(selected.map((role) => role.id));
+      if (response.space) {
+        // setMessage({
+        //   type: 'success',
+        //   summery: 'Users are added to Space successfully',
+        //   title: 'Success ',
+        // });
+      }
 
-    console.log({ response });
+      console.log({ response });
 
-    if (response?.error) {
-      // setMessage({
-      //   type: 'error',
-      //   summery: response?.error,
-      //   title: 'Error ',
-      // });
-    }
-    handleRevalidate({
-      path: '/roles',
-      tag: 'getRoles',
-      'tag[1]': `getSpaceDetails/${spaceName}`,
+      if (response?.error) {
+        // setMessage({
+        //   type: 'error',
+        //   summery: response?.error,
+        //   title: 'Error ',
+        // });
+      }
+      handleRevalidate({
+        path: '/roles',
+        tag: 'getRoles',
+        'tag[1]': `getSpaceDetails/${spaceName}`,
+      });
     });
   }
   console.log(superAdminRoles, spaceAdminRoles);
