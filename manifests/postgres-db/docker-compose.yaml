@@ -8,8 +8,8 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=ozonetech
-      - POSTGRES_PASSWORD=ozone_pass
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes:
       - postgres-data-volume:/var/lib/postgres/data
 
@@ -21,8 +21,8 @@ services:
       - 5050:5050
     environment:
       - PGADMIN_LISTEN_PORT=5050
-      - PGADMIN_DEFAULT_EMAIL=ozonetech@gmail.com
-      - PGADMIN_DEFAULT_PASSWORD=ozone_pass
+      - PGADMIN_DEFAULT_EMAIL=postgres@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=postgres
     volumes:
       - pg-admin-data-volume:/var/lib/pg-admin/data
 
