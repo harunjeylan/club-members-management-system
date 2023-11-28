@@ -3,6 +3,7 @@
 import CreateCategoryForm from '@client/components/Forms/CreateCategoryForm';
 import Model from '@client/components/ui/Model';
 import { TransitionContext } from '@client/context/TransitionContext';
+import useConfirmation from '@client/hooks/useConfirmation';
 import handleDeleteCategory from '@client/libs/client/category/handleDeleteCategory';
 import { Category } from '@prisma/client';
 import { Suspense, useContext, useState } from 'react';
@@ -17,9 +18,10 @@ type PropsType = {
 };
 function CategoriesManager({ categories }: PropsType) {
   const { handleServerMutation } = useContext(TransitionContext);
+  const { confirm, ConfirmComp } = useConfirmation();
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState<Category[]>([]);
-  async function deleteRoles(categoryId: string) {
+  async function deleteCategory(categoryId: string) {
     handleServerMutation(async () => {
       const response = await handleDeleteCategory(categoryId);
       if (response.category) {
@@ -29,7 +31,6 @@ function CategoriesManager({ categories }: PropsType) {
         //   title: 'Success ',
         // });
       }
-
 
       if (response?.error) {
         // setMessages({
@@ -42,13 +43,14 @@ function CategoriesManager({ categories }: PropsType) {
   }
   return (
     <div>
+      <ConfirmComp className="px-4" />
       <Model
         show={show}
         setShow={setShow}
         className=" p-4 bg-secondary-100 dark:bg-secondary-900 rounded"
       >
         <div className="min-w-[20rem] max-w-4xl mx-auto flex flex-col w-full gap-4">
-          <div className="text-xl font-bold">Create Role Form</div>
+          <div className="text-xl font-bold">Create Category Form</div>
           <CreateCategoryForm
             categories={categories as unknown as Category[]}
           />
@@ -90,7 +92,12 @@ function CategoriesManager({ categories }: PropsType) {
                       <td className="px-4 py-2 ">
                         <button
                           className="btn-icon"
-                          onClick={() => deleteRoles(category.id)}
+                          onClick={() =>
+                            confirm(() => deleteCategory(category.id), {
+                              title: 'Confirm to Delete',
+                              summery: 'Do Yo Want to delete this?',
+                            })
+                          }
                         >
                           <MdDelete size={20} color="red" />
                         </button>
@@ -98,7 +105,7 @@ function CategoriesManager({ categories }: PropsType) {
                     </tr>
                     {category.categories.map((subcategory) => (
                       <tr
-                        key={subcategory.id}
+                        key={`${category.id}---${subcategory.id}`}
                         className=" hover:bg-secondary-400 dark:hover:bg-secondary-800"
                       >
                         <td className="px-4 py-2 ">
@@ -109,7 +116,12 @@ function CategoriesManager({ categories }: PropsType) {
                         <td className="px-4 py-2 ">
                           <button
                             className="btn-icon"
-                            onClick={() => deleteRoles(category.id)}
+                            onClick={() =>
+                              confirm(() => deleteCategory(subcategory.id), {
+                                title: 'Confirm to Delete',
+                                summery: 'Do Yo Want to delete this?',
+                              })
+                            }
                           >
                             <MdDelete size={20} color="red" />
                           </button>

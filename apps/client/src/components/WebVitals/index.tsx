@@ -3,8 +3,8 @@
 import { useReportWebVitals } from 'next/web-vitals';
 
 export function WebVitals() {
-  // useReportWebVitals((metric) => {
-  //   ;
-  // });
+  useReportWebVitals((metric) => {
+    console.log(metric);
+  });
   return <></>;
 }

@@ -1,6 +1,7 @@
 'use client';
 import Header2 from '@client/components/ui/Header2';
 import { TransitionContext } from '@client/context/TransitionContext';
+import useConfirmation from '@client/hooks/useConfirmation';
 import handleDeleteContact from '@client/libs/client/contact/handleDeleteContact';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { Contact } from '@prisma/client';
@@ -8,6 +9,7 @@ import React, { Suspense, useContext } from 'react';
 import { MdDelete } from 'react-icons/md';
 
 export default function AdminContacts({ contacts }: { contacts: Contact[] }) {
+  const { confirm, ConfirmComp } = useConfirmation();
   const { handleServerMutation } = useContext(TransitionContext);
   async function deleteContact(contact: Contact) {
     handleServerMutation(async () => {
@@ -19,7 +21,6 @@ export default function AdminContacts({ contacts }: { contacts: Contact[] }) {
         //   title: 'Success ',
         // });
       }
-
 
       if (response?.error) {
         // setMessages({
@@ -36,6 +37,7 @@ export default function AdminContacts({ contacts }: { contacts: Contact[] }) {
   }
   return (
     <section className="w-full ">
+      <ConfirmComp className="px-4" />
       <div className="w-full px-1 md:px-2 lg:px-4 mx-full ">
         <div className="flex justify-between w-full  border-b border-secondary-500 my-4 pb-2">
           <Header2 title="Contacts" />
@@ -90,7 +92,12 @@ export default function AdminContacts({ contacts }: { contacts: Contact[] }) {
                       <td className="px-4 py-2 whitespace-nowrap">
                         <button
                           className="btn-icon"
-                          onClick={() => deleteContact(contact)}
+                          onClick={() =>
+                            confirm(() => deleteContact(contact), {
+                              title: 'Confirm to Delete',
+                              summery: 'Do Yo Want to delete this?',
+                            })
+                          }
                         >
                           <MdDelete size={20} color="red" />
                         </button>

@@ -10,6 +10,7 @@ import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
 import { Suspense, useContext, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
 import { TransitionContext } from '@client/context/TransitionContext';
+import useConfirmation from '@client/hooks/useConfirmation';
 enum FormType {
   UPDATE_SPACE,
   CREATE_SPACE,
@@ -21,6 +22,7 @@ function SpacesManager({
   spaces: Space[];
   user: UserWithAll;
 }) {
+  const { confirm, ConfirmComp } = useConfirmation();
   const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
@@ -28,7 +30,6 @@ function SpacesManager({
   const [activeModel, setActiveModel] = useState<FormType | undefined>(
     undefined
   );
-  ;
   const superAdminRoles = getUserAccessRoles(user.roles, [
     { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
     { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
@@ -54,8 +55,6 @@ function SpacesManager({
         // });
       }
 
-      ;
-
       if (response?.error) {
         // setMessages({
         //   type: 'error',
@@ -71,6 +70,7 @@ function SpacesManager({
   }
   return (
     <div>
+      <ConfirmComp className="px-4" />
       <Model
         show={show}
         setShow={setShow}
@@ -98,7 +98,15 @@ function SpacesManager({
           {selected.length ? (
             <div className="flex flex-wrap gap-2">
               {!!superAdminRoles.length && (
-                <button className="btn-danger py-1 px-4" onClick={deleteSpaces}>
+                <button
+                  className="btn-danger py-1 px-4"
+                  onClick={() =>
+                    confirm(() => deleteSpaces(), {
+                      title: 'Confirm to Delete',
+                      summery: 'Do Yo Want to delete this?',
+                    })
+                  }
+                >
                   delete
                 </button>
               )}

@@ -10,7 +10,7 @@ import React, { useContext } from 'react';
 import { MdDelete } from 'react-icons/md';
 
 export default function FileCard({ file }: { file: FileModel }) {
-
+  const { confirm, ConfirmComp } = useConfirmation();
   const { handleServerMutation } = useContext(TransitionContext);
   async function deleteFiles() {
     handleServerMutation(async () => {
@@ -22,8 +22,6 @@ export default function FileCard({ file }: { file: FileModel }) {
         //   title: 'Success ',
         // });
       }
-
-      ;
 
       if (response?.error) {
         // setMessages({
@@ -40,6 +38,7 @@ export default function FileCard({ file }: { file: FileModel }) {
   }
   return (
     <div key={file.id} className={`flex rounded relative `} onClick={() => {}}>
+      <ConfirmComp className="px-4" />
       <Image
         src={getFileUrl(file)}
         alt={file.name}
@@ -50,7 +49,12 @@ export default function FileCard({ file }: { file: FileModel }) {
       <div className="absolute top-2 right-2">
         <button
           className="btn-icon"
-          onClick={() => deleteFiles()}
+          onClick={() =>
+            confirm(() => deleteFiles(), {
+              title: 'Confirm to Delete',
+              summery: 'Do Yo Want to delete this?',
+            })
+          }
         >
           <MdDelete size={20} color="red" />
         </button>

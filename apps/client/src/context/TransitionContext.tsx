@@ -1,7 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { createContext, useEffect, useState, useTransition } from 'react';
+import Spinner from '@client/components/ui/Spinner';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { createContext, useEffect, useLayoutEffect, useState, useTransition } from 'react';
 
 export const TransitionContext = createContext({
   isPending: false,
@@ -9,16 +10,20 @@ export const TransitionContext = createContext({
   startTransition: (e: any) => {},
 });
 
-const TransitionProvider = ({ children }: { children: any }) => {
+const ConfirmationProvider = ({ children }: { children: any }) => {
   const [isPending, setPending] = useState(false);
   const [isMutating, setMutating] = useState(false);
   const [isTransitionStarted, startTransition] = useTransition();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (isPending || isTransitionStarted) {
-      setMutating(true);
-    }
+    startTransition(console.log);
+  }, [pathname, searchParams]);
+
+  useLayoutEffect(() => {
+    setMutating(isPending || isTransitionStarted);
   }, [isPending, isTransitionStarted]);
 
   const handleServerMutation = async (callBack: () => Promise<void>) => {
@@ -35,14 +40,14 @@ const TransitionProvider = ({ children }: { children: any }) => {
   };
   return (
     <TransitionContext.Provider value={values}>
-      {/* {!isMutating && (
-        <div className="h-1 w-full bg-secondary-200 dark:bg-secondary-600">
-          <div className="h-1 bg-primary-500" style={{ width: '45%' }}></div>
+      {isMutating && (
+        <div className="fixed top-2 right-2 z-[1000]">
+          <Spinner />
         </div>
-      )} */}
+      )}
       {children}
     </TransitionContext.Provider>
   );
 };
 
-export default TransitionProvider;
+export default ConfirmationProvider;

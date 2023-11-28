@@ -6,8 +6,10 @@ import UpdateUserForm from '@client/components/Forms/UserForm/UpdateUserForm';
 import UsersListTable from '@client/components/Tables/UserListTable';
 import Model from '@client/components/ui/Model';
 import { TransitionContext } from '@client/context/TransitionContext';
+import useConfirmation from '@client/hooks/useConfirmation';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import handleUpdateSpace from '@client/libs/client/space/handleUpdateSpace';
+import handleDeleteUser from '@client/libs/client/user/handleDeleteUser';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { Role, RoleCode, RoleScop, User } from '@prisma/client';
 import {
@@ -32,6 +34,7 @@ type PropsType = {
   user: UserWithAll;
 };
 function UsersManager({ users, roles, spaceName, user }: PropsType) {
+  const { confirm, ConfirmComp } = useConfirmation();
   const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
@@ -72,8 +75,6 @@ function UsersManager({ users, roles, spaceName, user }: PropsType) {
         // });
       }
 
-      ;
-
       if (response?.error) {
         // setMessages({
         //   type: 'error',
@@ -89,8 +90,33 @@ function UsersManager({ users, roles, spaceName, user }: PropsType) {
     });
   }
 
+  async function deleteUsers() {
+    handleServerMutation(async () => {
+      const response = await handleDeleteUser(selected.map((user) => user.id));
+      if (response.space) {
+        // setMessages({
+        //   type: 'success',
+        //   summery: 'Users are added to Space successfully',
+        //   title: 'Success ',
+        // });
+      }
+
+      if (response?.error) {
+        // setMessages({
+        //   type: 'error',
+        //   summery: response?.error,
+        //   title: 'Error ',
+        // });
+      }
+      handleRevalidate({
+        path: '/users',
+        tag: 'getUsers',
+      });
+    });
+  }
   return (
     <div>
+       <ConfirmComp className="px-4" />
       <Model
         show={show}
         setShow={setShow}
@@ -144,12 +170,27 @@ function UsersManager({ users, roles, spaceName, user }: PropsType) {
           {selected.length ? (
             <div className="flex flex-wrap gap-2">
               {(!!superAdminRoles.length || !!spaceAdminRoles.length) && (
-                <button className="btn-danger py-1 px-4">delete</button>
+                <button
+                  className="btn-danger py-1 px-4"
+                  onClick={() =>
+                    confirm(() => deleteUsers(), {
+                      title: 'Confirm to Delete',
+                      summery: 'Do Yo Want to delete this?',
+                    })
+                  }
+                >
+                  delete
+                </button>
               )}
               {(!!superAdminRoles.length || !!spaceAdminRoles.length) && (
                 <button
                   className="btn-warning py-1 px-4"
-                  onClick={() => removeUsersFromSpace()}
+                  onClick={() =>
+                    confirm(() => removeUsersFromSpace(), {
+                      title: 'Confirm to Remove',
+                      summery: 'Do Yo Want to remove this?',
+                    })
+                  }
                 >
                   remove from space
                 </button>

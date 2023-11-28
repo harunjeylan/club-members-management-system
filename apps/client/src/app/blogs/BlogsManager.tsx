@@ -2,19 +2,18 @@
 
 import BlogListTable from '@client/components/Tables/BlogListTable';
 import { TransitionContext } from '@client/context/TransitionContext';
+import useConfirmation from '@client/hooks/useConfirmation';
 import handleDeleteBlog from '@client/libs/client/blog/handleDeleteEvent';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { Blog, Category } from '@prisma/client';
 import Link from 'next/link';
 import { Suspense, useContext, useState } from 'react';
-enum FormType {
-  UPDATE_EVENT,
-  CREATE_EVENT,
-}
+
 type PropsType = {
   blogs: (Blog & { category: Category })[];
 };
 function BlogsManager({ blogs }: PropsType) {
+  const { confirm, ConfirmComp } = useConfirmation();
   const { handleServerMutation } = useContext(TransitionContext);
   const [selected, setSelected] = useState<(Blog & { category: Category })[]>(
     []
@@ -46,11 +45,20 @@ function BlogsManager({ blogs }: PropsType) {
   }
   return (
     <div>
+      <ConfirmComp className="px-4" />
       <div className="flex justify-between w-full ">
         <div>
           {selected.length ? (
             <div className="flex flex-wrap gap-2">
-              <button className="btn-danger py-1 px-4" onClick={deleteBlogs}>
+              <button
+                className="btn-danger py-1 px-4"
+                onClick={() =>
+                  confirm(() => deleteBlogs(), {
+                    title: 'Confirm to Delete',
+                    summery: 'Do Yo Want to delete this?',
+                  })
+                }
+              >
                 delete
               </button>
 

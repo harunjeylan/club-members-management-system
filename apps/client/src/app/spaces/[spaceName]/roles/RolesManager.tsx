@@ -11,6 +11,7 @@ import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
 import React, { Suspense, useContext, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
 import { TransitionContext } from '@client/context/TransitionContext';
+import useConfirmation from '@client/hooks/useConfirmation';
 enum FormType {
   UPDATE_ROLE,
   CREATE_ROLE,
@@ -21,6 +22,7 @@ type PropsType = {
   user: UserWithAll;
 };
 function RolesManager({ roles, spaceName, user }: PropsType) {
+  const { confirm, ConfirmComp } = useConfirmation();
   const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
@@ -55,8 +57,6 @@ function RolesManager({ roles, spaceName, user }: PropsType) {
         // });
       }
 
-      ;
-
       if (response?.error) {
         // setMessages({
         //   type: 'error',
@@ -71,10 +71,9 @@ function RolesManager({ roles, spaceName, user }: PropsType) {
       });
     });
   }
-  ;
-
   return (
     <div>
+       <ConfirmComp className="px-4" />
       <Model
         show={show}
         setShow={setShow}
@@ -105,7 +104,15 @@ function RolesManager({ roles, spaceName, user }: PropsType) {
           {(!!superAdminRoles.length || !!spaceAdminRoles.length) &&
           selected.length ? (
             <div className="flex flex-wrap gap-2">
-              <button className="btn-danger py-1 px-4" onClick={deleteRoles}>
+              <button
+                className="btn-danger py-1 px-4"
+                onClick={() =>
+                  confirm(() => deleteRoles(), {
+                    title: 'Confirm to Delete',
+                    summery: 'Do Yo Want to delete this?',
+                  })
+                }
+              >
                 delete
               </button>
 

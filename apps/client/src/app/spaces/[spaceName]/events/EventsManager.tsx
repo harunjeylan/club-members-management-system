@@ -5,6 +5,7 @@ import UpdateEventForm from '@client/components/Forms/EventForm/UpdateEventForm'
 import EventListTable from '@client/components/Tables/EventListTable';
 import Model from '@client/components/ui/Model';
 import { TransitionContext } from '@client/context/TransitionContext';
+import useConfirmation from '@client/hooks/useConfirmation';
 import handleDeleteEvent from '@client/libs/client/event/handleDeleteEvent';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
@@ -22,6 +23,7 @@ type PropsType = {
   user: UserWithAll;
 };
 function EventsManager({ events, categories, spaceName, user }: PropsType) {
+  const { confirm, ConfirmComp } = useConfirmation();
   const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
@@ -61,8 +63,6 @@ function EventsManager({ events, categories, spaceName, user }: PropsType) {
         // });
       }
 
-      ;
-
       if (response?.error) {
         // setMessages({
         //   type: 'error',
@@ -79,6 +79,7 @@ function EventsManager({ events, categories, spaceName, user }: PropsType) {
   }
   return (
     <div>
+      <ConfirmComp className="px-4" />
       <Model
         show={show}
         setShow={setShow}
@@ -113,7 +114,15 @@ function EventsManager({ events, categories, spaceName, user }: PropsType) {
           {(!!superAdminRoles.length || !!spaceAdminRoles.length) &&
           selected.length ? (
             <div className="flex flex-wrap gap-2">
-              <button className="btn-danger py-1 px-4" onClick={deleteEvents}>
+              <button
+                className="btn-danger py-1 px-4"
+                onClick={() =>
+                  confirm(() => deleteEvents(), {
+                    title: 'Confirm to Delete',
+                    summery: 'Do Yo Want to delete this?',
+                  })
+                }
+              >
                 delete
               </button>
 

@@ -9,6 +9,7 @@ import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { Role, Space } from '@prisma/client';
 import React, { Suspense, useContext, useEffect, useState } from 'react';
 import { TransitionContext } from '@client/context/TransitionContext';
+import useConfirmation from '@client/hooks/useConfirmation';
 enum FormType {
   UPDATE_ROLE,
   CREATE_ROLE,
@@ -18,6 +19,7 @@ type PropsType = {
   spaces: Space[];
 };
 function RolesManager({ roles, spaces }: PropsType) {
+  const { confirm, ConfirmComp } = useConfirmation();
   const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
@@ -25,8 +27,6 @@ function RolesManager({ roles, spaces }: PropsType) {
   const [activeModel, setActiveModel] = useState<FormType | undefined>(
     undefined
   );
-  ;
-
   useEffect(() => {
     if (activeModel === FormType.CREATE_ROLE) {
       setExpandUrl('/roles/new');
@@ -46,8 +46,6 @@ function RolesManager({ roles, spaces }: PropsType) {
         // });
       }
 
-      ;
-
       if (response?.error) {
         // setMessages({
         //   type: 'error',
@@ -63,6 +61,7 @@ function RolesManager({ roles, spaces }: PropsType) {
   }
   return (
     <div>
+      <ConfirmComp className="px-4" />
       <Model
         show={show}
         setShow={setShow}
@@ -89,7 +88,15 @@ function RolesManager({ roles, spaces }: PropsType) {
         <div>
           {selected.length ? (
             <div className="flex flex-wrap gap-2">
-              <button className="btn-danger py-1 px-4" onClick={deleteRoles}>
+              <button
+                className="btn-danger py-1 px-4"
+                onClick={() =>
+                  confirm(() => deleteRoles(), {
+                    title: 'Confirm to Delete',
+                    summery: 'Do Yo Want to delete this?',
+                  })
+                }
+              >
                 delete
               </button>
 

@@ -13,6 +13,7 @@ import { Role, RoleCode, RoleScop, Space } from '@prisma/client';
 import { Suspense, useContext, useEffect, useState } from 'react';
 import { UserWithAll } from 'types/user';
 import { TransitionContext } from '@client/context/TransitionContext';
+import useConfirmation from '@client/hooks/useConfirmation';
 enum FormType {
   ASSIGN_ROLE,
   ADD_TO_SPACE,
@@ -26,6 +27,7 @@ type PropsType = {
   user: UserWithAll;
 };
 function UsersManager({ users, roles, spaces, user }: PropsType) {
+  const { confirm, ConfirmComp } = useConfirmation();
   const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [expandUrl, setExpandUrl] = useState<string | undefined>(undefined);
@@ -56,8 +58,6 @@ function UsersManager({ users, roles, spaces, user }: PropsType) {
         // });
       }
 
-      ;
-
       if (response?.error) {
         // setMessages({
         //   type: 'error',
@@ -73,6 +73,7 @@ function UsersManager({ users, roles, spaces, user }: PropsType) {
   }
   return (
     <div>
+      <ConfirmComp className="px-4" />
       <Model
         show={show}
         setShow={setShow}
@@ -128,7 +129,15 @@ function UsersManager({ users, roles, spaces, user }: PropsType) {
         <div>
           {selected.length ? (
             <div className="flex flex-wrap gap-2">
-              <button className="btn-danger py-1 px-4" onClick={deleteUsers}>
+              <button
+                className="btn-danger py-1 px-4"
+                onClick={() =>
+                  confirm(() => deleteUsers(), {
+                    title: 'Confirm to Delete',
+                    summery: 'Do Yo Want to delete this?',
+                  })
+                }
+              >
                 delete
               </button>
               <button

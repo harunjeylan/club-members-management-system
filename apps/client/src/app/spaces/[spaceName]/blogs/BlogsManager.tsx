@@ -1,21 +1,16 @@
 'use client';
 
-import CreateBlogForm from '@client/components/Forms/BlogForm/CreateBlogForm';
-import UpdateBlogForm from '@client/components/Forms/BlogForm/UpdateBlogForm';
 import BlogListTable from '@client/components/Tables/BlogListTable';
-import Model from '@client/components/ui/Model';
 import { TransitionContext } from '@client/context/TransitionContext';
+import useConfirmation from '@client/hooks/useConfirmation';
 import handleDeleteBlog from '@client/libs/client/blog/handleDeleteEvent';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
-import { Category, Blog, RoleCode, RoleScop } from '@prisma/client';
+import { Blog, Category, RoleCode, RoleScop } from '@prisma/client';
 import Link from 'next/link';
-import { Suspense, useContext, useEffect, useState } from 'react';
+import { Suspense, useContext, useState } from 'react';
 import { UserWithAll } from 'types/user';
-enum FormType {
-  UPDATE_EVENT,
-  CREATE_EVENT,
-}
+
 type PropsType = {
   blogs: (Blog & { category: Category })[];
   categories: Category[];
@@ -23,6 +18,7 @@ type PropsType = {
   user: UserWithAll;
 };
 function BlogsManager({ blogs, categories, spaceName, user }: PropsType) {
+  const { confirm, ConfirmComp } = useConfirmation();
   const { handleServerMutation } = useContext(TransitionContext);
   const [selected, setSelected] = useState<(Blog & { category: Category })[]>(
     []
@@ -48,8 +44,6 @@ function BlogsManager({ blogs, categories, spaceName, user }: PropsType) {
         // });
       }
 
-      ;
-
       if (response?.error) {
         // setMessages({
         //   type: 'error',
@@ -66,12 +60,21 @@ function BlogsManager({ blogs, categories, spaceName, user }: PropsType) {
   }
   return (
     <div>
+      <ConfirmComp className="px-4" />
       <div className="flex justify-between w-full ">
         <div>
           {(!!superAdminRoles.length || !!spaceAdminRoles.length) &&
           selected.length ? (
             <div className="flex flex-wrap gap-2">
-              <button className="btn-danger py-1 px-4" onClick={deleteBlogs}>
+              <button
+                className="btn-danger py-1 px-4"
+                onClick={() =>
+                  confirm(() => deleteBlogs(), {
+                    title: 'Confirm to Delete',
+                    summery: 'Do Yo Want to delete this?',
+                  })
+                }
+              >
                 delete
               </button>
 
