@@ -4,10 +4,7 @@ import prisma from '@server/prisma/PrismaClient';
 
 export default async function publicDashboard(req, res) {
   const { populate } = req.query;
-  ;
-
   try {
-
     const populations = {};
     const populateArray = getArrayValues(populate);
     if (populateArray.includes('spaces')) {
@@ -75,25 +72,26 @@ export default async function publicDashboard(req, res) {
       populations['spaceEditors'] = spaceEditors;
     }
     if (populateArray.includes('events')) {
-      const events = await prisma.event.count();
+      const events = await prisma.event.count({
+        where: {
+          published: true,
+        },
+      });
 
       populations['events'] = events;
-      ;
     }
     if (populateArray.includes('blogs')) {
-      const blogs = await prisma.blog.count();
+      const blogs = await prisma.blog.count({
+        where: {
+          published: true,
+        },
+      });
 
       populations['blogs'] = blogs;
-      ;
     }
-
-    ;
 
     return res.status(200).json(populations);
   } catch (error) {
-    ;
-    return res
-      .status(500)
-      .json({ errors: [{ message: error.message }] })
+    return res.status(500).json({ errors: [{ message: error.message }] });
   }
 }

@@ -5,9 +5,11 @@ import { UserWithRoles } from 'types/user';
 import { server_host } from '../../../../config/host.config';
 import { revalidateTag } from 'next/cache';
 export async function POST(req: NextRequest) {
-  const { password, username, email } = await req.json();
+  const { first_name, last_name, password, username, email } = await req.json();
   const url = `${server_host}/users/register`;
   const payload = {
+    first_name,
+    last_name,
     password,
     username,
     email,

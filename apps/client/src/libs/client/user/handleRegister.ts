@@ -5,6 +5,8 @@ import { AnyAction } from '@reduxjs/toolkit';
 
 export default async function handleRegister(
   values: {
+    first_name: string,
+    last_name: string,
     username: string;
     email: string;
     password: string;
@@ -15,6 +17,8 @@ export default async function handleRegister(
   try {
     const url = `/api/auth/register`;
     const res = await axios.post(url, {
+      first_name: values.first_name,
+      last_name: values.last_name,
       username: values.username,
       email: values.email,
       password: values.password,

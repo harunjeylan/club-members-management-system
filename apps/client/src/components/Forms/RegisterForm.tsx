@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import * as Yup from 'yup';
+import * as yup from 'yup';
 import Alert, { AlertMessage } from '../ui/Alert';
 import handleRegister from '@client/libs/client/user/handleRegister';
 function RegisterForm() {
@@ -13,16 +13,18 @@ function RegisterForm() {
   const searchParams = useSearchParams();
   const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues = {
-    // name: "",
+    first_name: '',
+    last_name: '',
     username: '',
     email: '',
     password: '',
   };
-  let userSchema = Yup.object({
-    // name: Yup.string().required(),
-    username: Yup.string().required(),
-    email: Yup.string().required(),
-    password: Yup.string().required(),
+  let userSchema = yup.object({
+    first_name: yup.string().required(),
+    last_name: yup.string().required(),
+    username: yup.string().required(),
+    email: yup.string().required(),
+    password: yup.string().required(),
   });
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -38,6 +40,8 @@ function RegisterForm() {
 
   async function onSubmit(
     values: {
+      first_name: string,
+      last_name: string,
       username: string;
       email: string;
       password: string;
@@ -81,11 +85,52 @@ function RegisterForm() {
             <div key={ind} className="col-span-2">
               <Alert
                 message={message}
-                handleRemove={() => setMessages((prevMessages) => prevMessages.splice(ind, 1))}
+                handleRemove={() =>
+                  setMessages((prevMessages) => prevMessages.splice(ind, 1))
+                }
               />
             </div>
           ))}
-
+          <div className="col-span-1 flex flex-col gap-1 w-full">
+            <label>First Name</label>
+            <input
+              type="text"
+              name="first_name"
+              className={`input ${
+                !!touched.first_name && !!errors.first_name
+                  ? 'bg-red-300/50 border border-red-500'
+                  : ''
+              }`}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.first_name}
+            />
+            <ErrorMessage
+              name="first_name"
+              component="div"
+              className="text-red-500 dark:text-red-300"
+            />
+          </div>
+          <div className="col-span-1 flex flex-col gap-1 w-full">
+            <label>Last Name</label>
+            <input
+              type="text"
+              name="last_name"
+              className={`input ${
+                !!touched.last_name && !!errors.last_name
+                  ? 'bg-red-300/50 border border-red-500'
+                  : ''
+              }`}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.last_name}
+            />
+            <ErrorMessage
+              name="last_name"
+              component="div"
+              className="text-red-500 dark:text-red-300"
+            />
+          </div>
           <div className="col-span-1 flex flex-col gap-1 w-full">
             <label>Username</label>
             <input
