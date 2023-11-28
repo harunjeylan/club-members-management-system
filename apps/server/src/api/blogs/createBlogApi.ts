@@ -34,12 +34,12 @@ export default async function createBlogApi(req, res) {
       title: z.string(),
       slug: z.string(),
       published: z.boolean(),
-      description: z.string().or(z.undefined()),
-      content: z.string().or(z.undefined()),
-      categoryId: z.string().or(z.undefined()),
-      keyword: z.string().or(z.undefined()),
-      fileModelId: z.string().or(z.undefined()),
-      spaceName: z.string().or(z.undefined()),
+      description: z.string().optional(),
+      content: z.string().optional(),
+      categoryId: z.string().optional(),
+      keyword: z.string().optional(),
+      fileModelId: z.string().optional(),
+      spaceName: z.string().optional(),
     });
 
     //@ts-ignore: Unreachable code error

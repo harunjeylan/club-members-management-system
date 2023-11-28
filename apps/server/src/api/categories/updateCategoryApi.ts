@@ -22,7 +22,7 @@ export default async function updateEventApi(req, res) {
     }
 
     const zodSchema = z.object({
-      name: z.string().or(z.undefined()),
+      name: z.string().optional(),
     });
 
     //@ts-ignore: Unreachable code error

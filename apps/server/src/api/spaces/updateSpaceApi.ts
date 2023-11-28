@@ -21,15 +21,15 @@ export default async function updateSpaceApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      name: z.string().or(z.undefined()),
-      isPrivate: z.boolean().or(z.undefined()),
-      description: z.string().or(z.undefined()),
-      addUsers: z.array(z.string()).or(z.undefined()),
-      addRoles: z.array(z.string()).or(z.undefined()),
-      removeUsers: z.array(z.string()).or(z.undefined()),
-      removeRoles: z.array(z.string()).or(z.undefined()),
-      setUsers: z.array(z.string()).or(z.undefined()),
-      setRoles: z.array(z.string()).or(z.undefined()),
+      name: z.string().optional(),
+      isPrivate: z.boolean().optional(),
+      description: z.string().optional(),
+      addUsers: z.array(z.string()).optional(),
+      addRoles: z.array(z.string()).optional(),
+      removeUsers: z.array(z.string()).optional(),
+      removeRoles: z.array(z.string()).optional(),
+      setUsers: z.array(z.string()).optional(),
+      setRoles: z.array(z.string()).optional(),
     });
 
     //@ts-ignore: Unreachable code error

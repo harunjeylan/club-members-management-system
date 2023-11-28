@@ -18,7 +18,7 @@ export default async function createCategoryApi(req, res) {
     }
     const zodSchema = z.object({
       name: z.string(),
-      mainCategoryId: z.string().or(z.undefined()),
+      mainCategoryId: z.string().optional(),
     });
 
     //@ts-ignore: Unreachable code error

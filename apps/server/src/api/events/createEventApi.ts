@@ -49,11 +49,11 @@ export default async function createEventApi(req, res) {
         Repeat.EVERY_MONTH,
         Repeat.EVERY_YEAR,
       ]),
-      description: z.string().or(z.undefined()),
-      location: z.string().or(z.undefined()),
-      categoryId: z.string().or(z.undefined()),
+      description: z.string().optional(),
+      location: z.string().optional(),
+      categoryId: z.string().optional(),
       published: z.boolean(),
-      spaceName: z.string().or(z.undefined()),
+      spaceName: z.string().optional(),
     });
 
     //@ts-ignore: Unreachable code error

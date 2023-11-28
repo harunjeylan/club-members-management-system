@@ -1,16 +1,11 @@
 import BlogDetails from '@client/components/Blog/BlogDetails';
-import getFileUrl from '@client/helpers/getFileUrl';
 import getBlogDetails from '@client/libs/server/getBlogDetails';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 
 async function Page({ params }: { params: { slug: string } }) {
   const blog = await getBlogDetails(params.slug);
-  ;
-  
-  );
 
   return (
     <section className="w-full ">

@@ -29,12 +29,12 @@ export default async function updateUserApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      username: z.string().or(z.undefined()),
-      first_name: z.string().or(z.undefined()),
-      last_name: z.string().or(z.undefined()),
-      email: z.string().email().or(z.undefined()),
-      roles: z.array(z.string()).or(z.undefined()),
-      spaces: z.array(z.string()).or(z.undefined()),
+      username: z.string().optional(),
+      first_name: z.string().optional(),
+      last_name: z.string().optional(),
+      email: z.string().email().optional(),
+      roles: z.array(z.string()).optional(),
+      spaces: z.array(z.string()).optional(),
     });
 
     //@ts-ignore: Unreachable code error

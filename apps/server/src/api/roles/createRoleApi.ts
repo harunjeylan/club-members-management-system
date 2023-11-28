@@ -17,8 +17,8 @@ export default async function createRoleApi(req, res) {
       name: z.string(),
       code: z.enum([RoleCode.ADMIN, RoleCode.EDITOR, RoleCode.MEMBER]),
       scop: z.enum([RoleScop.SUPER, RoleScop.SPACE]),
-      description: z.string().or(z.undefined()),
-      spaceName: z.string().or(z.undefined()),
+      description: z.string().optional(),
+      spaceName: z.string().optional(),
     });
 
     //@ts-ignore: Unreachable code error

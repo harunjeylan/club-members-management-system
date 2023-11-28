@@ -18,13 +18,13 @@ export default async function updateRoleApi(req, res) {
       return res.sendStatus(403);
     }
     const zodSchema = z.object({
-      name: z.string().or(z.undefined()),
+      name: z.string().optional(),
       code: z
         .enum([RoleCode.ADMIN, RoleCode.EDITOR, RoleCode.MEMBER])
-        .or(z.undefined()),
-      scop: z.enum([RoleScop.SUPER, RoleScop.SPACE]).or(z.undefined()),
-      users: z.array(z.string()).or(z.undefined()),
-      description: z.string().or(z.undefined()),
+        .optional(),
+      scop: z.enum([RoleScop.SUPER, RoleScop.SPACE]).optional(),
+      users: z.array(z.string()).optional(),
+      description: z.string().optional(),
     });
 
     //@ts-ignore: Unreachable code error

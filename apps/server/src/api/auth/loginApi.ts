@@ -2,9 +2,11 @@ import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import prisma from '../../prisma/PrismaClient';
 import generateUserToken from '../../utils/generateUserToken';
+import { Request, Response } from 'express';
 
-export default async function loginApi(req, res) {
+export default async function loginApi(req: Request, res: Response) {
   const { identifier, password } = req.body;
+
   try {
     const zodSchema = z.object({
       identifier: z.string().or(z.string().email()),
@@ -34,20 +36,30 @@ export default async function loginApi(req, res) {
       },
     });
 
-    if (!user || !bcrypt.compareSync(password, user.password)) {
+    if (!user) {
+      return res.status(401).json({
+        message: 'User Not Found With Credential',
+        code: 'login-user',
+      }); // Unauthorized
+    }
+
+    if (!bcrypt.compareSync(password, user.password)) {
       return res
         .status(401)
-        .json({ message: 'Unauthorized', code: 'login-user' }); // Unauthorized
+        .json({ message: 'Wrong Credential', code: 'login-user' }); // Unauthorized
     }
-    
+
     const { access, refresh } = generateUserToken(user);
+    console.log({
+      user: prisma.$exclude(user, ['password']),
+      jwt: { access, refresh },
+    });
 
     return res.status(200).json({
       user: prisma.$exclude(user, ['password']),
       jwt: { access, refresh },
     });
   } catch (error) {
-    ;
     return res
       .status(500)
       .json({ message: 'Server Error', code: 'login-user' });

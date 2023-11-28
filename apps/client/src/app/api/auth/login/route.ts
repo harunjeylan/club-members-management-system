@@ -1,9 +1,8 @@
+import axios from 'axios';
 import { cookies } from 'next/headers';
-import { server_host } from '../../../../config/host.config';
-import axios, { AxiosError } from 'axios';
 import { NextRequest } from 'next/server';
 import { UserWithRoles } from 'types/user';
-import { revalidateTag } from 'next/cache';
+import { server_host } from '../../../../config/host.config';
 
 export async function POST(req: NextRequest) {
   const { identifier, password } = await req.json();
@@ -12,6 +11,7 @@ export async function POST(req: NextRequest) {
     identifier,
     password,
   };
+  
   try {
     const response = await axios.post<{
       user: UserWithRoles;
@@ -21,15 +21,14 @@ export async function POST(req: NextRequest) {
     const { user, jwt } = response.data;
     cookies().set({ name: 'token', value: jwt.access, secure: true });
     cookies().set({ name: 'userId', value: user.id, secure: true });
-    try {
-      revalidateTag('currentUserDetails');
-    } catch (e) {}
+
     return Response.json({ user, jwt });
   } catch (error: any) {
-    if (error?.response?.data?.error) {
+    
+    if (error?.response?.data) {
       return Response.json({
-        status: error.response.data.error.status,
-        message: error.response.data.error.message,
+        status: error.response.data.status,
+        message: error.response.data.message,
       });
     } else {
       return Response.json({

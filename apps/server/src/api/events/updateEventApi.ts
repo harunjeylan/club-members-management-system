@@ -43,9 +43,9 @@ export default async function updateEventApi(req, res) {
 
     const zodSchema = z.object({
       title: z.string(),
-      startAt: z.string().or(z.undefined()),
-      endAt: z.string().or(z.undefined()),
-      fullDay: z.boolean().or(z.undefined()),
+      startAt: z.string().optional(),
+      endAt: z.string().optional(),
+      fullDay: z.boolean().optional(),
       repeat: z
         .enum([
           Repeat.NO_REPEAT,
@@ -54,12 +54,12 @@ export default async function updateEventApi(req, res) {
           Repeat.EVERY_MONTH,
           Repeat.EVERY_YEAR,
         ])
-        .or(z.undefined()),
-      description: z.string().or(z.undefined()),
-      location: z.string().or(z.undefined()),
-      categoryId: z.string().or(z.undefined()),
-      published: z.boolean().or(z.undefined()),
-      spaceName: z.string().or(z.undefined()),
+        .optional(),
+      description: z.string().optional(),
+      location: z.string().optional(),
+      categoryId: z.string().optional(),
+      published: z.boolean().optional(),
+      spaceName: z.string().optional(),
     });
 
     //@ts-ignore: Unreachable code error
