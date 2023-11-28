@@ -7,7 +7,7 @@ export type AlertMessage = {
 }
 type AlertPropsType = {
   message: AlertMessage;
-  handleRemove?: () => void | null | undefined;
+  handleRemove?: () => any;
 };
 
 function Alert({ message, handleRemove }: AlertPropsType) {

@@ -41,6 +41,6 @@ export default async function getCurrentUserApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'get-current-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

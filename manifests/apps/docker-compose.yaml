@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:alpine3.18
+    container_name: postgres-db
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres-data-volume:/var/lib/postgres/data
+
+  pg-admin:
+    image: dpage/pgadmin4:7.7
+    container_name: pg-admin
+    restart: always
+    ports:
+      - 5050:5050
+    environment:
+      - PGADMIN_LISTEN_PORT=5050
+      - PGADMIN_DEFAULT_EMAIL=postgres@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=postgres
+    volumes:
+      - pg-admin-data-volume:/var/lib/pg-admin/data
+
+volumes:
+  postgres-data-volume:
+  pg-admin-data-volume:

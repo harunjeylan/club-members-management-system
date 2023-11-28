@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import prisma from '../../prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function createUserApi(req, res) {
   const { username, first_name, last_name, email, password } = req.body;
@@ -33,11 +34,7 @@ export default async function createUserApi(req, res) {
     });
 
     if (!success) {
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'register-user',
-      });
+      return res.status(409).json({ errors: fromZodError(error).details });
     }
 
     let userExist = await prisma.user.findFirst({
@@ -110,6 +107,6 @@ export default async function createUserApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'create-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

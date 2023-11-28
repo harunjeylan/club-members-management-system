@@ -2,6 +2,7 @@ import { RoleCode, RoleScop, Category, Repeat } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { z } from 'zod';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function createCategoryApi(req, res) {
   const { name, mainCategoryId } = req.body;
@@ -28,13 +29,7 @@ export default async function createCategoryApi(req, res) {
     });
 
     if (!success) {
-      ;
-
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'create-event',
-      });
+      return res.status(409).json({ errors: fromZodError(error).details });
     }
 
     const fieldsData = {
@@ -61,6 +56,6 @@ export default async function createCategoryApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'create-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

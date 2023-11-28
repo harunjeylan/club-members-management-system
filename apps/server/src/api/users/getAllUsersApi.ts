@@ -44,6 +44,6 @@ export default async function getAllUsersApi(req, res) {
     });
   } catch (error) {
     ;
-    return res.status(500).json({ message: error.message, code: 'get-users' });
+    return res.status(500).json({ errors: [{ message: error.message }] })
   }
 }

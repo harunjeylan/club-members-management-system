@@ -47,7 +47,7 @@ function SpacesManager({
         selected.map((space) => space.name)
       );
       if (response.space) {
-        // setMessage({
+        // setMessages({
         //   type: 'success',
         //   summery: 'Users are added to Space successfully',
         //   title: 'Success ',
@@ -57,7 +57,7 @@ function SpacesManager({
       ;
 
       if (response?.error) {
-        // setMessage({
+        // setMessages({
         //   type: 'error',
         //   summery: response?.error,
         //   title: 'Error ',

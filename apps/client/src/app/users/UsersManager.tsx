@@ -49,7 +49,7 @@ function UsersManager({ users, roles, spaces, user }: PropsType) {
     handleServerMutation(async () => {
       const response = await handleDeleteUser(selected.map((user) => user.id));
       if (response.space) {
-        // setMessage({
+        // setMessages({
         //   type: 'success',
         //   summery: 'Users are added to Space successfully',
         //   title: 'Success ',
@@ -59,7 +59,7 @@ function UsersManager({ users, roles, spaces, user }: PropsType) {
       ;
 
       if (response?.error) {
-        // setMessage({
+        // setMessages({
         //   type: 'error',
         //   summery: response?.error,
         //   title: 'Error ',

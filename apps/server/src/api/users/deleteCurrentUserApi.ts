@@ -12,9 +12,6 @@ export default async function deleteCurrentUserApi(req, res) {
       message: 'User deleted successfully',
     });
   } catch (error) {
-    ;
-    return res
-      .status(500)
-      .json({ message: error.message, code: 'delete-current-user' });
-  } 
+    return res.status(500).json({ errors: [{ message: error.message }] });
+  }
 }

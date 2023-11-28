@@ -12,7 +12,7 @@ type PropsType = {
 };
 function CreateEventForm({ categories, spaceName }: PropsType) {
   const { handleServerMutation } = useContext(TransitionContext);
-  const [message, setMessage] = useState<AlertMessage>();
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues: EventFormType = {
     title: '',
     startAt: new Date().toISOString().slice(0, 16),
@@ -28,15 +28,15 @@ function CreateEventForm({ categories, spaceName }: PropsType) {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
 
   async function onSubmit(values: EventFormType) {
     ;
@@ -49,20 +49,22 @@ function CreateEventForm({ categories, spaceName }: PropsType) {
       });
       ;
       if (response.event) {
-        setMessage({
+        setMessages([{
           type: 'success',
           summery: 'Event created successfully',
           title: 'Success ',
-        });
+        }]);
       }
 
-      if (response?.error) {
-        setMessage({
-          type: 'error',
-          summery: response?.error,
-          title: 'Error ',
-        });
-      }
+      if (response?.errors) {
+      setMessages(
+        response?.errors.map((error: { message: string, path:string[] }) => ({
+          type: 'warning',
+          summery: `${error.path?.[0]} : ${error.message}`,
+          title: 'Warning ',
+        }))
+      );
+    }
     });
   }
   return (
@@ -70,8 +72,8 @@ function CreateEventForm({ categories, spaceName }: PropsType) {
       categories={categories}
       onSubmit={onSubmit}
       initialValues={initialValues}
-      message={message}
-      setMessage={setMessage}
+      messages={messages}
+      setMessages={setMessages}
     />
   );
 }

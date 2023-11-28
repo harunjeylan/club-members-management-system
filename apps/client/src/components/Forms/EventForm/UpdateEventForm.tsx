@@ -15,7 +15,7 @@ function UpdateEventForm({
   spaceName?: string;
 }) {
   const { handleServerMutation } = useContext(TransitionContext);
-  const [message, setMessage] = useState<AlertMessage>();
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues: EventFormType = {
     title: event.title ?? '',
     startAt:
@@ -37,18 +37,17 @@ function UpdateEventForm({
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
 
   async function onSubmit(values: EventFormType) {
-    ;
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
@@ -56,21 +55,24 @@ function UpdateEventForm({
       const response = await handleUpdateEvent(event.id, values, {
         tags: revalidateTags,
       });
-      ;
       if (response.event) {
-        setMessage({
+        setMessages([{
           type: 'success',
           summery: 'Event created successfully',
           title: 'Success ',
-        });
+        }]);
       }
 
-      if (response?.message) {
-        setMessage({
-          type: 'error',
-          summery: response?.message,
-          title: 'Error ',
-        });
+      if (response?.errors) {
+        setMessages(
+          response?.errors.map(
+            (error: { message: string; path: string[] }) => ({
+              type: 'warning',
+              summery: `${error.path?.[0]} : ${error.message}`,
+              title: 'Warning ',
+            })
+          )
+        );
       }
     });
   }
@@ -79,8 +81,8 @@ function UpdateEventForm({
       categories={categories}
       onSubmit={onSubmit}
       initialValues={initialValues}
-      message={message}
-      setMessage={setMessage}
+      messages={messages}
+      setMessages={setMessages}
     />
   );
 }

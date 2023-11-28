@@ -23,8 +23,8 @@ type PropsType = {
   user: UserWithAll;
   onSubmit: (values: any, formikHelpers: FormikHelpers<any>) => void;
   initialValues: UserFormType;
-  message?: AlertMessage;
-  setMessage: Dispatch<SetStateAction<AlertMessage | undefined>>;
+  messages?: AlertMessage[];
+  setMessages: Dispatch<SetStateAction<AlertMessage[]>>;
   roles?: Role[];
   spaces?: Space[];
   spaceName?: string;
@@ -35,8 +35,8 @@ export default function UserForm({
   roles,
   onSubmit,
   initialValues,
-  message,
-  setMessage,
+  messages,
+  setMessages,
   spaceName,
 }: PropsType) {
   const yupSchema = yup.object<UserFormType>({
@@ -74,14 +74,14 @@ export default function UserForm({
           onSubmit={handleSubmit}
           className=" w-full grid grid-cols-2 gap-4"
         >
-          {message && (
-            <div className="col-span-2">
+          {messages?.map((message, ind) => (
+            <div key={ind} className="col-span-2">
               <Alert
                 message={message}
-                handleRemove={() => setMessage(undefined)}
+                handleRemove={() => setMessages((prevMessages) => prevMessages?.splice(ind, 1))}
               />
             </div>
-          )}
+          ))}
           <div className="col-span-1 flex flex-col gap-1 w-full">
             <label>First Name</label>
             <input

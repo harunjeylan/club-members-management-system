@@ -8,7 +8,7 @@ import handleCreateSpace from '@client/libs/client/space/handleCreateSpace';
 import { TransitionContext } from '@client/context/TransitionContext';
 function CreateSpaceForm() {
   const { handleServerMutation } = useContext(TransitionContext);
-  const [message, setMessage] = useState<AlertMessage>();
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues: Partial<Space> = {
     name: '',
     description: '',
@@ -21,15 +21,15 @@ function CreateSpaceForm() {
   });
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
 
   async function onSubmit(values: Partial<Space>) {
     ;
@@ -37,27 +37,29 @@ function CreateSpaceForm() {
       const response = await handleCreateSpace(values);
       ;
       if (response.space) {
-        setMessage({
+        setMessages([{
           type: 'success',
           summery: 'Space created successfully',
           title: 'Success ',
-        });
+        }]);
       }
-      if (response?.error) {
-        setMessage({
-          type: 'error',
-          summery: response?.error,
-          title: 'Error ',
-        });
-      }
+      if (response?.errors) {
+      setMessages(
+        response?.errors.map((error: { message: string, path:string[] }) => ({
+          type: 'warning',
+          summery: `${error.path?.[0]} : ${error.message}`,
+          title: 'Warning ',
+        }))
+      );
+    }
     });
   }
   return (
     <SpaceForm
       onSubmit={onSubmit}
       initialValues={initialValues}
-      message={message}
-      setMessage={setMessage}
+      messages={messages}
+      setMessages={setMessages}
     />
   );
 }

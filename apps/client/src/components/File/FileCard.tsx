@@ -16,7 +16,7 @@ export default function FileCard({ file }: { file: FileModel }) {
     handleServerMutation(async () => {
       const response = await handleDeleteFile(file.name);
       if (response.space) {
-        // setMessage({
+        // setMessages({
         //   type: 'success',
         //   summery: 'Users are added to Space successfully',
         //   title: 'Success ',
@@ -26,7 +26,7 @@ export default function FileCard({ file }: { file: FileModel }) {
       ;
 
       if (response?.error) {
-        // setMessage({
+        // setMessages({
         //   type: 'error',
         //   summery: response?.error,
         //   title: 'Error ',

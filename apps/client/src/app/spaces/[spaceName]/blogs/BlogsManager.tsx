@@ -41,7 +41,7 @@ function BlogsManager({ blogs, categories, spaceName, user }: PropsType) {
     handleServerMutation(async () => {
       const response = await handleDeleteBlog(selected.map((blog) => blog.id));
       if (response.space) {
-        // setMessage({
+        // setMessages({
         //   type: 'success',
         //   summery: 'Users are added to Space successfully',
         //   title: 'Success ',
@@ -51,7 +51,7 @@ function BlogsManager({ blogs, categories, spaceName, user }: PropsType) {
       ;
 
       if (response?.error) {
-        // setMessage({
+        // setMessages({
         //   type: 'error',
         //   summery: response?.error,
         //   title: 'Error ',

@@ -6,7 +6,7 @@ import { server_host } from '../../../../config/host.config';
 import { revalidateTag } from 'next/cache';
 export async function POST(req: NextRequest) {
   const { password, username, email } = await req.json();
-  const url = `${server_host}/api/auth/local/register`;
+  const url = `${server_host}/users/register`;
   const payload = {
     password,
     username,
@@ -25,16 +25,6 @@ export async function POST(req: NextRequest) {
     } catch (e) {}
     return Response.json({ user, jwt });
   } catch (error: any) {
-    if (error?.response?.data?.error) {
-      return Response.json({
-        status: error.response.data.error.status,
-        message: error.response.data.error.message,
-      });
-    } else {
-      return Response.json({
-        status: 500,
-        message: 'Internal Server Error',
-      });
-    }
+    return Response.json(error?.response?.data);
   }
 }

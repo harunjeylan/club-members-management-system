@@ -38,6 +38,6 @@ export default async function deleteUserApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'delete-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

@@ -19,8 +19,8 @@ export default async function handleLogin(
       dispatch(setToken(res.data.jwt));
       callback();
     }
-    if (res?.data?.message) {
-      return { error: res?.data?.message ?? "Unknown Error" };
+    if (res?.data?.errors) {
+      return { errors:res?.data?.errors };
     }
   } catch (error: any) {
     return error?.response?.data ?? { error: 'Unknown Error' };

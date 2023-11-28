@@ -5,13 +5,12 @@ import {
   VerticalTimelineElement,
 } from '@harunjeylan/next-timeline';
 import { Category, Event } from '@prisma/client';
-import { BsFileWordFill } from 'react-icons/bs';
 import { MdEventAvailable, MdLocationOn } from 'react-icons/md';
 
 function EventList({ events }: { events: (Event & { category: Category })[] }) {
   return (
     <div className="relative">
-      <VerticalTimeline animate={true} lineColor="#3b82f6" className="">
+      <VerticalTimeline animate={false} lineColor="#3b82f6" className="">
         {events.map((event) => (
           <VerticalTimelineElement
             className="p-2"

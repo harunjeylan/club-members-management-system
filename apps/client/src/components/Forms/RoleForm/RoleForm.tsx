@@ -18,16 +18,16 @@ export type RoleFormType = {
 type PropsType = {
   onSubmit: (values: any, formikHelpers: FormikHelpers<any>) => void;
   initialValues: RoleFormType;
-  message?: AlertMessage;
-  setMessage: Dispatch<SetStateAction<AlertMessage | undefined>>;
+  messages?: AlertMessage[];
+  setMessages: Dispatch<SetStateAction<AlertMessage[]>>;
   spaces?: Space[];
 };
 export default function RoleForm({
   spaces,
   onSubmit,
   initialValues,
-  message,
-  setMessage,
+  messages,
+  setMessages,
 }: PropsType) {
   let yupSchema = yup.object<RoleFormType>({
     name: yup.string().required(),
@@ -61,14 +61,14 @@ export default function RoleForm({
           onSubmit={handleSubmit}
           className=" w-full grid grid-cols-2 gap-4"
         >
-          {message && (
-            <div className="col-span-2">
+          {messages?.map((message, ind) => (
+            <div key={ind} className="col-span-2">
               <Alert
                 message={message}
-                handleRemove={() => setMessage(undefined)}
+                handleRemove={() => setMessages((prevMessages) => prevMessages?.splice(ind, 1))}
               />
             </div>
-          )}
+          ))}
 
           <div className="col-span-2 flex flex-col gap-1 w-full">
             <label>Name</label>

@@ -7,8 +7,8 @@ import handleCreateContact from '@client/libs/client/contact/handleCreateContact
 import { TransitionContext } from '@client/context/TransitionContext';
 const phoneRegExp = /^\+?1?\d{9,15}$/;
 function ContactForm() {
-  const {  handleServerMutation } = useContext(TransitionContext);
-  const [message, setMessage] = useState<AlertMessage>();
+  const { handleServerMutation } = useContext(TransitionContext);
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues = {
     name: '',
     email: '',
@@ -31,33 +31,35 @@ function ContactForm() {
   });
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
   async function onSubmit(values: typeof initialValues) {
-    ;
     handleServerMutation(async () => {
       const response = await handleCreateContact(values);
       if (response.contact) {
-        ;
-        setMessage({
+        setMessages([{
           type: 'success',
           summery: 'Message is sent successfully',
           title: 'Success ',
-        });
+        }]);
       }
-      if (response?.message) {
-        setMessage({
-          type: 'error',
-          summery: response?.message,
-          title: 'Error ',
-        });
+      if (response?.errors) {
+        setMessages(
+          response?.errors.map(
+            (error: { message: string; path: string[] }) => ({
+              type: 'warning',
+              summery: `${error.path?.[0]} : ${error.message}`,
+              title: 'Warning ',
+            })
+          )
+        );
       }
     });
   }
@@ -81,14 +83,14 @@ function ContactForm() {
             onSubmit={handleSubmit}
             className=" w-full grid grid-cols-2 gap-4"
           >
-            {message && (
-              <div className="col-span-2">
+            {messages.map((message, ind) => (
+              <div key={ind} className="col-span-2">
                 <Alert
                   message={message}
-                  handleRemove={() => setMessage(undefined)}
+                  handleRemove={() => setMessages((prevMessages) => prevMessages.splice(ind, 1))}
                 />
               </div>
-            )}
+            ))}
             <div className="col-span-2 flex flex-col gap-1 w-full">
               <label>Name</label>
               <input

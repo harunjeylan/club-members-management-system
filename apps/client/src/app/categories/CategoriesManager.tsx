@@ -23,7 +23,7 @@ function CategoriesManager({ categories }: PropsType) {
     handleServerMutation(async () => {
       const response = await handleDeleteCategory(categoryId);
       if (response.category) {
-        // setMessage({
+        // setMessages({
         //   type: 'success',
         //   summery: 'Users are added to Space successfully',
         //   title: 'Success ',
@@ -32,7 +32,7 @@ function CategoriesManager({ categories }: PropsType) {
 
 
       if (response?.error) {
-        // setMessage({
+        // setMessages({
         //   type: 'error',
         //   summery: response?.error,
         //   title: 'Error ',

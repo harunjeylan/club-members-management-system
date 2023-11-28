@@ -11,7 +11,7 @@ function RegisterForm() {
   const router = useRouter();
   const dispatch = useDispatch();
   const searchParams = useSearchParams();
-  const [message, setMessage] = useState<AlertMessage>();
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues = {
     // name: "",
     username: '',
@@ -26,15 +26,15 @@ function RegisterForm() {
   });
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
 
   async function onSubmit(
     values: {
@@ -48,12 +48,14 @@ function RegisterForm() {
     const response = await handleRegister(values, dispatch, () =>
       router.push(next ?? '/')
     );
-    if (response?.error) {
-      setMessage({
-        type: 'warning',
-        summery: response?.error,
-        title: 'Warning ',
-      });
+    if (response?.errors) {
+      setMessages(
+        response?.errors.map((error: { message: string; path: string[] }) => ({
+          type: 'warning',
+          summery: `${error.path?.[0]} : ${error.message}`,
+          title: 'Warning ',
+        }))
+      );
     }
   }
   return (
@@ -75,14 +77,14 @@ function RegisterForm() {
           onSubmit={handleSubmit}
           className=" w-full grid grid-cols-2 gap-4"
         >
-          {message && (
-            <div className="col-span-2">
+          {messages.map((message, ind) => (
+            <div key={ind} className="col-span-2">
               <Alert
                 message={message}
-                handleRemove={() => setMessage(undefined)}
+                handleRemove={() => setMessages((prevMessages) => prevMessages.splice(ind, 1))}
               />
             </div>
-          )}
+          ))}
 
           <div className="col-span-1 flex flex-col gap-1 w-full">
             <label>Username</label>

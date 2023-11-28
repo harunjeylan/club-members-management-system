@@ -29,6 +29,6 @@ export default async function getAllEventsApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'create-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

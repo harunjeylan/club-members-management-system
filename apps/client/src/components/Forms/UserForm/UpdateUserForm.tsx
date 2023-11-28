@@ -32,7 +32,7 @@ export default function UpdateUserForm({
   updateUser,
 }: PropsType) {
   const { handleServerMutation } = useContext(TransitionContext);
-  const [message, setMessage] = useState<AlertMessage>();
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues: UserFormType = {
     first_name: updateUser.first_name ?? '',
     last_name: updateUser.last_name ?? '',
@@ -44,23 +44,23 @@ export default function UpdateUserForm({
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
 
   async function onSubmit(values: UserFormType) {
     if (!user.id) {
-      return setMessage({
+      return setMessages([{
         type: 'warning',
         summery: 'User Id Not Found',
         title: 'Warning ',
-      });
+      }]);
     }
 
     const revalidateTags = [
@@ -78,19 +78,21 @@ export default function UpdateUserForm({
       ;
 
       if (response.user) {
-        setMessage({
+        setMessages([{
           type: 'success',
           summery: 'User updated successfully',
           title: 'Success ',
-        });
+        }]);
       }
-      if (response?.error) {
-        setMessage({
-          type: 'error',
-          summery: response?.error,
-          title: 'Error ',
-        });
-      }
+      if (response?.errors) {
+      setMessages(
+        response?.errors.map((error: { message: string, path:string[] }) => ({
+          type: 'warning',
+          summery: `${error.path?.[0]} : ${error.message}`,
+          title: 'Warning ',
+        }))
+      );
+    }
     });
   }
 
@@ -101,8 +103,8 @@ export default function UpdateUserForm({
       spaces={spaces}
       onSubmit={onSubmit}
       initialValues={initialValues}
-      message={message}
-      setMessage={setMessage}
+      messages={messages}
+      setMessages={setMessages}
       spaceName={spaceName}
     />
   );

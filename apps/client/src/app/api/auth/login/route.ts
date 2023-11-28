@@ -24,17 +24,6 @@ export async function POST(req: NextRequest) {
 
     return Response.json({ user, jwt });
   } catch (error: any) {
-    
-    if (error?.response?.data) {
-      return Response.json({
-        status: error.response.data.status,
-        message: error.response.data.message,
-      });
-    } else {
-      return Response.json({
-        status: 500,
-        message: 'Internal Server Error',
-      });
-    }
+    return Response.json(error?.response?.data);
   }
 }

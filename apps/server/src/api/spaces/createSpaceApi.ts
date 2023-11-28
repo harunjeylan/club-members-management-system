@@ -2,6 +2,7 @@ import { RoleCode, RoleScop } from '@prisma/client';
 import { z } from 'zod';
 import prisma from '../../prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function createSpaceApi(req, res) {
   const { name, isPrivate, description } = req.body;
@@ -28,11 +29,7 @@ export default async function createSpaceApi(req, res) {
     });
 
     if (!success) {
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'register-space',
-      });
+      return res.status(409).json({ errors: fromZodError(error).details });
     }
 
     let spaceExist = await prisma.space.findFirst({
@@ -84,6 +81,6 @@ export default async function createSpaceApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'create-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

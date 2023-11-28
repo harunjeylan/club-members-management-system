@@ -13,7 +13,7 @@ export default function AdminContacts({ contacts }: { contacts: Contact[] }) {
     handleServerMutation(async () => {
       const response = await handleDeleteContact(contact.id);
       if (response.contact) {
-        // setMessage({
+        // setMessages({
         //   type: 'success',
         //   summery: 'Users are added to Space successfully',
         //   title: 'Success ',
@@ -22,7 +22,7 @@ export default function AdminContacts({ contacts }: { contacts: Contact[] }) {
 
 
       if (response?.error) {
-        // setMessage({
+        // setMessages({
         //   type: 'error',
         //   summery: response?.error,
         //   title: 'Error ',

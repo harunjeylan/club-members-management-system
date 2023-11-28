@@ -12,7 +12,7 @@ function LoginForm() {
   const dispatch = useDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [message, setMessage] = useState<AlertMessage>();
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues = {
     identifier: '',
     password: '',
@@ -23,15 +23,15 @@ function LoginForm() {
   });
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
 
   async function onSubmit(
     values: {
@@ -44,12 +44,14 @@ function LoginForm() {
     const response = await handleLogin(values, dispatch, () =>
       router.push(next ?? '/')
     );
-    if (response?.error) {
-      setMessage({
-        type: 'warning',
-        summery: response?.error,
-        title: 'Warning ',
-      });
+    if (response?.errors) {
+      setMessages(
+        response?.errors.map((error: { message: string; path: string[] }) => ({
+          type: 'warning',
+          summery: `${error.path?.[0]} : ${error.message}`,
+          title: 'Warning ',
+        }))
+      );
     }
   }
   return (
@@ -68,14 +70,14 @@ function LoginForm() {
         isSubmitting,
       }) => (
         <form onSubmit={handleSubmit} className=" w-full flex flex-col gap-4">
-          {message && (
-            <div className="col-span-2">
+          {messages.map((message, ind) => (
+            <div key={ind} className="col-span-2">
               <Alert
                 message={message}
-                handleRemove={() => setMessage(undefined)}
+                handleRemove={() => setMessages((prevMessages) => prevMessages.splice(ind, 1))}
               />
             </div>
-          )}
+          ))}
           <div className="flex flex-col gap-1 w-full">
             <label>Identifier</label>
             <input

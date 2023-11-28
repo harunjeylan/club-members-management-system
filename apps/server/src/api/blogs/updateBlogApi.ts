@@ -3,6 +3,7 @@ import { Repeat, RoleCode, RoleScop } from '@prisma/client';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import getFieldsData from '@libs/utils/getFieldsData';
 import prisma from 'apps/server/src/prisma/PrismaClient';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function updateBlogApi(req, res) {
   const { slug } = req.params;
@@ -56,11 +57,7 @@ export default async function updateBlogApi(req, res) {
     const { success, error } = zodSchema.safeParse(fieldsData);
 
     if (!success) {
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'register-user',
-      });
+      return res.status(409).json({ errors: fromZodError(error).details });
     }
 
     if (fieldsData['published']) {
@@ -119,6 +116,6 @@ export default async function updateBlogApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'update-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

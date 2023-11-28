@@ -54,7 +54,7 @@ function EventsManager({ events, categories, spaceName, user }: PropsType) {
         selected.map((event) => event.id)
       );
       if (response.space) {
-        // setMessage({
+        // setMessages({
         //   type: 'success',
         //   summery: 'Users are added to Space successfully',
         //   title: 'Success ',
@@ -64,7 +64,7 @@ function EventsManager({ events, categories, spaceName, user }: PropsType) {
       ;
 
       if (response?.error) {
-        // setMessage({
+        // setMessages({
         //   type: 'error',
         //   summery: response?.error,
         //   title: 'Error ',

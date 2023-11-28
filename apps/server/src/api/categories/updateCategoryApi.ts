@@ -3,6 +3,7 @@ import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 import { z } from 'zod';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function updateEventApi(req, res) {
   const { categoryId } = req.params;
@@ -29,11 +30,7 @@ export default async function updateEventApi(req, res) {
     const { success, error } = zodSchema.safeParse(fieldsData);
 
     if (!success) {
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'register-user',
-      });
+      return res.status(409).json({ errors: fromZodError(error).details });
     }
 
     if (mainCategoryId?.length) {
@@ -57,6 +54,6 @@ export default async function updateEventApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'update-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

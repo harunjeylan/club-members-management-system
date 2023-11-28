@@ -64,6 +64,6 @@ export default async function deleteBlogApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'create-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

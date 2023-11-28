@@ -3,6 +3,7 @@ import prisma from 'apps/server/src/prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { z } from 'zod';
 import getFieldsData from '@libs/utils/getFieldsData';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function createBlogApi(req, res) {
   const { spaceName }: Blog = req.body;
@@ -46,11 +47,7 @@ export default async function createBlogApi(req, res) {
     const { success, error } = zodSchema.safeParse(fieldsData);
 
     if (!success) {
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'create-event',
-      });
+      return res.status(409).json({ errors: fromZodError(error).details });
     }
 
     fieldsData['authorId'] = req.user.id;
@@ -91,6 +88,6 @@ export default async function createBlogApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'create-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

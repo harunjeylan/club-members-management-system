@@ -37,7 +37,7 @@ function UsersManager({ users, roleId }: PropsType) {
       removeUsers: selected.map((user) => user.id),
     });
     if (response.space) {
-      // setMessage({
+      // setMessages({
       //   type: 'success',
       //   summery: 'Users are added to Space successfully',
       //   title: 'Success ',
@@ -47,7 +47,7 @@ function UsersManager({ users, roleId }: PropsType) {
     ;
 
     if (response?.error) {
-      // setMessage({
+      // setMessages({
       //   type: 'error',
       //   summery: response?.error,
       //   title: 'Error ',

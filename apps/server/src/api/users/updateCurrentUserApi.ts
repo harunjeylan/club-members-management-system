@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import prisma from '../../prisma/PrismaClient';
 import getFieldsData from '../../../../../libs/utils/getFieldsData';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function updateCurrentUserApi(req, res) {
   const fields = ['username', 'first_name', 'last_name', 'email'];
@@ -24,11 +25,7 @@ export default async function updateCurrentUserApi(req, res) {
     const { success, error } = zodSchema.safeParse({...fieldsData, profile});
 
     if (!success) {
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'register-user',
-      });
+      return res.status(409).json({ errors: fromZodError(error).details });
     }
     const populations = {};
     if (profile) {
@@ -62,6 +59,6 @@ export default async function updateCurrentUserApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'update-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

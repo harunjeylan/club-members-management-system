@@ -25,8 +25,8 @@ export type BlogFormType = {
 type PropsType = {
   onSubmit: (values: any, formikHelpers: FormikHelpers<any>) => void;
   initialValues: BlogFormType;
-  message?: AlertMessage;
-  setMessage: Dispatch<SetStateAction<AlertMessage | undefined>>;
+  messages?: AlertMessage[];
+  setMessages: Dispatch<SetStateAction<AlertMessage []>>;
   categories: Category[];
   files: FileModel[];
 };
@@ -34,8 +34,8 @@ type PropsType = {
 export default function BlogForm({
   onSubmit,
   initialValues,
-  message,
-  setMessage,
+  messages,
+  setMessages,
   categories,
   files,
 }: PropsType) {
@@ -71,14 +71,14 @@ export default function BlogForm({
           onSubmit={handleSubmit}
           className=" w-full grid grid-cols-2 gap-4"
         >
-          {message && (
-            <div className="col-span-2">
+          {messages?.map((message, ind) => (
+            <div key={ind} className="col-span-2">
               <Alert
                 message={message}
-                handleRemove={() => setMessage(undefined)}
+                handleRemove={() => setMessages((prevMessages) => prevMessages?.splice(ind, 1))}
               />
             </div>
-          )}
+          ))}
 
           <div className="col-span-1 flex flex-col gap-1 w-full">
             <label>Title</label>

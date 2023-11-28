@@ -2,6 +2,7 @@ import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from '@server/prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { z } from 'zod';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function createRoleApi(req, res) {
   const { name, code, scop, description, spaceName, users } = req.body;
@@ -31,11 +32,7 @@ export default async function createRoleApi(req, res) {
     });
 
     if (!success) {
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'create-event',
-      });
+      return res.status(409).json({ errors: fromZodError(error).details });
     }
     const fieldsData = {
       name,
@@ -73,6 +70,6 @@ export default async function createRoleApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'create-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

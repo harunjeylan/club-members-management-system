@@ -7,7 +7,7 @@ import handleUpdateSpace from '@client/libs/client/space/handleUpdateSpace';
 import { TransitionContext } from '@client/context/TransitionContext';
 function UpdateSpaceForm({ space }: { space: Space }) {
   const { handleServerMutation } = useContext(TransitionContext);
-  const [message, setMessage] = useState<AlertMessage>();
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues: Partial<Space> = {
     name: space.name ?? '',
     description: space.description ?? '',
@@ -16,34 +16,36 @@ function UpdateSpaceForm({ space }: { space: Space }) {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
 
   async function onSubmit(values: Partial<Space>) {
-    ;
     handleServerMutation(async () => {
       const response = await handleUpdateSpace(space.name, values);
-      ;
       if (response.space) {
-        setMessage({
+        setMessages([{
           type: 'success',
           summery: 'Update Space successfully',
           title: 'Success ',
-        });
+        }]);
       }
-      if (response?.error) {
-        setMessage({
-          type: 'error',
-          summery: response?.error,
-          title: 'Error ',
-        });
+      if (response?.errors) {
+        setMessages(
+          response?.errors.map(
+            (error: { message: string; path: string[] }) => ({
+              type: 'warning',
+              summery: `${error.path?.[0]} : ${error.message}`,
+              title: 'Warning ',
+            })
+          )
+        );
       }
     });
   }
@@ -51,8 +53,8 @@ function UpdateSpaceForm({ space }: { space: Space }) {
     <SpaceForm
       onSubmit={onSubmit}
       initialValues={initialValues}
-      message={message}
-      setMessage={setMessage}
+      messages={messages}
+      setMessages={setMessages}
     />
   );
 }

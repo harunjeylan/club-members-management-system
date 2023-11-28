@@ -3,6 +3,7 @@ import prisma from '../../prisma/PrismaClient';
 import getFieldsData from '../../../../../libs/utils/getFieldsData';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { RoleCode, RoleScop } from '@prisma/client';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function updateUserApi(req, res) {
   const { userId } = req.params;
@@ -40,11 +41,7 @@ export default async function updateUserApi(req, res) {
     //@ts-ignore: Unreachable code error
     const { success, error } = zodSchema.safeParse(fieldsData);
     if (!success) {
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'register-user',
-      });
+      return res.status(409).json({ errors: fromZodError(error).details });
     }
 
     let populations = {};
@@ -113,6 +110,6 @@ export default async function updateUserApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'update-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

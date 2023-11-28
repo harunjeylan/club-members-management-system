@@ -3,6 +3,7 @@ import { Repeat, RoleCode, RoleScop } from '@prisma/client';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import getFieldsData from '@libs/utils/getFieldsData';
 import prisma from 'apps/server/src/prisma/PrismaClient';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function updateEventApi(req, res) {
   const { eventId } = req.params;
@@ -66,16 +67,8 @@ export default async function updateEventApi(req, res) {
     const { success, error } = zodSchema.safeParse(fieldsData);
 
     if (!success) {
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'register-user',
-      });
-    }
-    if (fieldsData['published']) {
-      fieldsData['publishedAt'] = new Date().toISOString();
-    }
-    if (fieldsData['startAt']) {
+      return res.status(409).json({ errors: fromZodError(error).details });
+    }if (fieldsData['startAt']) {
       fieldsData['startAt'] = new Date(fieldsData['startAt']).toISOString();
     }
     if (fieldsData['endAt']) {
@@ -129,6 +122,6 @@ export default async function updateEventApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'update-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

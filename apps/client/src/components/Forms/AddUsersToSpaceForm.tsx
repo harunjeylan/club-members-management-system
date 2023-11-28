@@ -12,64 +12,64 @@ type PropsType = {
 };
 function AddUsersToSpaceForm({ users, spaces }: PropsType) {
   const { handleServerMutation } = useContext(TransitionContext);
-  const [message, setMessage] = useState<AlertMessage>();
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const [selectedSpace, setSelectedSpace] = useState<string>(
     spaces.length ? spaces?.[0].name : ''
   );
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    ;
-
     if (!selectedSpace.length) {
-      return setMessage({
+      return setMessages([{
         type: 'warning',
         summery: "Space can't empty",
         title: 'Warning ',
-      });
+      }]);
     }
     handleServerMutation(async () => {
       const response = await handleUpdateSpace(selectedSpace, {
         addUsers: users,
       });
       if (response.space) {
-        setMessage({
+        setMessages([{
           type: 'success',
           summery: 'Users are added to Space successfully',
           title: 'Success ',
-        });
+        }]);
       }
 
-      ;
-
-      if (response?.error) {
-        setMessage({
-          type: 'error',
-          summery: response?.error,
-          title: 'Error ',
-        });
+      if (response?.errors) {
+        setMessages(
+          response?.errors.map(
+            (error: { message: string; path: string[] }) => ({
+              type: 'warning',
+              summery: `${error.path?.[0]} : ${error.message}`,
+              title: 'Warning ',
+            })
+          )
+        );
       }
     });
   }
   return (
     <form onSubmit={onSubmit} className="w-full grid grid-cols-2 gap-4 p-4">
-      {message && (
-        <div className="col-span-2">
-          <Alert message={message} handleRemove={() => setMessage(undefined)} />
+      {messages.map((message, ind) => (
+        <div key={ind} className="col-span-2">
+          <Alert message={message} handleRemove={() => setMessages((prevMessages) => prevMessages.splice(ind, 1))} />
         </div>
-      )}
+      ))}
       <div className="col-span-2 flex flex-col gap-4 w-full">
         <div className="col-span-2 flex flex-col gap-1 w-full">
           <label>Space</label>

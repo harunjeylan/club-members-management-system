@@ -3,6 +3,7 @@ import { z } from 'zod';
 import prisma from '../../prisma/PrismaClient';
 import generateUserToken from '../../utils/generateUserToken';
 import { Request, Response } from 'express';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function loginApi(req: Request, res: Response) {
   const { identifier, password } = req.body;
@@ -20,11 +21,7 @@ export default async function loginApi(req: Request, res: Response) {
     });
 
     if (!success) {
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'login-user',
-      });
+      return res.status(409).json({ errors: fromZodError(error).details });
     }
 
     const user = await prisma.user.findFirst({
@@ -38,8 +35,12 @@ export default async function loginApi(req: Request, res: Response) {
 
     if (!user) {
       return res.status(401).json({
-        message: 'User Not Found With Credential',
-        code: 'login-user',
+        errors: [
+          {
+            message: 'User Not Found With Credential',
+            code: 'login-user',
+          },
+        ],
       }); // Unauthorized
     }
 
@@ -50,10 +51,6 @@ export default async function loginApi(req: Request, res: Response) {
     }
 
     const { access, refresh } = generateUserToken(user);
-    console.log({
-      user: prisma.$exclude(user, ['password']),
-      jwt: { access, refresh },
-    });
 
     return res.status(200).json({
       user: prisma.$exclude(user, ['password']),

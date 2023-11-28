@@ -20,16 +20,16 @@ export type EventFormType = {
 type PropsType = {
   onSubmit: (values: any, formikHelpers: FormikHelpers<any>) => void;
   initialValues: EventFormType;
-  message?: AlertMessage;
-  setMessage: Dispatch<SetStateAction<AlertMessage | undefined>>;
+  messages?: AlertMessage[];
+  setMessages: Dispatch<SetStateAction<AlertMessage[]>>;
   categories: Category[];
 };
 
 export default function EventForm({
   onSubmit,
   initialValues,
-  message,
-  setMessage,
+  messages,
+  setMessages,
   categories,
 }: PropsType) {
   const yupSchema = yup.object<EventFormType>({
@@ -73,14 +73,14 @@ export default function EventForm({
           className=" w-full grid grid-cols-2 gap-4"
         >
          
-          {message && (
-            <div className="col-span-2">
+          {messages?.map((message, ind) => (
+            <div key={ind} className="col-span-2">
               <Alert
                 message={message}
-                handleRemove={() => setMessage(undefined)}
+                handleRemove={() => setMessages((prevMessages) => prevMessages?.splice(ind, 1))}
               />
             </div>
-          )}
+          ))}
 
           <div className="col-span-2 flex flex-col gap-1 w-full">
             <label>Title</label>

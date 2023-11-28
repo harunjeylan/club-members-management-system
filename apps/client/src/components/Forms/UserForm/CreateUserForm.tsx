@@ -19,7 +19,7 @@ export default function CreateUserForm({
   spaceName,
 }: PropsType) {
   const { handleServerMutation } = useContext(TransitionContext);
-  const [message, setMessage] = useState<AlertMessage>();
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues: UserFormType = {
     first_name: '',
     last_name: '',
@@ -32,15 +32,15 @@ export default function CreateUserForm({
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
 
   async function onSubmit(values: UserFormType) {
     if (!values.password) {
@@ -61,19 +61,21 @@ export default function CreateUserForm({
         }
       );
       if (response.user) {
-        setMessage({
+        setMessages([{
           type: 'success',
           summery: 'User created successfully',
           title: 'Success ',
-        });
+        }]);
       }
-      if (response?.error) {
-        setMessage({
+      if (response?.errors) {
+      setMessages(
+        response?.errors.map((error: { message: string, path:string[] }) => ({
           type: 'warning',
-          summery: response?.error,
+          summery: `${error.path?.[0]} : ${error.message}`,
           title: 'Warning ',
-        });
-      }
+        }))
+      );
+    }
     });
   }
 
@@ -84,8 +86,8 @@ export default function CreateUserForm({
       spaces={spaces}
       onSubmit={onSubmit}
       initialValues={initialValues}
-      message={message}
-      setMessage={setMessage}
+      messages={messages}
+      setMessages={setMessages}
       spaceName={spaceName}
     />
   );

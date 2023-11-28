@@ -36,6 +36,6 @@ export default async function deleteRoleApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'delete-role' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

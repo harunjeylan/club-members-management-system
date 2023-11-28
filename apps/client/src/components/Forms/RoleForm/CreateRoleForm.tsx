@@ -13,7 +13,7 @@ function CreateRoleForm({
   spaceName?: string;
 }) {
   const { handleServerMutation } = useContext(TransitionContext);
-  const [message, setMessage] = useState<AlertMessage>();
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues: RoleFormType = {
     name: '',
     scop: RoleScop.SPACE,
@@ -24,37 +24,39 @@ function CreateRoleForm({
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
 
   async function onSubmit(values: RoleFormType) {
-    ;
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
     handleServerMutation(async () => {
       const response = await handleCreateRole(values, { tags: revalidateTags });
-      ;
       if (response.role) {
-        setMessage({
+        setMessages([{
           type: 'success',
           summery: 'Role created successfully',
           title: 'Success ',
-        });
+        }]);
       }
-      if (response?.error) {
-        setMessage({
-          type: 'error',
-          summery: response?.error,
-          title: 'Error ',
-        });
+      if (response?.errors) {
+        setMessages(
+          response?.errors.map(
+            (error: { message: string; path: string[] }) => ({
+              type: 'warning',
+              summery: `${error.path?.[0]} : ${error.message}`,
+              title: 'Warning ',
+            })
+          )
+        );
       }
     });
   }
@@ -63,8 +65,8 @@ function CreateRoleForm({
       spaces={spaces}
       onSubmit={onSubmit}
       initialValues={initialValues}
-      message={message}
-      setMessage={setMessage}
+      messages={messages}
+      setMessages={setMessages}
     />
   );
 }

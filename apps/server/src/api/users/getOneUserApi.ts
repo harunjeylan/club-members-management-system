@@ -50,6 +50,6 @@ export default async function getOneUserApi(req, res) {
     });
   } catch (error) {
     ;
-    return res.status(500).json({ message: error.message, code: 'get-user' });
+    return res.status(500).json({ errors: [{ message: error.message }] })
   }
 }

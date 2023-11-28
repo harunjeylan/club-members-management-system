@@ -48,7 +48,7 @@ function RolesManager({ roles, spaceName, user }: PropsType) {
     handleServerMutation(async () => {
       const response = await handleDeleteRole(selected.map((role) => role.id));
       if (response.space) {
-        // setMessage({
+        // setMessages({
         //   type: 'success',
         //   summery: 'Users are added to Space successfully',
         //   title: 'Success ',
@@ -58,7 +58,7 @@ function RolesManager({ roles, spaceName, user }: PropsType) {
       ;
 
       if (response?.error) {
-        // setMessage({
+        // setMessages({
         //   type: 'error',
         //   summery: response?.error,
         //   title: 'Error ',

@@ -3,6 +3,7 @@ import prisma from '../../prisma/PrismaClient';
 import getFieldsData from '../../../../../libs/utils/getFieldsData';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { RoleCode, RoleScop } from '@prisma/client';
+import { fromZodError } from 'zod-validation-error';
 
 export default async function updateSpaceApi(req, res) {
   const { spaceName } = req.params;
@@ -43,11 +44,7 @@ export default async function updateSpaceApi(req, res) {
       setRoles,
     });
     if (!success) {
-      return res.status(409).json({
-        message: 'Invalid Data',
-        details: error.issues,
-        code: 'register-user',
-      });
+      return res.status(409).json({ errors: fromZodError(error).details });
     }
     let populations = {};
     if (setUsers?.length) {
@@ -124,6 +121,6 @@ export default async function updateSpaceApi(req, res) {
     ;
     return res
       .status(500)
-      .json({ message: error.message, code: 'update-user' });
+      .json({ errors: [{ message: error.message }] })
   }
 }

@@ -17,7 +17,7 @@ function UpdateBlogForm({
   files: FileModel[];
 }) {
   const { handleServerMutation } = useContext(TransitionContext);
-  const [message, setMessage] = useState<AlertMessage>();
+  const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues: BlogFormType = {
     title: blog.title ?? '',
     slug: blog.slug ?? '',
@@ -32,18 +32,17 @@ function UpdateBlogForm({
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (message) {
-        setMessage(undefined);
+      if (messages) {
+        setMessages([]);
       }
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [message]);
+  }, [messages]);
 
   async function onSubmit(values: BlogFormType) {
-    ;
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
@@ -51,21 +50,24 @@ function UpdateBlogForm({
       const response = await handleUpdateBlog(blog.slug, values, {
         tags: revalidateTags,
       });
-      ;
       if (response.blog) {
-        setMessage({
+        setMessages([{
           type: 'success',
           summery: 'Blog created successfully',
           title: 'Success ',
-        });
+        }]);
       }
 
-      if (response?.message) {
-        setMessage({
-          type: 'error',
-          summery: response?.message,
-          title: 'Error ',
-        });
+      if (response?.errors) {
+        setMessages(
+          response?.errors.map(
+            (error: { message: string; path: string[] }) => ({
+              type: 'warning',
+              summery: `${error.path?.[0]} : ${error.message}`,
+              title: 'Warning ',
+            })
+          )
+        );
       }
     });
   }
@@ -75,8 +77,8 @@ function UpdateBlogForm({
       categories={categories}
       onSubmit={onSubmit}
       initialValues={initialValues}
-      message={message}
-      setMessage={setMessage}
+      messages={messages}
+      setMessages={setMessages}
     />
   );
 }
