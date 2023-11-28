@@ -121,7 +121,7 @@ export default async function updateSpaceApi(req, res) {
       space: space,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'update-user' });

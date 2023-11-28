@@ -23,6 +23,7 @@ model User {
   roles      Role[]
   spaces     Space[]
   blogs      Blog[]
+  events      Event[]
 }
 
 model Profile {
@@ -86,6 +87,7 @@ model Event {
   title       String
   startAt     DateTime
   endAt       DateTime
+  author      User       @relation(fields: [authorId], references: [id])
   fullDay     Boolean    @default(false)
   repeat      Repeat     @default(NO_REPEAT)
   published   Boolean    @default(false)
@@ -96,10 +98,12 @@ model Event {
   category    Category?  @relation(fields: [categoryId], references: [id])
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  publishedAt DateTime?
   categoryId  String?
   space       Space?     @relation(fields: [spaceName], references: [name], onDelete: SetNull, onUpdate: NoAction)
   spaceName   String?
   fileModelId String?
+  authorId      String
 }
 
 model Blog {

@@ -42,7 +42,7 @@ function AssignUsersRoleForm({
       const response = await handleUpdateRole(selectedRole, {
         addUsers: users,
       });
-      console.log({ response });
+      ;
 
       if (response.role) {
         setMessage({

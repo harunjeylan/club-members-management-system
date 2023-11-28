@@ -61,7 +61,7 @@ function EventsManager({ events, categories, spaceName, user }: PropsType) {
         // });
       }
 
-      console.log({ response });
+      ;
 
       if (response?.error) {
         // setMessage({

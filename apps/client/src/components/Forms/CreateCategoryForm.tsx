@@ -35,10 +35,10 @@ function CreateCategoryForm({ categories }: { categories: Category[] }) {
   }, [message]);
 
   async function onSubmit(values: Partial<Category>) {
-    console.log({ values });
+    ;
     handleServerMutation(async () => {
       const response = await handleCreateCategory(values);
-      console.log({ response });
+      ;
       if (response.category) {
         setMessage({
           type: 'success',

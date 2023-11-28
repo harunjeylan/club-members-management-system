@@ -37,7 +37,7 @@ function UpdateRoleForm({
   }, [message]);
 
   async function onSubmit(values: RoleFormType) {
-    console.log({ values });
+    ;
 
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),

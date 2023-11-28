@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
 import { BlogWithAll } from 'types/blog';
-import { host } from '../../config/host.config';
+import { server_host } from '../../config/host.config';
 
 async function getBlogs() {
   const cookieStore = cookies();
@@ -10,7 +10,7 @@ async function getBlogs() {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/blogs?populate=space&populate=category&populate=image&populate=author`;
+  const url = `${server_host}/blogs?populate=space&populate=category&populate=image&populate=author`;
   const res = await fetch(url, {
     method: 'GET',
     next: { tags: ['getBlogs'] },
@@ -20,7 +20,7 @@ async function getBlogs() {
   });
 
   if (!res.ok) {
-    console.log(res);
+    ;
     if (res.status === 404) {
       return redirect('/not-found');
     }

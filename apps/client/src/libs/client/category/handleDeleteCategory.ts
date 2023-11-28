@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import handleRevalidate from '../handleRevalidate';
@@ -16,10 +16,10 @@ export default async function handleDeleteCategory(categoryId: string | string[]
       },
     };
     let res: any;
-    console.log({categoryId});
+    ;
     
     if (typeof categoryId === 'string') {
-      res = await axios.delete(`${host}/categories/${categoryId}`, payload);
+      res = await axios.delete(`${server_host}/categories/${categoryId}`, payload);
       handleRevalidate({
         'path[0]': '/categories',
         'path[1]': `/categories/${categoryId}`,
@@ -27,7 +27,7 @@ export default async function handleDeleteCategory(categoryId: string | string[]
         'tag[1]': `getRoleDetails/${categoryId}`,
       });
     } else {
-      res = await axios.put(`${host}/categories`, { categoryIds: categoryId }, payload);
+      res = await axios.put(`${server_host}/categories`, { categoryIds: categoryId }, payload);
       handleRevalidate({
         path: '/categories',
         tag: 'getRoles',
@@ -36,7 +36,7 @@ export default async function handleDeleteCategory(categoryId: string | string[]
 
     return res.data;
   } catch (error: any) {
-    console.log(error);
+    ;
 
     return error?.response?.data ?? { error: 'Unknown Error' };
   }

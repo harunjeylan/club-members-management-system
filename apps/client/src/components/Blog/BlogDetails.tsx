@@ -7,7 +7,7 @@ import { MdCategory } from 'react-icons/md';
 import { BlogWithAll } from 'types/blog';
 
 export default function BlogDetails({ blog }: { blog: BlogWithAll }) {
-  console.log({ blog });
+  ;
 
   return (
     <main className="flex flex-col gap-4">

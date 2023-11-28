@@ -33,7 +33,7 @@ export default async function createContactApi(req, res) {
       contact: contact,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

@@ -35,13 +35,13 @@ function CreateRoleForm({
   }, [message]);
 
   async function onSubmit(values: RoleFormType) {
-    console.log({ values });
+    ;
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
     handleServerMutation(async () => {
       const response = await handleCreateRole(values, { tags: revalidateTags });
-      console.log({ response });
+      ;
       if (response.role) {
         setMessage({
           type: 'success',

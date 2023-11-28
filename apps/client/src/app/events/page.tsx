@@ -18,15 +18,16 @@ async function Page() {
     userRoles = getUserAccessRoles(user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+      { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
     ]);
     events = await getEvents();
-    console.log({ events });
 
     categories = await getCategories();
   } else {
     events = await getPublishedEvents();
   }
-  console.log({ userRoles });
+  ;
 
   if (!userRoles.length) {
     return (

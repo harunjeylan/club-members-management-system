@@ -1,5 +1,5 @@
 import { UserFormType } from '@client/components/Forms/UserForm/UserForm';
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import getFieldsData from '@libs/utils/getFieldsData';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
@@ -24,7 +24,7 @@ export default async function handleUpdateUser(
 ) {
   try {
     const token = getCookie('token');
-    const url = `${host}/users/${userId}`;
+    const url = `${server_host}/users/${userId}`;
     const fields = [
       'first_name',
       'last_name',

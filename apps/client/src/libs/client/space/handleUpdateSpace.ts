@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import handleRevalidate from '../handleRevalidate';
@@ -21,7 +21,7 @@ export default async function handleUpdateSpace(
 ) {
   try {
     const token = getCookie('token');
-    const url = `${host}/spaces/${spaceName}`;
+    const url = `${server_host}/spaces/${spaceName}`;
     if (typeof token === 'undefined') {
       return;
     }

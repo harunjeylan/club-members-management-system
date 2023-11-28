@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import { Contact } from '@prisma/client';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
@@ -27,7 +27,7 @@ export default async function handleCreateContact(
       },
     };
 
-    const url = `${host}/contacts`;
+    const url = `${server_host}/contacts`;
     const res = await axios.post(url, payloadData, payload);
     const revalidate: any = {
       'tag[1]': 'getContacts',

@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
 import { UserWithProfile } from 'types/user';
-import { host } from '../../config/host.config';
+import { server_host } from '../../config/host.config';
 
 async function getSpaceDetails(spaceName: string) {
   const cookieStore = cookies();
@@ -11,8 +11,8 @@ async function getSpaceDetails(spaceName: string) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/spaces/${spaceName}?populate=users&populate=roles&populate=events&populate=blogs`;
-  console.log(url);
+  const url = `${server_host}/spaces/${spaceName}?populate=users&populate=roles&populate=events&populate=blogs`;
+  ;
 
   const res = await fetch(url, {
     method: 'GET',
@@ -23,7 +23,7 @@ async function getSpaceDetails(spaceName: string) {
   });
 
   if (!res.ok) {
-    console.log(res);
+    ;
     if (res.status === 404) {
       return redirect('/not-found');
     }

@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import { Event, Repeat } from '@prisma/client';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
@@ -25,7 +25,7 @@ export default async function handleUpdateEvent(
 ) {
   try {
     const token = getCookie('token');
-    const url = `${host}/events/${eventId}`;
+    const url = `${server_host}/events/${eventId}`;
 
     if (typeof token === 'undefined') {
       return;
@@ -58,6 +58,8 @@ export default async function handleUpdateEvent(
       'tag[0]': 'getEvents',
       'tag[1]': `getEventDetails/${eventId}`,
       'tag[3]': `getSpaceDetails/${values.spaceName}`,
+      'tag[2]': `getPublishedEventDetails/${eventId}`,
+      'tag[4]': `getPublishedEvents`,
     };
     revalidateOptions?.tags?.forEach((tag, ind) => {
       revalidate['tag[' + (6 + ind) + ']'] = tag;

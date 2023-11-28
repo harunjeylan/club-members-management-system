@@ -21,13 +21,23 @@ export default async function updateEventApi(req, res) {
   const fieldsData = getFieldsData(req.body, fields);
 
   try {
-    const userAccessRoles = getUserAccessRoles(req.user.roles, [
+    const superAdminAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-      { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: fieldsData["spaceName"] },
-      { scop: RoleScop.SPACE, code: RoleCode.EDITOR, spaceName: fieldsData["spaceName"] },
     ]);
-    if (!userAccessRoles.length) {
+    const spaceAdminAccessRoles = getUserAccessRoles(req.user.roles, [
+      {
+        scop: RoleScop.SPACE,
+        code: RoleCode.ADMIN,
+        spaceName: fieldsData['spaceName'],
+      },
+      {
+        scop: RoleScop.SPACE,
+        code: RoleCode.EDITOR,
+        spaceName: fieldsData['spaceName'],
+      },
+    ]);
+    if (![...superAdminAccessRoles, ...spaceAdminAccessRoles].length) {
       return res.sendStatus(403);
     }
 
@@ -62,7 +72,9 @@ export default async function updateEventApi(req, res) {
         code: 'register-user',
       });
     }
-
+    if (fieldsData['published']) {
+      fieldsData['publishedAt'] = new Date().toISOString();
+    }
     if (fieldsData['startAt']) {
       fieldsData['startAt'] = new Date(fieldsData['startAt']).toISOString();
     }
@@ -70,25 +82,51 @@ export default async function updateEventApi(req, res) {
       fieldsData['endAt'] = new Date(fieldsData['endAt']).toISOString();
     }
     let populations = {};
+    populations['author'] = {
+      include: {
+        profile: {
+          include: {
+            image: true,
+          },
+        },
+      },
+    };
+
     if (fieldsData['categoryId']?.length) {
       populations['category'] = true;
     }
     if (fieldsData['spaceName']?.length) {
       populations['space'] = true;
     }
-    const event = await prisma.event.update({
-      where: {
-        id: eventId,
-      },
-      data: fieldsData,
-      include: populations,
-    });
+    if (superAdminAccessRoles.length) {
+      const event = await prisma.event.update({
+        where: {
+          id: eventId,
+        },
+        data: fieldsData,
+        include: populations,
+      });
 
-    return res.status(200).json({
-      event: event,
-    });
+      return res.status(200).json({
+        event: event,
+      });
+    } else if (spaceAdminAccessRoles) {
+      const event = await prisma.event.update({
+        where: {
+          id: eventId,
+          authorId: req.user.id,
+        },
+        data: fieldsData,
+        include: populations,
+      });
+
+      return res.status(200).json({
+        event: event,
+      });
+    }
+    return res.sendStatus(403);
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'update-user' });

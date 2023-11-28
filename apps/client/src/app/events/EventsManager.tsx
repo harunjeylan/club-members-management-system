@@ -27,7 +27,6 @@ function EventsManager({ events, categories }: PropsType) {
   const [activeModel, setActiveModel] = useState<FormType | undefined>(
     undefined
   );
-  console.log(selected);
 
   useEffect(() => {
     if (activeModel === FormType.CREATE_EVENT) {
@@ -50,7 +49,6 @@ function EventsManager({ events, categories }: PropsType) {
         // });
       }
 
-      console.log({ response });
 
       if (response?.error) {
         // setMessage({

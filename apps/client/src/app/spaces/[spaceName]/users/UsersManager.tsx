@@ -72,7 +72,7 @@ function UsersManager({ users, roles, spaceName, user }: PropsType) {
         // });
       }
 
-      console.log({ response });
+      ;
 
       if (response?.error) {
         // setMessage({

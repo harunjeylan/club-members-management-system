@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import { Role } from '@prisma/client';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
@@ -27,7 +27,7 @@ export default async function handleCreateRole(
       },
     };
 
-    const url = `${host}/roles`;
+    const url = `${server_host}/roles`;
     const res = await axios.post(url, payloadData, payload);
     const revalidate: any = {
       'path[0]': '/roles',

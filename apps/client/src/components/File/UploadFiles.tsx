@@ -1,10 +1,17 @@
 'use client';
 import Model from '@client/components/ui/Model';
+import { TransitionContext } from '@client/context/TransitionContext';
 import getFileUrl from '@client/helpers/getFileUrl';
 import handleUploadFile from '@client/libs/client/files/handleUploadFile';
 import { FileModel } from '@prisma/client';
 import Image from 'next/image';
-import React, { ReactNode, Suspense, useRef, useState } from 'react';
+import React, {
+  ReactNode,
+  Suspense,
+  useContext,
+  useRef,
+  useState,
+} from 'react';
 
 type PropsType = {
   children: ({
@@ -13,10 +20,11 @@ type PropsType = {
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
   }) => ReactNode;
   type?: '*' | 'image/*';
-  onUpload: (files: FileModel[]) => void;
-  files: FileModel[];
+  onUpload?: (files: FileModel[]) => void;
+  files?: FileModel[];
   multiple?: boolean;
-  defaultValues: FileModel[];
+  defaultValues?: FileModel[];
+  showPreview?: boolean;
 };
 
 export default function UploadFiles({
@@ -26,15 +34,19 @@ export default function UploadFiles({
   defaultValues,
   type = '*',
   multiple = false,
+  showPreview = false,
 }: PropsType) {
   enum ActiveSelector {
     LOCAL,
     MEDIA,
   }
+  const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
-  const [selected, setSelected] = useState<FileModel[]>(defaultValues);
+  const [selected, setSelected] = useState<FileModel[]>(defaultValues ?? []);
   const [previews, setPreviews] = useState<FileModel[]>(selected);
-  const [active, setActive] = useState<ActiveSelector>(ActiveSelector.MEDIA);
+  const [active, setActive] = useState<ActiveSelector>(
+    !!files ? ActiveSelector.MEDIA : ActiveSelector.LOCAL
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   async function onSubmit() {
     if (!fileInputRef.current || !fileInputRef.current?.files?.length) {
@@ -48,13 +60,16 @@ export default function UploadFiles({
         formData.append(file.name, file);
       }
     });
-
-    const response = await handleUploadFile(myFiles);
-    if (response.files) {
-      onUpload(response.files ?? []);
-      setPreviews(response.files);
-      setShow(false);
-    }
+    handleServerMutation(async () => {
+      const response = await handleUploadFile(myFiles);
+      if (response.files) {
+        if (typeof onUpload === 'function') {
+          onUpload(response.files ?? []);
+        }
+        setPreviews(response.files);
+        setShow(false);
+      }
+    });
   }
 
   function exist(files: FileModel[], file: FileModel): boolean {
@@ -81,12 +96,14 @@ export default function UploadFiles({
       >
         <div className="w-fill flex flex-col mt-2">
           <nav className="flex items-center justify-start bg-secondary-200 dark:bg-secondary-800 ">
-            <button
-              onClick={() => setActive(ActiveSelector.MEDIA)}
-              className="px-4 py-2 hover:bg-slate-300 hover:dark:bg-slate-700"
-            >
-              Media
-            </button>
+            {!!files && (
+              <button
+                onClick={() => setActive(ActiveSelector.MEDIA)}
+                className="px-4 py-2 hover:bg-slate-300 hover:dark:bg-slate-700"
+              >
+                Media
+              </button>
+            )}
             <button
               onClick={() => setActive(ActiveSelector.LOCAL)}
               className="px-4 py-2 hover:bg-slate-300 hover:dark:bg-slate-700"
@@ -95,7 +112,7 @@ export default function UploadFiles({
             </button>
           </nav>
           <div className="bg-slate-200 dark:bg-slate-950 px-2 max-h-screen overflow-y-hidden">
-            {active === ActiveSelector.MEDIA && (
+            {!!files && active === ActiveSelector.MEDIA && (
               <Suspense fallback={<div>Loading..</div>}>
                 <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 p-2 ">
                   {files.map((file) => (
@@ -120,7 +137,9 @@ export default function UploadFiles({
                   <button
                     type="button"
                     onClick={() => {
-                      onUpload(selected);
+                      if (typeof onUpload === 'function') {
+                        onUpload(selected);
+                      }
                       setPreviews(selected);
                       setShow(false);
                     }}
@@ -154,7 +173,7 @@ export default function UploadFiles({
         </div>
       </Model>
       {children({ setShow })}
-      {!!previews.length && (
+      {!!previews.length && showPreview && (
         <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 p-2 ">
           {previews.map((file) => (
             <div

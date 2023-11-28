@@ -3,25 +3,25 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
 import { UserWithAll } from 'types/user';
-import { host } from '../../config/host.config';
+import { server_host } from '../../config/host.config';
 
 export default async function getDashboard(user?: UserWithAll | null) {
   const cookieStore = cookies();
   const headers: { [key: string]: string } = {};
-  let baseUser = `${host}/dashboard/public`;
+  let baseUser = `${server_host}/dashboard/public`;
   if (cookieStore.has('token') && user) {
     const token = cookieStore.get('token') as { value: string };
     headers['Authorization'] = `Bearer ${token.value}`;
 
     const { memberRoles, spaceRoles, superAdminRoles } = getMainUserRoles(user);
     // if (!!memberRoles.length) {
-    //   baseUser = `${host}/dashboard/members`;
+    //   baseUser = `${server_host}/dashboard/members`;
     // }
     // if (!!spaceRoles.length) {
-    //   baseUser = `${host}/dashboard/space-admins`;
+    //   baseUser = `${server_host}/dashboard/space-admins`;
     // }
     if (!!superAdminRoles.length) {
-      baseUser = `${host}/dashboard/super-admins`;
+      baseUser = `${server_host}/dashboard/super-admins`;
     }
   }
   const url =
@@ -35,7 +35,7 @@ export default async function getDashboard(user?: UserWithAll | null) {
   });
 
   if (!res.ok) {
-    console.log(res);
+    ;
     if (res.status === 404) {
       return redirect('/not-found');
     }

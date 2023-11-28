@@ -10,7 +10,7 @@ const router = express.Router();
 router.get('/', authenticateToken, getAllFilesAPi);
 router.post('/', authenticateToken, formidableMiddleware(), uploadFilesApi);
 
-router.get('/:fileName', authenticateToken, getOneFileAPi);
+router.get('/:fileName', getOneFileAPi);
 router.delete('/:fileName', authenticateToken, deleteFilesAPi);
 
 export default router;

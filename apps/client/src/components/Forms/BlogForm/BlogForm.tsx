@@ -153,6 +153,7 @@ export default function BlogForm({
                 (file) => file.id === initialValues.fileModelId
               )}
               multiple={false}
+              showPreview={true}
               files={files}
               onUpload={(files) => {
                 setFieldValue('fileModelId', files?.[0].id);

@@ -64,7 +64,7 @@ export default async function getAllBlogsApi(req, res) {
       blogs: blogs,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

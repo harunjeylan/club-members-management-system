@@ -190,7 +190,7 @@ Step 6: Configure the Database
 - Option 1: PostgreSQL
   1. Install PostgreSQL on your system and make sure it is running.
   2. Create a new PostgreSQL database for the Club Members Management System.
-  3. Update the database configuration in the project. Locate the configuration file (e.g., `config/database.ts` or `config/database.json`) and provide the necessary details such as host, port, username, password, and database name.
+  3. Update the database configuration in the project. Locate the configuration file (e.g., `config/database.ts` or `config/database.json`) and provide the necessary details such as server_host, port, username, password, and database name.
 
 - Option 2: Docker Compose (simplified setup)
   1. Install Docker and Docker Compose on your system.

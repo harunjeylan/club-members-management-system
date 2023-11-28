@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import handleRevalidate from '../handleRevalidate';
@@ -17,11 +17,11 @@ export default async function handleCreateBlog(
   },
   revalidateOptions?: { paths?: string[]; tags?: string[] }
 ) {
-  console.log({values});
-  
+  ;
+
   try {
     const token = getCookie('token');
-    const url = `${host}/blogs`;
+    const url = `${server_host}/blogs`;
     const payloadData = {
       title: values.title,
       slug: values.slug,
@@ -46,6 +46,7 @@ export default async function handleCreateBlog(
     const revalidate: any = {
       path: '/blogs',
       tag: 'getBlogs',
+      'tag[1]': 'getPublishedBlogs',
     };
     revalidateOptions?.tags?.forEach((tag, ind) => {
       revalidate['tag[' + (6 + ind) + ']'] = tag;

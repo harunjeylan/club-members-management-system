@@ -43,7 +43,7 @@ export default async function getAllUsersApi(req, res) {
       users: users.map((user) => prisma.$exclude(user, ['password'])),
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res.status(500).json({ message: error.message, code: 'get-users' });
   }
 }

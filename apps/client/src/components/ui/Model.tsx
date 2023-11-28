@@ -12,7 +12,7 @@ type PropsType = {
   expandUrl?: string;
 };
 function Model({ children, show, setShow, className, expandUrl }: PropsType) {
-    console.log({expandUrl});
+    ;
     
   return (
     <Portal show={show}>

@@ -39,7 +39,7 @@ function CreateEventForm({ categories, spaceName }: PropsType) {
   }, [message]);
 
   async function onSubmit(values: EventFormType) {
-    console.log({ values });
+    ;
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
@@ -47,7 +47,7 @@ function CreateEventForm({ categories, spaceName }: PropsType) {
       const response = await handleCreateEvent(values, {
         tags: revalidateTags,
       });
-      console.log({ response });
+      ;
       if (response.event) {
         setMessage({
           type: 'success',

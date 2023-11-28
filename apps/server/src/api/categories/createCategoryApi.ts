@@ -28,7 +28,7 @@ export default async function createCategoryApi(req, res) {
     });
 
     if (!success) {
-      console.log(error.issues);
+      ;
 
       return res.status(409).json({
         message: 'Invalid Data',
@@ -49,7 +49,7 @@ export default async function createCategoryApi(req, res) {
       };
     }
 
-    console.log(fieldsData);
+    ;
 
     const category = await prisma.category.create({
       data: fieldsData,
@@ -58,7 +58,7 @@ export default async function createCategoryApi(req, res) {
       category: category,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

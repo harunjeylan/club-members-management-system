@@ -2,18 +2,18 @@ import { Role, User } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
-import { host } from '../../config/host.config';
+import { server_host } from '../../config/host.config';
 
 export default async function getRoleDetails(roleId: string) {
-  console.log(roleId);
+  ;
 
   const cookieStore = cookies();
   if (!cookieStore.has('token')) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/roles/${roleId}?populate=users&populate=space`;
-  console.log(url);
+  const url = `${server_host}/roles/${roleId}?populate=users&populate=space`;
+  ;
 
   const res = await fetch(url, {
     method: 'GET',
@@ -24,7 +24,7 @@ export default async function getRoleDetails(roleId: string) {
   });
 
   if (!res.ok) {
-    console.log(res);
+    ;
     if (res.status === 404) {
       return redirect('/not-found');
     }

@@ -1,6 +1,7 @@
 import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from '../../prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
+import deleteFiles from '@server/helpers/deleteFiles';
 
 export default async function deleteFilesAPi(req, res) {
   const { fileName } = req.params;
@@ -14,8 +15,9 @@ export default async function deleteFilesAPi(req, res) {
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
     }
+    let files = [];
     if (fileIds?.length) {
-      await prisma.fileModel.deleteMany({
+      files = await prisma.fileModel.findMany({
         where: {
           id: {
             in: fileIds,
@@ -24,12 +26,28 @@ export default async function deleteFilesAPi(req, res) {
       });
     }
     if (fileName) {
-      await prisma.fileModel.delete({
+      const file = await prisma.fileModel.findFirst({
         where: {
           name: fileName,
         },
       });
+      files.push(file);
     }
+    const filesPromise = [];
+    ;
+    
+    files.forEach((file) => {
+      filesPromise.push(deleteFiles(file.name));
+    });
+
+    await Promise.all(filesPromise);
+    await prisma.fileModel.deleteMany({
+      where: {
+        id: {
+          in: files.map((file) => file.id),
+        },
+      },
+    });
     return res.status(200).json({
       deleted: { fileName, fileIds },
       message: 'files deleted',

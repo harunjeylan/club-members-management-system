@@ -27,10 +27,10 @@ function UpdateSpaceForm({ space }: { space: Space }) {
   }, [message]);
 
   async function onSubmit(values: Partial<Space>) {
-    console.log({ values });
+    ;
     handleServerMutation(async () => {
       const response = await handleUpdateSpace(space.name, values);
-      console.log({ response });
+      ;
       if (response.space) {
         setMessage({
           type: 'success',

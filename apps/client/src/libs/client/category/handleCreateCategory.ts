@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import { Category } from '@prisma/client';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
@@ -7,7 +7,7 @@ import handleRevalidate from '../handleRevalidate';
 export default async function handleCreateCategory(values: Partial<Category>) {
   try {
     const token = getCookie('token');
-    const url = `${host}/categories`;
+    const url = `${server_host}/categories`;
     const payloadData = {
       name: values.name,
       mainCategoryId: values.categoryId,

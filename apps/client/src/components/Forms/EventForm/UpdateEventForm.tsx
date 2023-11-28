@@ -48,7 +48,7 @@ function UpdateEventForm({
   }, [message]);
 
   async function onSubmit(values: EventFormType) {
-    console.log({ values });
+    ;
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
@@ -56,7 +56,7 @@ function UpdateEventForm({
       const response = await handleUpdateEvent(event.id, values, {
         tags: revalidateTags,
       });
-      console.log({ response });
+      ;
       if (response.event) {
         setMessage({
           type: 'success',

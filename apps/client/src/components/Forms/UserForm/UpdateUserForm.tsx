@@ -75,7 +75,7 @@ export default function UpdateUserForm({
         tags: revalidateTags,
       });
 
-      console.log(response.user);
+      ;
 
       if (response.user) {
         setMessage({

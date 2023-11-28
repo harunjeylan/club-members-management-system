@@ -25,7 +25,7 @@ function RolesManager({ roles, spaces }: PropsType) {
   const [activeModel, setActiveModel] = useState<FormType | undefined>(
     undefined
   );
-  console.log(selected);
+  ;
 
   useEffect(() => {
     if (activeModel === FormType.CREATE_ROLE) {
@@ -46,7 +46,7 @@ function RolesManager({ roles, spaces }: PropsType) {
         // });
       }
 
-      console.log({ response });
+      ;
 
       if (response?.error) {
         // setMessage({

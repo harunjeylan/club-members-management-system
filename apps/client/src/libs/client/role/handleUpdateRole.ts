@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import { Role, RoleCode, RoleScop } from '@prisma/client';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
@@ -42,7 +42,7 @@ export default async function handleUpdateRole(
         Authorization: `Bearer ${token}`,
       },
     };
-    const url = `${host}/roles/${roleId}`;
+    const url = `${server_host}/roles/${roleId}`;
     const res = await axios.put(url, payloadData, payload);
     const revalidate: any = {
       'path[0]': '/roles',

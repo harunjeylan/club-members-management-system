@@ -2,7 +2,7 @@ import { Space } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
-import { host } from '../../config/host.config';
+import { server_host } from '../../config/host.config';
 
 async function getSpaces() {
   const cookieStore = cookies();
@@ -10,7 +10,7 @@ async function getSpaces() {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/spaces`;
+  const url = `${server_host}/spaces`;
   const res = await fetch(url, {
     method: 'GET',
     next: { tags: ['getSpaces'] },
@@ -20,7 +20,7 @@ async function getSpaces() {
   });
 
   if (!res.ok) {
-    console.log(res);
+    ;
     if (res.status === 404) {
       return redirect('/not-found');
     }

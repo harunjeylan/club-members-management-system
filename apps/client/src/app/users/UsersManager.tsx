@@ -56,7 +56,7 @@ function UsersManager({ users, roles, spaces, user }: PropsType) {
         // });
       }
 
-      console.log({ response });
+      ;
 
       if (response?.error) {
         // setMessage({

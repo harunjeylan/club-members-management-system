@@ -21,7 +21,6 @@ async function Page({ params }: { params: { slug: string } }) {
   } else {
     blog = await getPublishedBlogDetails(params.slug);
   }
-  console.log(getFileUrl(blog.image));
   const blogs = await getPublishedBlogs();
   return (
     <>

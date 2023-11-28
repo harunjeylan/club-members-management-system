@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import handleRevalidate from '../handleRevalidate';
@@ -23,7 +23,7 @@ export default async function handleUploadFile(
         Authorization: `Bearer ${token}`,
       },
     };
-    const url = `${host}/files`;
+    const url = `${server_host}/files`;
     const res = await axios.post(url, formData, payload);
     const revalidate: any = {
       'tag[0]': `getFiles`,

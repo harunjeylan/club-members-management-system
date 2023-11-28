@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import handleRevalidate from '../handleRevalidate';
@@ -17,7 +17,7 @@ export default async function handleDeleteFile(fileName: string | string[]) {
       };
       let res: any;
       if (typeof fileName === 'string') {
-        res = await axios.delete(`${host}/files/${fileName}`, payload);
+        res = await axios.delete(`${server_host}/files/${fileName}`, payload);
         handleRevalidate({
           'path[0]': '/files',
           'path[1]': `/files/${fileName}`,
@@ -25,7 +25,7 @@ export default async function handleDeleteFile(fileName: string | string[]) {
           'tag[1]': `getFileDetails/${fileName}`,
         });
       } else {
-        res = await axios.put(`${host}/files`, { fileNames: fileName }, payload);
+        res = await axios.put(`${server_host}/files`, { fileNames: fileName }, payload);
         handleRevalidate({
           path: '/files',
           tag: 'getFiles',
@@ -34,7 +34,7 @@ export default async function handleDeleteFile(fileName: string | string[]) {
   
       return res.data;
     } catch (error: any) {
-      console.log(error);
+      ;
   
       return error?.response?.data ?? { error: 'Unknown Error' };
     }

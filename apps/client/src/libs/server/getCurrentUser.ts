@@ -2,7 +2,7 @@ import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import 'server-only';
 import { UserWithAll } from 'types/user';
-import { host } from '../../config/host.config';
+import { server_host } from '../../config/host.config';
 
 async function getCurrentUser() {
   const cookieStore = cookies();
@@ -10,7 +10,7 @@ async function getCurrentUser() {
 
   if (token?.value) {
     try {
-      const url = `${host}/users/me?populate=profile&populate=roles`;
+      const url = `${server_host}/users/me?populate=profile&populate=roles`;
       const res = await fetch(url, {
         method: 'GET',
         headers: {

@@ -8,9 +8,9 @@ import { AiOutlineArrowLeft } from 'react-icons/ai';
 
 async function Page({ params }: { params: { slug: string } }) {
   const blog = await getBlogDetails(params.slug);
-  console.log({blog});
+  ;
   
-  console.log(getFileUrl(blog.image));
+  );
 
   return (
     <section className="w-full ">

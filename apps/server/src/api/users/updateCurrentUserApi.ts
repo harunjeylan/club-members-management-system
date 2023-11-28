@@ -59,7 +59,7 @@ export default async function updateCurrentUserApi(req, res) {
       user: prisma.$exclude(user, ['password']),
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'update-user' });

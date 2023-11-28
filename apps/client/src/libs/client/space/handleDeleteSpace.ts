@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { revalidatePath, revalidateTag } from 'next/cache';
@@ -18,7 +18,7 @@ export default async function handleDeleteSpace(spaceName: string | string[]) {
     };
     let res: any;
     if (typeof spaceName === 'string') {
-      res = await axios.delete(`${host}/spaces/${spaceName}`, payload);
+      res = await axios.delete(`${server_host}/spaces/${spaceName}`, payload);
       handleRevalidate({
         'path[0]': '/spaces',
         'path[1]': `/spaces/${spaceName}`,
@@ -27,7 +27,7 @@ export default async function handleDeleteSpace(spaceName: string | string[]) {
       });
     } else {
       res = await axios.put(
-        `${host}/spaces`,
+        `${server_host}/spaces`,
         { spaceNames: spaceName },
         payload
       );

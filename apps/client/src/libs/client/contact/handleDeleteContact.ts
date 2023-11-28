@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import handleRevalidate from '../handleRevalidate';
@@ -17,7 +17,7 @@ export default async function handleDeleteContact(contactId: string | string[]) 
       };
       let res: any;
       if (typeof contactId === 'string') {
-        res = await axios.delete(`${host}/contacts/${contactId}`, payload);
+        res = await axios.delete(`${server_host}/contacts/${contactId}`, payload);
         handleRevalidate({
           'path[0]': '/contacts',
           'path[1]': `/contacts/${contactId}`,
@@ -25,7 +25,7 @@ export default async function handleDeleteContact(contactId: string | string[]) 
           'tag[1]': `getContactDetails/${contactId}`,
         });
       } else {
-        res = await axios.put(`${host}/contacts`, { contactIds: contactId }, payload);
+        res = await axios.put(`${server_host}/contacts`, { contactIds: contactId }, payload);
         handleRevalidate({
           path: '/contacts',
           tag: 'getContacts',
@@ -34,7 +34,7 @@ export default async function handleDeleteContact(contactId: string | string[]) 
   
       return res.data;
     } catch (error: any) {
-      console.log(error);
+      ;
   
       return error?.response?.data ?? { error: 'Unknown Error' };
     }

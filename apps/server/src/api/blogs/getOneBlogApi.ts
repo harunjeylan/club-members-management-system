@@ -6,7 +6,7 @@ import getArrayValues from '@libs/utils/getArrayValues';
 export default async function getOneBlogApi(req, res) {
   const { slug } = req.params;
   const { populate } = req.query;
-  console.log({ populate });
+  ;
 
   try {
     let populations = {};
@@ -38,13 +38,11 @@ export default async function getOneBlogApi(req, res) {
       superAdminRoles = getUserAccessRoles(req.user.roles, [
         { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
         { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-        { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
-        { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
         { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
         { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
       ]);
     }
-    console.log({ superAdminRoles });
+    ;
     if (!req.user || !superAdminRoles.length) {
       const blog = await prisma.blog.findFirst({
         include: populations,
@@ -57,12 +55,7 @@ export default async function getOneBlogApi(req, res) {
         blog: blog,
       });
     }
-    console.log(
-      req.user.roles
-        .map((role: Role) => role.spaceName)
-        .filter((name: string | null) => !!name)
-    );
-
+   
     const blog = await prisma.blog.findFirst({
       include: populations,
       where: {
@@ -82,7 +75,7 @@ export default async function getOneBlogApi(req, res) {
       blog: blog,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

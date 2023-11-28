@@ -37,22 +37,12 @@ export default async function deleteEventApi(req, res) {
       }
     } else if (spaceAdminAccessRoles) {
       if (eventId) {
-        const event = await prisma.event.delete({
+        await prisma.event.delete({
           where: {
             id: eventId,
+            authorId: req.user.id,
           },
         });
-        if (
-          spaceAdminAccessRoles
-            .map((role) => role.spaceName)
-            .includes(event.spaceName)
-        ) {
-          await prisma.event.delete({
-            where: {
-              id: eventId,
-            },
-          });
-        }
       }
       if (eventIds?.length) {
         await prisma.event.deleteMany({
@@ -60,9 +50,7 @@ export default async function deleteEventApi(req, res) {
             id: {
               in: eventIds,
             },
-            spaceName: {
-              in: spaceAdminAccessRoles.map((role) => role.spaceName),
-            },
+            authorId: req.user.id,
           },
         });
       }
@@ -73,7 +61,7 @@ export default async function deleteEventApi(req, res) {
       message: 'Event deleted successfully',
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

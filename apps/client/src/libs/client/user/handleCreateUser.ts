@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { revalidatePath, revalidateTag } from 'next/cache';
@@ -11,7 +11,7 @@ export default async function handleCreateUser(
 ) {
   try {
     const token = getCookie('token');
-    const url = `${host}/users`;
+    const url = `${server_host}/users`;
 
     const payloadData = {
       first_name: values.first_name,

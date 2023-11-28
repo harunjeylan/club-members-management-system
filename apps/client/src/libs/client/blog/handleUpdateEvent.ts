@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import { Blog, Repeat } from '@prisma/client';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
@@ -22,7 +22,7 @@ export default async function handleUpdateBlog(
 ) {
   try {
     const token = getCookie('token');
-    const url = `${host}/blogs/${slug}`;
+    const url = `${server_host}/blogs/${slug}`;
 
     if (typeof token === 'undefined') {
       return;
@@ -52,6 +52,7 @@ export default async function handleUpdateBlog(
       'tag[0]': 'getBlogs',
       'tag[1]': `getBlogDetails/${slug}`,
       'tag[3]': `getSpaceDetails/${values.spaceName}`,
+      'tag[2]': `getBlogDetails/${slug}`,
     };
     revalidateOptions?.tags?.forEach((tag, ind) => {
       revalidate['tag[' + (6 + ind) + ']'] = tag;

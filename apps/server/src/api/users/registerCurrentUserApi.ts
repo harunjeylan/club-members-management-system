@@ -7,7 +7,7 @@ import generateUserToken from '../../utils/generateUserToken';
 export default async function registerCurrentUserApi(req, res) {
   const { username, first_name, last_name, email, password } = req.body;
   try {
-    console.log({ username, first_name, last_name, email, password });
+    ;
 
     const zodSchema = z.object({
       username: z.string(),
@@ -83,7 +83,7 @@ export default async function registerCurrentUserApi(req, res) {
       jwt: { access, refresh },
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'register-user' });

@@ -1,6 +1,3 @@
-const host =
-  process.env.NODE_ENV === "production"
-    ? process.env.HOST
-    : "http://localhost:8080";
+const server_host = process.env.NEXT_PUBLIC_SERVER_HOST ?? 'http://localhost:3000';
 
-export { host };
+export { server_host };

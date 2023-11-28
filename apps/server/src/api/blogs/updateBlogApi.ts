@@ -21,9 +21,11 @@ export default async function updateBlogApi(req, res) {
   const fieldsData = getFieldsData(req.body, fields);
 
   try {
-    const userAccessRoles = getUserAccessRoles(req.user.roles, [
+    const superAdminAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+    ]);
+    const spaceAdminAccessRoles = getUserAccessRoles(req.user.roles, [
       {
         scop: RoleScop.SPACE,
         code: RoleCode.ADMIN,
@@ -35,7 +37,7 @@ export default async function updateBlogApi(req, res) {
         spaceName: fieldsData['spaceName'],
       },
     ]);
-    if (!userAccessRoles.length) {
+    if (![...superAdminAccessRoles, ...spaceAdminAccessRoles].length) {
       return res.sendStatus(403);
     }
 
@@ -61,7 +63,6 @@ export default async function updateBlogApi(req, res) {
       });
     }
 
-    
     if (fieldsData['published']) {
       fieldsData['publishedAt'] = new Date().toISOString();
     }
@@ -85,21 +86,37 @@ export default async function updateBlogApi(req, res) {
     if (fieldsData['fileModelId']?.length) {
       populations['image'] = true;
     }
-    console.log({fieldsData});
+    ;
 
-    const blog = await prisma.blog.update({
-      where: {
-        slug: slug,
-      },
-      data: fieldsData,
-      include: populations,
-    });
+    if (superAdminAccessRoles.length) {
+      const blog = await prisma.blog.update({
+        where: {
+          slug: slug,
+        },
+        data: fieldsData,
+        include: populations,
+      });
 
-    return res.status(200).json({
-      blog: blog,
-    });
+      return res.status(200).json({
+        blog: blog,
+      });
+    } else if (spaceAdminAccessRoles) {
+      const blog = await prisma.blog.update({
+        where: {
+          slug: slug,
+          authorId: req.user.id,
+        },
+        data: fieldsData,
+        include: populations,
+      });
+
+      return res.status(200).json({
+        blog: blog,
+      });
+    }
+    return res.sendStatus(403);
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'update-user' });

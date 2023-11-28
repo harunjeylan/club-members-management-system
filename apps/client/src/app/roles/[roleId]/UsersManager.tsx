@@ -22,7 +22,7 @@ function UsersManager({ users, roleId }: PropsType) {
   const [activeModel, setActiveModel] = useState<FormType | undefined>(
     undefined
   );
-  console.log(selected);
+  ;
 
   useEffect(() => {
     if (activeModel === FormType.CREATE_USER) {
@@ -44,7 +44,7 @@ function UsersManager({ users, roleId }: PropsType) {
       // });
     }
 
-    console.log({ response });
+    ;
 
     if (response?.error) {
       // setMessage({

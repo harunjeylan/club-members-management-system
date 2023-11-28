@@ -31,7 +31,7 @@ function AddUsersToSpaceForm({ users, spaces }: PropsType) {
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(selectedSpace.length);
+    ;
 
     if (!selectedSpace.length) {
       return setMessage({
@@ -52,7 +52,7 @@ function AddUsersToSpaceForm({ users, spaces }: PropsType) {
         });
       }
 
-      console.log({ response });
+      ;
 
       if (response?.error) {
         setMessage({

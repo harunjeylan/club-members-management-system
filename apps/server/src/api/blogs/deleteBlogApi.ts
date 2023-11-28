@@ -37,22 +37,12 @@ export default async function deleteBlogApi(req, res) {
       }
     } else if (spaceAdminAccessRoles) {
       if (blogId) {
-        const blog = await prisma.blog.delete({
+        await prisma.blog.delete({
           where: {
             id: blogId,
+            authorId: req.user.id,
           },
         });
-        if (
-          spaceAdminAccessRoles
-            .map((role) => role.spaceName)
-            .includes(blog.spaceName)
-        ) {
-          await prisma.blog.delete({
-            where: {
-              id: blogId,
-            },
-          });
-        }
       }
       if (blogIds?.length) {
         await prisma.blog.deleteMany({
@@ -60,9 +50,7 @@ export default async function deleteBlogApi(req, res) {
             id: {
               in: blogIds,
             },
-            spaceName: {
-              in: spaceAdminAccessRoles.map((role) => role.spaceName),
-            },
+            authorId: req.user.id,
           },
         });
       }
@@ -73,7 +61,7 @@ export default async function deleteBlogApi(req, res) {
       message: 'Blog deleted successfully',
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

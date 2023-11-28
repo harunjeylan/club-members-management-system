@@ -82,7 +82,7 @@ export default async function updateRoleApi(req, res) {
       role: role,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'update-user' });

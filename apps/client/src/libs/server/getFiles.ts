@@ -2,7 +2,7 @@ import { FileModel } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
-import { host } from '../../config/host.config';
+import { server_host } from '../../config/host.config';
 
 export default async function getFiles() {
   const cookieStore = cookies();
@@ -10,7 +10,7 @@ export default async function getFiles() {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/files`;
+  const url = `${server_host}/files`;
   const res = await fetch(url, {
     method: 'GET',
     next: { tags: [`getFiles`] },
@@ -20,7 +20,7 @@ export default async function getFiles() {
   });
 
   if (!res.ok) {
-    console.log(res);
+    ;
     if (res.status === 404) {
       return redirect('/not-found');
     }

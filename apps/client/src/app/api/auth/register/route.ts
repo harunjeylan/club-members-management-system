@@ -2,11 +2,11 @@ import { cookies } from 'next/headers';
 import axios from 'axios';
 import { NextRequest } from 'next/server';
 import { UserWithRoles } from 'types/user';
-import { host } from '../../../../config/host.config';
+import { server_host } from '../../../../config/host.config';
 import { revalidateTag } from 'next/cache';
 export async function POST(req: NextRequest) {
   const { password, username, email } = await req.json();
-  const url = `${host}/api/auth/local/register`;
+  const url = `${server_host}/api/auth/local/register`;
   const payload = {
     password,
     username,

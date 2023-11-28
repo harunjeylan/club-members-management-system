@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
 import { UserWithAll } from 'types/user';
-import { host } from '../../config/host.config';
+import { server_host } from '../../config/host.config';
 
 async function getUsers() {
   const cookieStore = cookies();
@@ -10,7 +10,7 @@ async function getUsers() {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/users?populate=profile&populate=roles&populate=spaces`;
+  const url = `${server_host}/users?populate=profile&populate=roles&populate=spaces`;
   const res = await fetch(url, {
     method: 'GET',
     next: { tags: ['getUsers'] },
@@ -20,7 +20,7 @@ async function getUsers() {
   });
 
   if (!res.ok) {
-    console.log(res);
+    ;
     if (res.status === 404) {
       return redirect('/not-found');
     }

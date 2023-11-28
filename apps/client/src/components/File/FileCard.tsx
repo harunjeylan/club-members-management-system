@@ -1,6 +1,7 @@
 'use client';
 import { TransitionContext } from '@client/context/TransitionContext';
 import getFileUrl from '@client/helpers/getFileUrl';
+import useConfirmation from '@client/hooks/useConfirmation';
 import handleDeleteFile from '@client/libs/client/files/handleDeleteFile';
 import handleRevalidate from '@client/libs/client/handleRevalidate';
 import { FileModel } from '@prisma/client';
@@ -9,6 +10,7 @@ import React, { useContext } from 'react';
 import { MdDelete } from 'react-icons/md';
 
 export default function FileCard({ file }: { file: FileModel }) {
+
   const { handleServerMutation } = useContext(TransitionContext);
   async function deleteFiles() {
     handleServerMutation(async () => {
@@ -21,7 +23,7 @@ export default function FileCard({ file }: { file: FileModel }) {
         // });
       }
 
-      console.log({ response });
+      ;
 
       if (response?.error) {
         // setMessage({
@@ -46,7 +48,10 @@ export default function FileCard({ file }: { file: FileModel }) {
         className="w-full object-cover aspect-square rounded"
       />
       <div className="absolute top-2 right-2">
-        <button className="btn-icon" onClick={deleteFiles}>
+        <button
+          className="btn-icon"
+          onClick={() => deleteFiles()}
+        >
           <MdDelete size={20} color="red" />
         </button>
       </div>

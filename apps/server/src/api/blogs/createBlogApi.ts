@@ -18,7 +18,7 @@ export default async function createBlogApi(req, res) {
     'fileModelId',
   ];
   const fieldsData = getFieldsData(req.body, fields);
-console.log({fieldsData, body:req.body});
+  ;
 
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
@@ -54,11 +54,11 @@ console.log({fieldsData, body:req.body});
     }
 
     fieldsData['authorId'] = req.user.id;
-    
+
     if (fieldsData['published']) {
       fieldsData['publishedAt'] = new Date().toISOString();
     }
-    
+
     let populations = {};
     populations['author'] = {
       include: {
@@ -78,8 +78,7 @@ console.log({fieldsData, body:req.body});
     if (fieldsData['fileModelId']?.length) {
       populations['image'] = true;
     }
-    console.log({fieldsData});
-    
+    ;
 
     const blog = await prisma.blog.create({
       data: fieldsData as Blog,
@@ -89,7 +88,7 @@ console.log({fieldsData, body:req.body});
       blog: blog,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

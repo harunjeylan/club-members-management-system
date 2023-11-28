@@ -1,6 +1,6 @@
 import getArrayValues from '@libs/utils/getArrayValues';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
-import { Role, RoleCode, RoleScop } from '@prisma/client';
+import { RoleCode, RoleScop } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 
 export default async function getAllEventsApi(req, res) {
@@ -14,17 +14,31 @@ export default async function getAllEventsApi(req, res) {
       if (item === 'category') {
         populations['category'] = true;
       }
+      if (item === 'author') {
+        populations['author'] = {
+          include: {
+            profile: {
+              include: {
+                image: true,
+              },
+            },
+          },
+        };
+      }
     });
-
-    const superAdminRoles = getUserAccessRoles(req.user.roles, [
-      { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
-      { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-      { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
-      { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
-    ]);
-    if (!!superAdminRoles.length) {
+    let superAdminRoles = [];
+    if (req.user) {
+      superAdminRoles = getUserAccessRoles(req.user.roles, [
+        { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+        { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+        { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+        { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+      ]);
+    }
+    if (!req.user || !superAdminRoles.length) {
       const events = await prisma.event.findMany({
         include: populations,
+        where: { published: true },
       });
       return res.status(200).json({
         events: events,
@@ -33,13 +47,21 @@ export default async function getAllEventsApi(req, res) {
 
     const events = await prisma.event.findMany({
       include: populations,
+      where: {
+        OR: [
+          {
+            authorId: req.user.id,
+          },
+          { published: true },
+        ],
+      },
     });
 
     return res.status(200).json({
       events: events,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

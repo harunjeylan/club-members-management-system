@@ -25,7 +25,7 @@ export default async function getOnePublishedEventApi(req, res) {
       event: event,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

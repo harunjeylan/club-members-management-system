@@ -4,7 +4,7 @@ import prisma from '@server/prisma/PrismaClient';
 
 export default async function publicDashboard(req, res) {
   const { populate } = req.query;
-  console.log({ populate });
+  ;
 
   try {
 
@@ -78,20 +78,20 @@ export default async function publicDashboard(req, res) {
       const events = await prisma.event.count();
 
       populations['events'] = events;
-      console.log({ populations });
+      ;
     }
     if (populateArray.includes('blogs')) {
       const blogs = await prisma.blog.count();
 
       populations['blogs'] = blogs;
-      console.log({ populations });
+      ;
     }
 
-    console.log({ populations });
+    ;
 
     return res.status(200).json(populations);
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

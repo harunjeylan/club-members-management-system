@@ -6,7 +6,7 @@ import { RoleScop } from '@prisma/client';
 
 async function Page({ params }: { params: { roleId: string } }) {
   const role = await getRoleDetails(params.roleId);
-  console.log(role);
+  ;
 
   return (
     <section className="w-full flex flex-col gap-8">

@@ -20,7 +20,6 @@ export default function AdminContacts({ contacts }: { contacts: Contact[] }) {
         // });
       }
 
-      console.log({ response });
 
       if (response?.error) {
         // setMessage({

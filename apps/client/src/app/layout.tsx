@@ -6,8 +6,9 @@ import getCurrentUser from '@client/libs/server/getCurrentUser';
 import classNames from 'classnames';
 // import { Roboto } from 'next/font/google';
 import { cookies } from 'next/headers';
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 import './globals.css';
+import ReadyState from '@client/components/ui/ReadyState';
 
 // const inter = Inter({ subsets: ["latin"] });
 // const roboto = Roboto({
@@ -37,13 +38,16 @@ export default async function RootLayout({ children }: PropsType) {
           ` bg-secondary-50 dark:bg-secondary-950 text-slate-800 dark:text-slate-200`
         )}
       >
-        <TransitionProvider>
-          <WebVitals />
-          <StoreProvider user={user} token={token}>
-            <Navbar />
-            {children}
-          </StoreProvider>
-        </TransitionProvider>
+        <Suspense fallback={false}>
+          <ReadyState />
+          <TransitionProvider>
+            <WebVitals />
+            <StoreProvider user={user} token={token}>
+              <Navbar />
+              {children}
+            </StoreProvider>
+          </TransitionProvider>
+        </Suspense>
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { host } from '../../../../config/host.config';
+import { server_host } from '../../../../config/host.config';
 import axios, { AxiosError } from 'axios';
 import { NextRequest } from 'next/server';
 import { UserWithRoles } from 'types/user';
@@ -7,7 +7,7 @@ import { revalidateTag } from 'next/cache';
 
 export async function POST(req: NextRequest) {
   const { identifier, password } = await req.json();
-  const url = `${host}/auth/login`;
+  const url = `${server_host}/auth/login`;
   const payload = {
     identifier,
     password,

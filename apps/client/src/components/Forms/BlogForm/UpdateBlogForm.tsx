@@ -43,7 +43,7 @@ function UpdateBlogForm({
   }, [message]);
 
   async function onSubmit(values: BlogFormType) {
-    console.log({ values });
+    ;
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
@@ -51,7 +51,7 @@ function UpdateBlogForm({
       const response = await handleUpdateBlog(blog.slug, values, {
         tags: revalidateTags,
       });
-      console.log({ response });
+      ;
       if (response.blog) {
         setMessage({
           type: 'success',

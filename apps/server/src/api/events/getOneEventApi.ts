@@ -15,17 +15,33 @@ export default async function getOneEventApi(req, res) {
       if (item === 'category') {
         populations['category'] = true;
       }
+       if (item === 'author') {
+        populations['author'] = {
+          include: {
+            profile: {
+              include: {
+                image: true,
+              },
+            },
+          },
+        };
+      }
     });
-    const superAdminRoles = getUserAccessRoles(req.user.roles, [
-      { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+    let superAdminRoles = [];
+
+    if (req.user) {
+      superAdminRoles = getUserAccessRoles(req.user.roles, [
+        { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
         { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
         { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
         { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
-    ]);
-    if (!!superAdminRoles.length) {
+      ]);
+    }
+    
+    if (!req.user || !superAdminRoles.length) {
       const event = await prisma.event.findFirst({
         include: populations,
-        where: { id: eventId },
+        where: { id: eventId, published: true },
       });
       if (!event) {
         return res.sendStatus(404);
@@ -34,10 +50,17 @@ export default async function getOneEventApi(req, res) {
         event: event,
       });
     }
+   
     const event = await prisma.event.findFirst({
       include: populations,
       where: {
         id: eventId,
+        OR: [
+          {
+            authorId: req.user.id,
+          },
+          { published: true },
+        ],
       },
     });
     if (!event) {
@@ -47,7 +70,7 @@ export default async function getOneEventApi(req, res) {
       event: event,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

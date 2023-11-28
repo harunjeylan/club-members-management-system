@@ -10,7 +10,7 @@ type PropsType = {
 };
 
 export default function BlogCard({ blog }: PropsType) {
-  console.log([blog]);
+  ;
 
   return (
     <div className="flex flex-col gap-4 bg-secondary-100 dark:bg-secondary-900 p-2 rounded-lg">

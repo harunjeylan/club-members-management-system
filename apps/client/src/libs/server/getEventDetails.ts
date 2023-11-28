@@ -2,7 +2,7 @@ import { Category, Event } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
-import { host } from '../../config/host.config';
+import { server_host } from '../../config/host.config';
 
 export default async function getEventDetails(eventId: string) {
   const cookieStore = cookies();
@@ -10,7 +10,7 @@ export default async function getEventDetails(eventId: string) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${host}/events/${eventId}?populate=space&populate=category`;
+  const url = `${server_host}/events/${eventId}?populate=space&populate=category`;
   const res = await fetch(url, {
     method: 'GET',
     next: { tags: [`getEventDetails/${eventId}`] },
@@ -20,7 +20,7 @@ export default async function getEventDetails(eventId: string) {
   });
 
   if (!res.ok) {
-    console.log(res);
+    ;
     if (res.status === 404) {
       return redirect('/not-found');
     }

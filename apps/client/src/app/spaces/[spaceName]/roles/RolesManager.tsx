@@ -55,7 +55,7 @@ function RolesManager({ roles, spaceName, user }: PropsType) {
         // });
       }
 
-      console.log({ response });
+      ;
 
       if (response?.error) {
         // setMessage({
@@ -71,7 +71,7 @@ function RolesManager({ roles, spaceName, user }: PropsType) {
       });
     });
   }
-  console.log(superAdminRoles, spaceAdminRoles);
+  ;
 
   return (
     <div>

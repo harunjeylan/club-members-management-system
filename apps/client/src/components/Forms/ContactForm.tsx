@@ -41,11 +41,11 @@ function ContactForm() {
     };
   }, [message]);
   async function onSubmit(values: typeof initialValues) {
-    console.log({ values });
+    ;
     handleServerMutation(async () => {
       const response = await handleCreateContact(values);
       if (response.contact) {
-        console.log({ response });
+        ;
         setMessage({
           type: 'success',
           summery: 'Message is sent successfully',

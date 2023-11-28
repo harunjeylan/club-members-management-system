@@ -32,10 +32,10 @@ function CreateSpaceForm() {
   }, [message]);
 
   async function onSubmit(values: Partial<Space>) {
-    console.log({ values });
+    ;
     handleServerMutation(async () => {
       const response = await handleCreateSpace(values);
-      console.log({ response });
+      ;
       if (response.space) {
         setMessage({
           type: 'success',

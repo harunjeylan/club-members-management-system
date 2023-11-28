@@ -48,7 +48,7 @@ function BlogsManager({ blogs, categories, spaceName, user }: PropsType) {
         // });
       }
 
-      console.log({ response });
+      ;
 
       if (response?.error) {
         // setMessage({

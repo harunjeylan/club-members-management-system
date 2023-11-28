@@ -47,7 +47,7 @@ export default async function loginApi(req, res) {
       jwt: { access, refresh },
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: 'Server Error', code: 'login-user' });

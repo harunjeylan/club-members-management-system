@@ -12,6 +12,17 @@ export default async function getAllPublishedEventsApi(req, res) {
       if (item === 'category') {
         populations['category'] = true;
       }
+      if (item === 'author') {
+        populations['author'] = {
+          include: {
+            profile: {
+              include: {
+                image: true,
+              },
+            },
+          },
+        };
+      }
     });
     const events = await prisma.event.findMany({
       where: { published: true },
@@ -21,7 +32,7 @@ export default async function getAllPublishedEventsApi(req, res) {
       events: events,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

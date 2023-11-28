@@ -1,4 +1,4 @@
-import { host } from '@client/config/host.config';
+import { server_host } from '@client/config/host.config';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { revalidatePath, revalidateTag } from 'next/cache';
@@ -17,7 +17,7 @@ export default async function handleDeleteUser(userId: string | string[]) {
     };
     let res: any;
     if (typeof userId === 'string') {
-      res = await axios.delete(`${host}/users/${userId}`, payload);
+      res = await axios.delete(`${server_host}/users/${userId}`, payload);
       handleRevalidate({
         'path[0]': '/users',
         'path[1]': `/users/${userId}`,
@@ -28,7 +28,7 @@ export default async function handleDeleteUser(userId: string | string[]) {
         'tag[1]': `getUserDetails/${userId}`,
       });
     } else {
-      res = await axios.put(`${host}/users`, { userIds: userId }, payload);
+      res = await axios.put(`${server_host}/users`, { userIds: userId }, payload);
       handleRevalidate({
         path: '/users',
         tag: 'getUsers',

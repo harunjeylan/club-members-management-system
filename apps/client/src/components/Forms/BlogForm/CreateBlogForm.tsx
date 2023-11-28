@@ -39,13 +39,13 @@ function CreateBlogForm({ categories, spaceName, files }: PropsType) {
   }, [message]);
 
   async function onSubmit(values: BlogFormType) {
-    console.log({ values });
+    ;
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
     handleServerMutation(async () => {
       const response = await handleCreateBlog(values, { tags: revalidateTags });
-      console.log({ response });
+      ;
       if (response.blog) {
         setMessage({
           type: 'success',

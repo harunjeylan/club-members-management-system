@@ -54,7 +54,7 @@ export default async function updateEventApi(req, res) {
       category: category,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'update-user' });

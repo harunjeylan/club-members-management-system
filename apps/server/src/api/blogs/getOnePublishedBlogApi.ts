@@ -4,7 +4,7 @@ import prisma from 'apps/server/src/prisma/PrismaClient';
 export default async function getOnePublishedBLogApi(req, res) {
   const { slug } = req.params;
   const { populate } = req.query;
-  console.log({populate});
+  ;
   try {
     let populations = {};
     getArrayValues(populate).forEach((item: string) => {
@@ -40,7 +40,7 @@ export default async function getOnePublishedBLogApi(req, res) {
       blog: blog,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

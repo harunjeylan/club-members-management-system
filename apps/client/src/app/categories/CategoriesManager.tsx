@@ -6,6 +6,7 @@ import { TransitionContext } from '@client/context/TransitionContext';
 import handleDeleteCategory from '@client/libs/client/category/handleDeleteCategory';
 import { Category } from '@prisma/client';
 import { Suspense, useContext, useState } from 'react';
+import { MdDelete } from 'react-icons/md';
 type PropsType = {
   categories: {
     id: string;
@@ -18,7 +19,6 @@ function CategoriesManager({ categories }: PropsType) {
   const { handleServerMutation } = useContext(TransitionContext);
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState<Category[]>([]);
-  console.log({ categories });
   async function deleteRoles(categoryId: string) {
     handleServerMutation(async () => {
       const response = await handleDeleteCategory(categoryId);
@@ -30,7 +30,6 @@ function CategoriesManager({ categories }: PropsType) {
         // });
       }
 
-      console.log({ response });
 
       if (response?.error) {
         // setMessage({
@@ -81,19 +80,19 @@ function CategoriesManager({ categories }: PropsType) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-400 dark:divide-slate-800 border-t border-slate-400 dark:border-slate-800">
-                {categories?.map((category) => (
+                {categories?.map((category, index) => (
                   <>
                     <tr
-                      key={category.id}
+                      key={`${category.id}--${index}`}
                       className=" hover:bg-secondary-400 dark:hover:bg-secondary-800"
                     >
                       <td className="px-4 py-2">{category.name}</td>
                       <td className="px-4 py-2 ">
                         <button
-                          className="btn-danger py-1 px-4"
+                          className="btn-icon"
                           onClick={() => deleteRoles(category.id)}
                         >
-                          delete
+                          <MdDelete size={20} color="red" />
                         </button>
                       </td>
                     </tr>
@@ -109,10 +108,10 @@ function CategoriesManager({ categories }: PropsType) {
                         </td>
                         <td className="px-4 py-2 ">
                           <button
-                            className="btn-danger py-1 px-4"
+                            className="btn-icon"
                             onClick={() => deleteRoles(category.id)}
                           >
-                            delete
+                            <MdDelete size={20} color="red" />
                           </button>
                         </td>
                       </tr>

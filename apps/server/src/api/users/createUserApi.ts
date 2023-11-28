@@ -107,7 +107,7 @@ export default async function createUserApi(req, res) {
       user: prisma.$exclude({ ...user, profile }, ['password']),
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });

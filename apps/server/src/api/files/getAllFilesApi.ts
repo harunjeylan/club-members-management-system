@@ -10,7 +10,7 @@ export default async function getAllFilesAPi(req, res) {
       { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
       { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
     ]);
-    console.log({userAccessRoles});
+    ;
     
 
     if (!userAccessRoles.length) {

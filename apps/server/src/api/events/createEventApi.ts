@@ -2,27 +2,37 @@ import { RoleCode, RoleScop, Event, Repeat } from '@prisma/client';
 import prisma from 'apps/server/src/prisma/PrismaClient';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { z } from 'zod';
+import getFieldsData from '@libs/utils/getFieldsData';
 
 export default async function createEventApi(req, res) {
-  const {
-    title,
-    startAt,
-    endAt,
-    fullDay,
-    repeat,
-    location,
-    description,
-    categoryId,
-    published,
-    spaceName,
-  } = req.body;
+  const fields = [
+    'title',
+    'startAt',
+    'endAt',
+    'fullDay',
+    'repeat',
+    'location',
+    'description',
+    'published',
+    'categoryId',
+    'spaceName',
+  ];
+  const fieldsData = getFieldsData(req.body, fields);
 
   try {
     const userAccessRoles = getUserAccessRoles(req.user.roles, [
       { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
       { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-      { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: spaceName },
-      { scop: RoleScop.SPACE, code: RoleCode.EDITOR, spaceName: spaceName },
+      {
+        scop: RoleScop.SPACE,
+        code: RoleCode.ADMIN,
+        spaceName: fieldsData['spaceName'],
+      },
+      {
+        scop: RoleScop.SPACE,
+        code: RoleCode.EDITOR,
+        spaceName: fieldsData['spaceName'],
+      },
     ]);
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
@@ -47,18 +57,7 @@ export default async function createEventApi(req, res) {
     });
 
     //@ts-ignore: Unreachable code error
-    const { success, error } = zodSchema.safeParse({
-      title,
-      startAt,
-      endAt,
-      fullDay,
-      repeat,
-      location,
-      description,
-      published,
-      categoryId,
-      spaceName,
-    });
+    const { success, error } = zodSchema.safeParse(fieldsData);
 
     if (!success) {
       return res.status(409).json({
@@ -68,17 +67,7 @@ export default async function createEventApi(req, res) {
       });
     }
 
-    const fieldsData = {
-      title,
-      startAt: new Date(startAt).toISOString(),
-      endAt: new Date(endAt).toISOString(),
-      fullDay,
-      repeat,
-      location,
-      description,
-      published,
-      categoryId,
-    };
+    fieldsData['authorId'] = req.user.id;
 
     if (fieldsData['startAt']) {
       fieldsData['startAt'] = new Date(fieldsData['startAt']).toISOString();
@@ -87,24 +76,38 @@ export default async function createEventApi(req, res) {
       fieldsData['endAt'] = new Date(fieldsData['endAt']).toISOString();
     }
 
+    if (fieldsData['published']) {
+      fieldsData['publishedAt'] = new Date().toISOString();
+    }
+
     let populations = {};
+    populations['author'] = {
+      include: {
+        profile: {
+          include: {
+            image: true,
+          },
+        },
+      },
+    };
+
     if (fieldsData['categoryId']?.length) {
       populations['category'] = true;
     }
-    if (spaceName?.length) {
-      fieldsData['spaceName'] = spaceName;
+    if (populations['spaceName']?.length) {
+      fieldsData['spaceName'] = populations['spaceName'];
       populations['space'] = true;
     }
 
     const event = await prisma.event.create({
-      data: fieldsData,
+      data: fieldsData as Event,
       include: populations,
     });
     return res.status(200).json({
       event: event,
     });
   } catch (error) {
-    console.log(error);
+    ;
     return res
       .status(500)
       .json({ message: error.message, code: 'create-user' });
