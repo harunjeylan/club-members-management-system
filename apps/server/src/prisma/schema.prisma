@@ -11,19 +11,21 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  first_name String   @db.VarChar(255)
-  last_name  String   @db.VarChar(255)
-  username   String   @unique @db.VarChar(255)
-  password   String   @db.VarChar(255)
-  email      String   @unique @db.VarChar(255)
+  id         String    @id @default(uuid())
+  first_name String    @db.VarChar(255)
+  last_name  String    @db.VarChar(255)
+  username   String    @unique @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  email      String    @unique @db.VarChar(255)
   profile    Profile?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   roles      Role[]
   spaces     Space[]
   blogs      Blog[]
-  events      Event[]
+  events     Event[]
+  forums     Forum[]
+  Message    Message[]
 }
 
 model Profile {
@@ -62,24 +64,35 @@ model Space {
   events      Event[]
   fileModelId String?
   blogs       Blog[]
+  forums      Forum[]
 }
 
-model Setting {
-  id        String @id @default(uuid())
-  name      String @unique
-  value     Json?
-  space     Space  @relation(fields: [spaceName], references: [name], onDelete: Cascade, onUpdate: NoAction)
-  spaceName String
+model Forum {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  scop        ForumScop
+  author      User      @relation(fields: [authorId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  space       Space?    @relation(fields: [spaceName], references: [name], onDelete: SetNull, onUpdate: NoAction)
+  spaceName   String?
+  authorId    String
+  messages    Message[]
 }
 
-model Category {
-  id         String     @id @default(uuid())
-  name       String     @unique
-  events     Event[]
-  category   Category?  @relation("category", fields: [categoryId], references: [id])
-  categories Category[] @relation("category")
-  categoryId String?
-  blogs      Blog[]
+model Message {
+  id        String    @id @default(uuid())
+  text      String
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  forum     Forum     @relation(fields: [forumId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  reply     Message   @relation("reply", fields: [replyId], references: [id])
+  replies   Message[] @relation("reply")
+  userId    String
+  replyId   String
+  forumId   String
 }
 
 model Event {
@@ -103,7 +116,7 @@ model Event {
   space       Space?     @relation(fields: [spaceName], references: [name], onDelete: SetNull, onUpdate: NoAction)
   spaceName   String?
   fileModelId String?
-  authorId      String
+  authorId    String
 }
 
 model Blog {
@@ -148,6 +161,24 @@ model FileModel {
   blogs        Blog[]
 }
 
+model Category {
+  id         String     @id @default(uuid())
+  name       String     @unique
+  events     Event[]
+  category   Category?  @relation("category", fields: [categoryId], references: [id])
+  categories Category[] @relation("category")
+  categoryId String?
+  blogs      Blog[]
+}
+
+model Setting {
+  id        String @id @default(uuid())
+  name      String @unique
+  value     Json?
+  space     Space  @relation(fields: [spaceName], references: [name], onDelete: Cascade, onUpdate: NoAction)
+  spaceName String
+}
+
 enum Repeat {
   NO_REPEAT   @map("NO_REPEAT")
   EVERY_DAY   @map("EVERY_DAY")
@@ -159,6 +190,11 @@ enum Repeat {
 enum RoleScop {
   SUPER @map("SUPER")
   SPACE @map("SPACE")
+}
+
+enum ForumScop {
+  GENERAL @map("GENERAL")
+  LOCAL   @map("LOCAL")
 }
 
 enum RoleCode {

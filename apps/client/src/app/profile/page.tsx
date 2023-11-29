@@ -20,33 +20,42 @@ async function Page() {
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-full md:col-span-6 lg:col-span-4 p-4 flex flex-col gap-4  rounded-md bg-secondary-200 dark:bg-secondary-900">
             <div className="flex flex-col gap-4 mx-auto mt-auto justify-center items-center">
-            {!!user?.profile?.image ? (
-              <Image
-                src={getFileUrl(user?.profile?.image)}
-                alt={user.username}
-                width={200}
-                height={200}
-                className="h-40 w-40 aspect-square rounded-full"
-              />
-            ) : (
-              <BiUserCircle size={140} />
-            )}
+              {!!user?.profile?.image ? (
+                <Image
+                  src={getFileUrl(user?.profile?.image)}
+                  alt={user.username}
+                  width={200}
+                  height={200}
+                  className="h-40 w-40 aspect-square rounded-full"
+                />
+              ) : (
+                <BiUserCircle size={140} />
+              )}
             </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center gap-2 px-4">
-                <div className="">Full Name</div>
-                <div className="font-bold">
-                  {user.first_name} {user.last_name}
-                </div>
-              </div>
-              <div className="flex justify-between items-center gap-2 px-4">
-                <div className="">Username</div>
-                <div className="font-bold">{user.username}</div>
-              </div>
-              <div className="flex justify-between items-center gap-2 px-4">
-                <div className="">Email</div>
-                <div className="font-bold">{user.email}</div>
-              </div>
+            <div className="w-full flex flex-col gap-4">
+              <div className="text-2xl font-bold">About</div>
+              <ul className="flex flex-col gap-2">
+                <li className="flex gap-3 items-center">
+                  <div className="flex flex-col">
+                    <span className="">Full Name</span>
+                    <span className="font-bold">
+                      {user.first_name} {user.last_name}
+                    </span>
+                  </div>
+                </li>
+                <li className="flex gap-3 items-center">
+                  <div className="flex flex-col">
+                    <span className="">Username</span>
+                    <span className="font-bold">{user.username}</span>
+                  </div>
+                </li>
+                <li className="flex gap-3 items-center">
+                  <div className="flex flex-col">
+                    <span className="">Email</span>
+                    <span className="font-bold">{user.email}</span>
+                  </div>
+                </li>
+              </ul>
             </div>
           </div>
 

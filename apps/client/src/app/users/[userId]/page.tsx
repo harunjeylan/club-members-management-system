@@ -29,21 +29,30 @@ async function Page({ params }: { params: { userId: string } }) {
                 <BiUserCircle size={140} />
               )}
             </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center gap-2 px-4">
-                <div className="font-thin">Full Name</div>
-                <div className="font-bold">
-                  {user.first_name} {user.last_name}
-                </div>
-              </div>
-              <div className="flex justify-between items-center gap-2 px-4">
-                <div className="font-thin">Username</div>
-                <div className="font-bold">{user.username}</div>
-              </div>
-              <div className="flex justify-between items-center gap-2 px-4">
-                <div className="font-thin">Username</div>
-                <div className="font-bold">{user.username}</div>
-              </div>
+            <div className="w-full flex flex-col gap-4">
+              <div className="text-2xl font-bold">About</div>
+              <ul className="flex flex-col gap-2">
+                <li className="flex gap-3 items-center">
+                  <div className="flex flex-col">
+                    <span className="">Full Name</span>
+                    <span className="font-bold">
+                      {user.first_name} {user.last_name}
+                    </span>
+                  </div>
+                </li>
+                <li className="flex gap-3 items-center">
+                  <div className="flex flex-col">
+                    <span className="">Username</span>
+                    <span className="font-bold">{user.username}</span>
+                  </div>
+                </li>
+                <li className="flex gap-3 items-center">
+                  <div className="flex flex-col">
+                    <span className="">Email</span>
+                    <span className="font-bold">{user.email}</span>
+                  </div>
+                </li>
+              </ul>
             </div>
           </div>
 

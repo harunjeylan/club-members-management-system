@@ -1,4 +1,3 @@
-import AdminSidebar from '@client/components/Sidebar/AdminSidebar';
 import getCurrentUser from '@client/libs/server/getCurrentUser';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { RoleCode, RoleScop } from '@prisma/client';
@@ -11,32 +10,25 @@ export const metadata = {
 };
 type PropsType = {
   children: ReactNode | ReactNode[];
+  params: { spaceName: string };
 };
-export default async function Layout({ children }: PropsType) {
+export default async function Layout({ children, params }: PropsType) {
   const user = await getCurrentUser();
-
   if (!user) {
     return redirect('/auth/login');
   }
   const userRoles = getUserAccessRoles(user.roles, [
     { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
     { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-    { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
-    { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
-    { scop: RoleScop.SUPER, code: RoleCode.MEMBER },
-    { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
+    { scop: RoleScop.SPACE, code: RoleCode.ADMIN, spaceName: params.spaceName },
+    {
+      scop: RoleScop.SPACE,
+      code: RoleCode.EDITOR,
+      spaceName: params.spaceName,
+    },
   ]);
-
   if (!userRoles.length) {
     return redirect('/auth/login');
   }
-
-  return (
-    <main className="flex h-full w-full ">
-      <AdminSidebar user={user} />
-      <div className="w-full max-w-[100vw] overflow-x-auto mt-12">
-        {children}
-      </div>
-    </main>
-  );
+  return <main className="flex h-full w-full">{children}</main>;
 }
