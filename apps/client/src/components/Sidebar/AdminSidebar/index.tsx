@@ -1,7 +1,10 @@
 'use client';
 import Sidebar from '@client/components/ui/Sidebar';
+import getFileUrl from '@client/helpers/getFileUrl';
 import { selectCurrentUser } from '@client/libs/features/userSlice';
 import { Role, RoleCode, RoleScop } from '@prisma/client';
+import { UserWithAll } from 'types/user';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { AiFillSetting } from 'react-icons/ai';
@@ -16,15 +19,15 @@ import {
 import { TbBrandBlogger } from 'react-icons/tb';
 import { useSelector } from 'react-redux';
 type PropsType = {
-  userRoles: Partial<Role>[];
+  user: UserWithAll;
 };
-function AdminSidebar({ userRoles }: PropsType) {
+function AdminSidebar({ user }: PropsType) {
   const [searchLink, setSearchLink] = useState('');
   const userData = useSelector(selectCurrentUser);
-  const [groups, setGroups] = useState(getLinks(userRoles, searchLink));
+  const [groups, setGroups] = useState(getLinks(user?.roles ?? [], searchLink));
 
   useEffect(() => {
-    setGroups(getLinks(userRoles, searchLink));
+    setGroups(getLinks(user?.roles ?? [], searchLink));
   }, [searchLink]);
 
   return (
@@ -70,7 +73,17 @@ function AdminSidebar({ userRoles }: PropsType) {
         </div>
         {userData && (
           <div className="w-full flex flex-row items-center gap-2 py-4 px-4 bg-secondary-200 dark:bg-secondary-800">
-            <FaUserAlt size={30} />
+            {!!user?.profile?.image ? (
+              <Image
+                src={getFileUrl(user?.profile?.image)}
+                alt={user.username}
+                width={100}
+                height={100}
+                className="h-12 w-12 aspect-square rounded-full"
+              />
+            ) : (
+              <FaUserAlt size={30} />
+            )}
             <Link href={'/profile'} className="">
               <div className="text-start">
                 <div>{userData.username}</div>

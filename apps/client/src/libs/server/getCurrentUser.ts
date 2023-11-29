@@ -1,4 +1,3 @@
-import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import 'server-only';
 import { UserWithAll } from 'types/user';
@@ -28,9 +27,6 @@ async function getCurrentUser() {
       return null;
     }
   } else {
-    try {
-      revalidateTag('getCurrentUser');
-    } catch (e) {}
     return null;
   }
 }

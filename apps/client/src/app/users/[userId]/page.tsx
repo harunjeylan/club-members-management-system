@@ -1,6 +1,8 @@
 import Header2 from '@client/components/ui/Header2';
+import getFileUrl from '@client/helpers/getFileUrl';
 import getUserDetails from '@client/libs/server/getUserDetails';
 import { RoleScop } from '@prisma/client';
+import Image from 'next/image';
 import { BiUserCircle } from 'react-icons/bi';
 
 async function Page({ params }: { params: { userId: string } }) {
@@ -15,7 +17,17 @@ async function Page({ params }: { params: { userId: string } }) {
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-full md:col-span-6 lg:col-span-4 p-4 flex flex-col gap-4  rounded-md bg-secondary-200 dark:bg-secondary-900">
             <div className="flex flex-col gap-4 mx-auto mt-auto justify-center items-center">
-              <BiUserCircle size={140} />
+              {!!user?.profile?.image ? (
+                <Image
+                  src={getFileUrl(user?.profile?.image)}
+                  alt={user.username}
+                  width={200}
+                  height={200}
+                  className="h-40 w-40 aspect-square rounded-full"
+                />
+              ) : (
+                <BiUserCircle size={140} />
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center gap-2 px-4">
@@ -34,7 +46,7 @@ async function Page({ params }: { params: { userId: string } }) {
               </div>
             </div>
           </div>
-          
+
           <div className="col-span-full  md:col-span-6 lg:col-span-8 p-4 flex flex-col gap-4  rounded-md bg-secondary-200 dark:bg-secondary-900">
             <div className="flex justify-between w-full  border-b border-secondary-500 my-4 pb-2">
               <Header2 title={`User Roles`} />
@@ -67,7 +79,9 @@ async function Page({ params }: { params: { userId: string } }) {
                       <td className="px-4 py-2">{role.code}</td>
                       <td className="px-4 py-2">{role.scop}</td>
                       <td className="px-4 py-2">
-                        {role.scop === RoleScop.SUPER ? 'For All Space' : role.spaceName}
+                        {role.scop === RoleScop.SUPER
+                          ? 'For All Space'
+                          : role.spaceName}
                       </td>
                     </tr>
                   ))}

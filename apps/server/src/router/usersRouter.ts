@@ -1,4 +1,5 @@
 import createUserApi from '@server/api/users/createUserApi';
+import deleteUserApi from '@server/api/users/deleteUserApi';
 import updateUserApi from '@server/api/users/updateUserApi';
 import express from 'express';
 import deleteCurrentUserApi from '../api/users/deleteCurrentUserApi';
@@ -8,7 +9,6 @@ import getOneUserApi from '../api/users/getOneUserApi';
 import registerCurrentUserApi from '../api/users/registerCurrentUserApi';
 import updateCurrentUserApi from '../api/users/updateCurrentUserApi';
 import { authenticateToken } from '../middlewares/authenticateToken';
-import deleteUserApi from '@server/api/users/deleteUserApi';
 
 const router = express.Router();
 router.get('/', authenticateToken, getAllUsersApi);
@@ -23,5 +23,6 @@ router.delete('/me', authenticateToken, deleteCurrentUserApi);
 router.get('/:userId', authenticateToken, getOneUserApi);
 router.put('/:userId', authenticateToken, updateUserApi);
 router.delete('/:userId', authenticateToken, deleteUserApi);
+
 
 export default router;

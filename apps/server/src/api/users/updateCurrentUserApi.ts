@@ -16,7 +16,7 @@ export default async function updateCurrentUserApi(req, res) {
       profile: z
         .object({
           bio: z.string().optional(),
-          image: z.string().optional(),
+          fileModelId: z.string().optional(),
         })
         .optional(),
     });
@@ -30,18 +30,18 @@ export default async function updateCurrentUserApi(req, res) {
     const populations = {};
     if (profile) {
       const userProfile = profile;
-      if (profile['image']) {
-        profile['image'] = {
-          connect: { id: profile['image'] },
-        };
-      }
+      
       await prisma.profile.update({
         where: {
           userId: req.user.id,
         },
         data: userProfile,
       });
-      populations['profile'] = true;
+      populations['profile'] = {
+        include: {
+          image: true,
+        },
+      };
     }
 
     const user = await prisma.user.update({

@@ -1,4 +1,5 @@
 'use client';
+import getFileUrl from '@client/helpers/getFileUrl';
 import handleLogout from '@client/libs/client/user/handleLogout';
 import {
   selectCurrentUser,
@@ -6,6 +7,7 @@ import {
 } from '@client/libs/features/userSlice';
 import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import { Role, RoleCode, RoleScop } from '@prisma/client';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -45,12 +47,23 @@ function Profile() {
   return (
     <div className="relative">
       <div>
-        <button
-          onClick={() => setShow((prev) => !prev)}
-          className="flex btn-icon"
-        >
-          <BsPerson size={20} />
-        </button>
+        {!!user?.profile?.image ? (
+          <Image
+            onClick={() => setShow((prev) => !prev)}
+            src={getFileUrl(user?.profile?.image)}
+            alt={user.username}
+            width={100}
+            height={100}
+            className="h-8 w-8 aspect-square rounded-full cursor-pointer"
+          />
+        ) : (
+          <button
+            onClick={() => setShow((prev) => !prev)}
+            className="flex btn-icon"
+          >
+            <BsPerson size={20} />
+          </button>
+        )}
       </div>
       {show && (
         <div
