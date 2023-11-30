@@ -41,27 +41,25 @@ function ContactForm() {
     };
   }, [messages]);
   async function onSubmit(values: typeof initialValues) {
-    handleServerMutation(async () => {
-      const response = await handleCreateContact(values);
-      if (response.contact) {
-        setMessages([{
+    const response = await handleCreateContact(values);
+    if (response.contact) {
+      setMessages([
+        {
           type: 'success',
           summery: 'Message is sent successfully',
           title: 'Success ',
-        }]);
-      }
-      if (response?.errors) {
-        setMessages(
-          response?.errors.map(
-            (error: { message: string; path: string[] }) => ({
-              type: 'warning',
-              summery: `${error.path?.[0]} : ${error.message}`,
-              title: 'Warning ',
-            })
-          )
-        );
-      }
-    });
+        },
+      ]);
+    }
+    if (response?.errors) {
+      setMessages(
+        response?.errors.map((error: { message: string; path: string[] }) => ({
+          type: 'warning',
+          summery: `${error.path?.[0]} : ${error.message}`,
+          title: 'Warning ',
+        }))
+      );
+    }
   }
   return (
     <>
@@ -87,7 +85,9 @@ function ContactForm() {
               <div key={ind} className="col-span-2">
                 <Alert
                   message={message}
-                  handleRemove={() => setMessages((prevMessages) => prevMessages.splice(ind, 1))}
+                  handleRemove={() =>
+                    setMessages((prevMessages) => prevMessages.splice(ind, 1))
+                  }
                 />
               </div>
             ))}

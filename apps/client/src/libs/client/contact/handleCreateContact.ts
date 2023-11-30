@@ -1,7 +1,6 @@
 import { server_host } from '@client/config/host.config';
 import { Contact } from '@prisma/client';
 import axios from 'axios';
-import { getCookie } from 'cookies-next';
 import handleRevalidate from '../handleRevalidate';
 
 export default async function handleCreateContact(
@@ -9,7 +8,6 @@ export default async function handleCreateContact(
   revalidateOptions?: { paths?: string[]; tags?: string[] }
 ) {
   try {
-    const token = getCookie('token');
     const payloadData = {
       name: values.name,
       phone: values.phone,
@@ -17,18 +15,9 @@ export default async function handleCreateContact(
       subject: values.subject,
       message: values.message,
     };
-    if (typeof token === 'undefined') {
-      return;
-    }
-
-    const payload = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
 
     const url = `${server_host}/contacts`;
-    const res = await axios.post(url, payloadData, payload);
+    const res = await axios.post(url, payloadData);
     const revalidate: any = {
       'tag[1]': 'getContacts',
     };
