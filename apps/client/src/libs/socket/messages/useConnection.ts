@@ -1,6 +1,8 @@
 import { server_host } from '@client/config/host.config';
 import { getCookie } from 'cookies-next';
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { io } from 'socket.io-client';
 type PropsType<T> = {
   roomId: string;
@@ -8,8 +10,11 @@ type PropsType<T> = {
 };
 
 export default function useConnection<T>(props: PropsType<T>) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [connecting, setConnecting] = useState(true);
   const [connected, setConnected] = useState(false);
+  const [counter, setCounter] = useState(0);
   const [messages, setMessages] = useState<(T & { id: string | number })[]>(
     props.messages
   );
@@ -20,8 +25,26 @@ export default function useConnection<T>(props: PropsType<T>) {
         token: token,
       },
     });
-  }, []);
-  useLayoutEffect(() => {
+  }, [pathname, searchParams, counter]);
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
+    console.log({ connecting, connected });
+    if (connecting || !connected) {
+      interval = setInterval(() => {
+        console.log('reconnecting...');
+        setConnected(false);
+        setConnecting(true);
+        socket.connect();
+        setCounter(prev=>prev+1)
+      }, 1000 * counter);
+      return () => {
+        if (interval) {
+          clearTimeout(interval);
+        }
+      };
+    }
+  }, [connected, connecting, counter]);
+  useEffect(() => {
     socket.on('connect', () => {
       setConnecting(true);
       socket.emit('join', props.roomId);
@@ -45,14 +68,24 @@ export default function useConnection<T>(props: PropsType<T>) {
         setConnecting(false);
       });
     });
+    let interval: NodeJS.Timeout | undefined;
     socket.on('connect_error', () => {
-      setTimeout(() => {
-        setConnected(false);
-        setConnecting(true);
-        socket.connect();
-      }, 1000);
+      if (connecting || !connected) {
+        interval = setInterval(() => {
+          console.log('reconnecting...');
+          setConnected(false);
+          setConnecting(true);
+          socket.connect();
+          setCounter(prev=>prev+1)
+        }, 1000 * counter);
+      }
     });
-  }, [socket]);
+    return () => {
+      if (interval) {
+        clearTimeout(interval);
+      }
+    };
+  }, [socket, connected, connecting, counter]);
   function sendMessage(text: string) {
     socket.emit('message', {
       roomId: props.roomId,
