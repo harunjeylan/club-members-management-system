@@ -1,4 +1,4 @@
-import { Blog, Category, Event, Role, Space } from '@prisma/client';
+import { Blog, Category, Event, Forum, Role, Space } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
@@ -11,9 +11,7 @@ async function getSpaceDetails(spaceName: string) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${server_host}/spaces/${spaceName}?populate=users&populate=roles&populate=events&populate=blogs`;
-  ;
-
+  const url = `${server_host}/spaces/${spaceName}?populate=users&populate=roles&populate=events&populate=blogs&populate=forums`;
   const res = await fetch(url, {
     method: 'GET',
     next: { tags: [`getSpaceDetails/${spaceName}`] },
@@ -23,7 +21,6 @@ async function getSpaceDetails(spaceName: string) {
   });
 
   if (!res.ok) {
-    ;
     if (res.status === 404) {
       return redirect('/not-found');
     }
@@ -37,6 +34,7 @@ async function getSpaceDetails(spaceName: string) {
       roles: Role[];
       events: (Event & { category: Category })[];
       blogs: (Blog & { category: Category })[];
+      forums: Forum[];
     };
   };
   if (!space) {

@@ -1,4 +1,5 @@
 'use client';
+
 import Sidebar from '@client/components/ui/Sidebar';
 import getFileUrl from '@client/helpers/getFileUrl';
 import { Role, RoleCode, RoleScop } from '@prisma/client';
@@ -12,6 +13,7 @@ import {
   MdCategory,
   MdDashboard,
   MdEvent,
+  MdForum,
   MdWorkspaces,
 } from 'react-icons/md';
 import { TbBrandBlogger } from 'react-icons/tb';
@@ -142,6 +144,15 @@ const linkGroups = [
           { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
           { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
           { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+        ],
+      },
+      {
+        name: 'Forums',
+        link: '/forums',
+        Icon: MdForum,
+        accessedFor: [
+          { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+          { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
         ],
       },
       {

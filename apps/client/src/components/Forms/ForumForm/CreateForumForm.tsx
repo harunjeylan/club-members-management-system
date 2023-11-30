@@ -1,29 +1,23 @@
 'use client';
-import handleCreateEvent from '@client/libs/client/event/handleCreateEvent';
-import { Category, Event, Repeat } from '@prisma/client';
-import { useContext, useEffect, useState } from 'react';
-import * as yup from 'yup';
-import { AlertMessage } from '../../ui/Alert';
-import EventForm, { EventFormType } from './ForumForm';
+
 import { TransitionContext } from '@client/context/TransitionContext';
+import { useContext, useEffect, useState } from 'react';
+import { AlertMessage } from '../../ui/Alert';
+import ForumForm, { ForumFormType } from './ForumForm';
+import handleCreateForum from '@client/libs/client/forums/handleCreateForum';
+import { ForumScop, Space } from '@prisma/client';
 type PropsType = {
-  categories: Category[];
   spaceName?: string;
+  spaces?: Space[];
 };
-function CreateEventForm({ categories, spaceName }: PropsType) {
+function CreateForumForm({ spaceName, spaces }: PropsType) {
   const { handleServerMutation } = useContext(TransitionContext);
   const [messages, setMessages] = useState<AlertMessage[]>([]);
-  const initialValues: EventFormType = {
+  const initialValues: ForumFormType = {
     title: '',
-    startAt: new Date().toISOString().slice(0, 16),
-    endAt: new Date().toISOString().slice(0, 16),
-    fullDay: false,
-    repeat: Repeat.NO_REPEAT,
-    published: false,
-    location: '',
     description: '',
-    categoryId: '',
-    spaceName: spaceName ?? '',
+    scop: spaceName ? ForumScop.LOCAL : ForumScop.GENERAL,
+    spaceName: spaceName ?? spaces?.[0]?.name ?? '',
   };
 
   useEffect(() => {
@@ -38,38 +32,40 @@ function CreateEventForm({ categories, spaceName }: PropsType) {
     };
   }, [messages]);
 
-  async function onSubmit(values: EventFormType) {
-    ;
+  async function onSubmit(values: ForumFormType) {
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
     handleServerMutation(async () => {
-      const response = await handleCreateEvent(values, {
+      const response = await handleCreateForum(values, {
         tags: revalidateTags,
       });
-      ;
-      if (response.event) {
-        setMessages([{
-          type: 'success',
-          summery: 'Event created successfully',
-          title: 'Success ',
-        }]);
+      if (response.forum) {
+        setMessages([
+          {
+            type: 'success',
+            summery: 'Forum created successfully',
+            title: 'Success ',
+          },
+        ]);
       }
 
       if (response?.errors) {
-      setMessages(
-        response?.errors.map((error: { message: string, path:string[] }) => ({
-          type: 'warning',
-          summery: `${error.path?.[0]} : ${error.message}`,
-          title: 'Warning ',
-        }))
-      );
-    }
+        setMessages(
+          response?.errors.map(
+            (error: { message: string; path: string[] }) => ({
+              type: 'warning',
+              summery: `${error.path?.[0]} : ${error.message}`,
+              title: 'Warning ',
+            })
+          )
+        );
+      }
     });
   }
   return (
-    <EventForm
-      categories={categories}
+    <ForumForm
+      spaces={spaces}
       onSubmit={onSubmit}
       initialValues={initialValues}
       messages={messages}
@@ -78,4 +74,4 @@ function CreateEventForm({ categories, spaceName }: PropsType) {
   );
 }
 
-export default CreateEventForm;
+export default CreateForumForm;

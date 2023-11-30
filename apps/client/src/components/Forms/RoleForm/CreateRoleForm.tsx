@@ -16,7 +16,7 @@ function CreateRoleForm({
   const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues: RoleFormType = {
     name: '',
-    scop: RoleScop.SPACE,
+    scop: spaceName ? RoleScop.SPACE : RoleScop.SUPER,
     code: RoleCode.MEMBER,
     description: '',
     spaceName: spaceName ?? spaces?.[0]?.name ?? '',
@@ -41,11 +41,13 @@ function CreateRoleForm({
     handleServerMutation(async () => {
       const response = await handleCreateRole(values, { tags: revalidateTags });
       if (response.role) {
-        setMessages([{
-          type: 'success',
-          summery: 'Role created successfully',
-          title: 'Success ',
-        }]);
+        setMessages([
+          {
+            type: 'success',
+            summery: 'Role created successfully',
+            title: 'Success ',
+          },
+        ]);
       }
       if (response?.errors) {
         setMessages(

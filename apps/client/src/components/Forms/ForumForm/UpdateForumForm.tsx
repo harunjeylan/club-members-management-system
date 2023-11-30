@@ -1,37 +1,28 @@
 'use client';
-import handleUpdateEvent from '@client/libs/client/event/handleUpdateEvent';
-import { Category, Event, Repeat } from '@prisma/client';
+import { Category, Forum, ForumScop, Repeat, Space } from '@prisma/client';
 import { useContext, useEffect, useState } from 'react';
 import { AlertMessage } from '../../ui/Alert';
-import EventForm, { EventFormType } from './ForumForm';
+import ForumForm, { ForumFormType } from './ForumForm';
 import { TransitionContext } from '@client/context/TransitionContext';
-function UpdateEventForm({
-  event,
-  categories,
+import handleUpdateForum from '@client/libs/client/forums/handleUpdateForum';
+function UpdateForumForm({
+  forum,
   spaceName,
+  spaces,
 }: {
-  event: Event;
-  categories: Category[];
+  spaces?: Space[];
+  forum: Forum;
   spaceName?: string;
 }) {
   const { handleServerMutation } = useContext(TransitionContext);
   const [messages, setMessages] = useState<AlertMessage[]>([]);
-  const initialValues: EventFormType = {
-    title: event.title ?? '',
-    startAt:
-      event.startAt instanceof Date
-        ? event.startAt.toISOString().slice(0, 16)
-        : new Date(event.startAt).toISOString().slice(0, 16),
-    endAt:
-      event.endAt instanceof Date
-        ? event.endAt.toISOString().slice(0, 16)
-        : new Date(event.startAt).toISOString().slice(0, 16),
-    fullDay: event.fullDay ?? false,
-    repeat: event.repeat ?? Repeat.NO_REPEAT,
-    published: event.published ?? false,
-    location: event.location ?? '',
-    description: event.description ?? '',
-    categoryId: event.categoryId ?? '',
+  const initialValues: ForumFormType = {
+    title: forum.title ?? '',
+    scop:
+      forum.scop ?? forum.spaceName ?? spaceName
+        ? ForumScop.LOCAL
+        : ForumScop.GENERAL,
+    description: forum.description ?? '',
     spaceName: spaceName ?? '',
   };
 
@@ -47,20 +38,22 @@ function UpdateEventForm({
     };
   }, [messages]);
 
-  async function onSubmit(values: EventFormType) {
+  async function onSubmit(values: ForumFormType) {
     const revalidateTags = [
       ...(values.spaceName ? [`getSpaceDetails/${values.spaceName}`] : []),
     ];
     handleServerMutation(async () => {
-      const response = await handleUpdateEvent(event.id, values, {
+      const response = await handleUpdateForum(forum.id, values, {
         tags: revalidateTags,
       });
-      if (response.event) {
-        setMessages([{
-          type: 'success',
-          summery: 'Event created successfully',
-          title: 'Success ',
-        }]);
+      if (response.forum) {
+        setMessages([
+          {
+            type: 'success',
+            summery: 'Forum created successfully',
+            title: 'Success ',
+          },
+        ]);
       }
 
       if (response?.errors) {
@@ -77,14 +70,14 @@ function UpdateEventForm({
     });
   }
   return (
-    <EventForm
-      categories={categories}
+    <ForumForm
       onSubmit={onSubmit}
       initialValues={initialValues}
       messages={messages}
       setMessages={setMessages}
+      spaces={spaces}
     />
   );
 }
 
-export default UpdateEventForm;
+export default UpdateForumForm;

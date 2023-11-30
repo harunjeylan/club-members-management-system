@@ -1,20 +1,20 @@
-import { Event } from '@prisma/client';
+import { Forum } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
 import { UserWithProfile } from 'types/user';
 import { server_host } from '../../config/host.config';
 
-async function getEvents() {
+async function getForums() {
   const cookieStore = cookies();
   if (!cookieStore.has('token')) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${server_host}/events?populate=space&populate=author`;
+  const url = `${server_host}/forums?populate=space&populate=author`;
   const res = await fetch(url, {
     method: 'GET',
-    next: { tags: ['getEvents'] },
+    next: { tags: ['getForums'] },
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
@@ -28,13 +28,13 @@ async function getEvents() {
     throw new Error('Failed to fetch data');
   }
 
-  const { events } = (await res.json()) as {
-    events: (Event & { author: UserWithProfile })[];
+  const { forums } = (await res.json()) as {
+    forums: (Forum & { author: UserWithProfile })[];
   };
-  if (!events) {
+  if (!forums) {
     return redirect('/not-found');
   }
-  return events;
+  return forums;
 }
 
-export default getEvents;
+export default getForums;

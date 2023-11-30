@@ -1,27 +1,30 @@
-import BlogDetails from '@client/components/Blog/BlogDetails';
-import BlogList from '@client/components/Blog/BlogList';
 import Footer from '@client/components/Footer';
-import Header from '@client/components/ui/Header';
-import getFileUrl from '@client/helpers/getFileUrl';
-import getBlogDetails from '@client/libs/server/getBlogDetails';
 import getCurrentUser from '@client/libs/server/getCurrentUser';
-import getPublishedBlogDetails from '@client/libs/server/getPublishedBlogDetails';
-import getPublishedBlogs from '@client/libs/server/getPublishedBlogs';
+import getForumDetails from '@client/libs/server/getForumDetails';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
+import { Role, RoleCode, RoleScop } from '@prisma/client';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
-import { BlogWithAll } from 'types/blog';
 
-async function Page({ params }: { params: { slug: string } }) {
+async function Page({ params }: { params: { forumId: string } }) {
   const user = await getCurrentUser();
-  let blog: BlogWithAll;
-
+  let userRoles: Partial<Role>[] = [];
   if (user) {
-    blog = await getBlogDetails(params.slug);
-  } else {
-    blog = await getPublishedBlogDetails(params.slug);
+    userRoles = getUserAccessRoles(user.roles, [
+      { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+      { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+      { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+      { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+    ]);
   }
-  const blogs = await getPublishedBlogs();
+  if (!userRoles.length) {
+    return redirect('/auth/login');
+  }
+  const forum = await getForumDetails(params.forumId);
+  console.log({forum});
+  
   return (
     <>
       <main className="w-full my-8">
@@ -35,18 +38,9 @@ async function Page({ params }: { params: { slug: string } }) {
           </Link>
         </div>
         <div className="max-w-6xl mx-auto w-full px-2 md:px-4">
-          <Suspense fallback={<div>Loading..</div>}>
-            <BlogDetails blog={blog} />
-          </Suspense>
-          <Suspense fallback={<div>Loading..</div>}>
-            <div className="my-4">
-              <Header title="Other Blogs" />
-            </div>
-            <BlogList blogs={blogs} />
-          </Suspense>
+          <Suspense fallback={<div>Loading..</div>}></Suspense>
         </div>
       </main>
-      <Footer />
     </>
   );
 }

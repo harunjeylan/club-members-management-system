@@ -49,6 +49,9 @@ export default async function getOneSpaceApi(req, res) {
           },
         };
       }
+      if (item === 'forums') {
+        populations['forums'] = true;
+      }
     });
     let space = null;
     if (adminAccessRoles.length) {
@@ -87,9 +90,6 @@ export default async function getOneSpaceApi(req, res) {
       space: space,
     });
   } catch (error) {
-    ;
-    return res
-      .status(500)
-      .json({ errors: [{ message: error.message }] })
+    return res.status(500).json({ errors: [{ message: error.message }] });
   }
 }

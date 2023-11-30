@@ -18,7 +18,7 @@ function UpdateRoleForm({
   const [messages, setMessages] = useState<AlertMessage[]>([]);
   const initialValues: RoleFormType = {
     name: role.name ?? '',
-    scop: role.scop ?? RoleScop.SPACE,
+    scop: role.scop ?? role.spaceName ?? spaceName ? RoleScop.SPACE : RoleScop.SUPER,
     code: role.code ?? RoleCode.MEMBER,
     description: role.description ?? '',
     spaceName: role.spaceName ?? spaceName ?? '',
