@@ -12,7 +12,7 @@ async function Page() {
   const spaces = await getSpaces();
   const forums = await getForums();
   return (
-    <section className="w-full ">
+    <section className="w-full mt-12">
       <div className="w-full px-4 mx-full ">
         <div className="flex justify-between w-full  border-b border-secondary-500 my-4 pb-2">
           <Header2 title="Forums" />

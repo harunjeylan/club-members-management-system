@@ -7,8 +7,6 @@ import { MdCategory } from 'react-icons/md';
 import { BlogWithAll } from 'types/blog';
 
 export default function BlogDetails({ blog }: { blog: BlogWithAll }) {
-  ;
-
   return (
     <main className="flex flex-col gap-4">
       <article className="w-full max-w-4xl  mx-auto flex flex-col gap-4">
@@ -16,7 +14,17 @@ export default function BlogDetails({ blog }: { blog: BlogWithAll }) {
         <div className="flex gap-4 items-center justify-between">
           {!!blog.author && (
             <div className="flex flex-row items-center gap-2">
-              <FaUserAlt size={40} />
+              {!!blog.author?.profile?.image ? (
+                <Image
+                  src={getFileUrl(blog.author?.profile?.image)}
+                  alt={blog.author.username}
+                  width={100}
+                  height={100}
+                  className="h-10 w-10 aspect-square rounded-full"
+                />
+              ) : (
+                <FaUserAlt size={40}  />
+              )}
               <div className="text-start text-sm">
                 <div>
                   {blog.author.first_name} {blog.author.last_name}
@@ -56,7 +64,9 @@ export default function BlogDetails({ blog }: { blog: BlogWithAll }) {
         <h1 className="text-lg md:text-2xl lg:text-4xl font-extrabold text-center">
           {blog.title}
         </h1>
-        <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+        <div className="prose lg:prose-xl prose-stone dark:prose-invert">
+          <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+        </div>
       </article>
     </main>
   );

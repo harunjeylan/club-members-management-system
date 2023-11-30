@@ -29,7 +29,6 @@ export default async function createEventApi(req, res) {
     if (!userAccessRoles.length) {
       return res.sendStatus(403);
     }
-    console.log(req.body);
     
     const zodSchema = z.union([
       z.object({
@@ -51,7 +50,6 @@ export default async function createEventApi(req, res) {
     if (!success) {
       return res.status(409).json({ errors: fromZodError(error).details });
     }
-console.log(data);
 
     const forum = await prisma.forum.create({
       data: { ...data, authorId: req.user.id } as Forum,

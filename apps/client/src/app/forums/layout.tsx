@@ -25,7 +25,7 @@ export default async function Layout({ children }: PropsType) {
   return (
     <main className="flex h-full w-full ">
       {user && userRoles.length ? <AdminSidebar user={user} /> : ''}
-      <div className="w-full max-w-[100vw] overflow-x-auto mt-12">
+      <div className=" w-full overflow-y-auto">
         {children}
       </div>
     </main>

@@ -20,10 +20,11 @@ export default async function Layout({ children }: PropsType) {
   const adminRoles = getUserAccessRoles(user.roles, [
     { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
     { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
-  ]);
-  const userRoles = getUserAccessRoles(user.roles, [
     { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
     { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+  ]);
+  const userRoles = getUserAccessRoles(user.roles, [
+    { scop: RoleScop.SPACE, code: RoleCode.MEMBER },
   ]);
   if (![...userRoles, ...adminRoles].length) {
     return redirect('/auth/login');

@@ -12,6 +12,26 @@ export default async function getOneEventApi(req, res) {
       if (item === 'space') {
         populations['space'] = true;
       }
+      if (item === 'messages') {
+        populations['messages'] = {
+          include: {
+            user: {
+              include: {
+                profile: {
+                  include: {
+                    image: true,
+                  },
+                },
+              },
+            },
+            reply: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        };
+      }
 
       if (item === 'author') {
         populations['author'] = {

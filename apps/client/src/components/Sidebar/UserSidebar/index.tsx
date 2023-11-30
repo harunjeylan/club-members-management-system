@@ -48,7 +48,7 @@ function UserSidebar({ user }: PropsType) {
                   alt={user.username}
                   width={100}
                   height={100}
-                  className="h-12 w-12 aspect-square rounded-full"
+                  className="h-10 w-10 aspect-square rounded-full"
                 />
               ) : (
                 <FaUserAlt size={30} />

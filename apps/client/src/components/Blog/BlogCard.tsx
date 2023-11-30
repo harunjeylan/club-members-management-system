@@ -43,16 +43,16 @@ export default function BlogCard({ blog }: PropsType) {
         </div>
       )}
       <div className="flex gap-2 items-center">
-        <Link href={`/blogs/${blog.slug}`} className="text-lg font-bold">
+        <Link href={`/blogs/${blog.slug}`} className="text-lg font-bold line-clamp-1">
           {blog.title}
         </Link>
-        {blog.category && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-secondary-200 dark:bg-secondary-700 px-2 py-1 text-xs font-semibold">
-            {blog.category.name}
-          </span>
-        )}
       </div>
-      <p>{blog.description}</p>
+      <p className='line-clamp-3'>{blog.description}</p>
+      {blog.category && (
+        <span className="inline-flex items-center gap-1 rounded-full bg-secondary-200 dark:bg-secondary-700 px-2 py-1 text-xs font-semibold">
+          {blog.category.name}
+        </span>
+      )}
       {!!blog.published && (
         <span className="flex w-full p-1 bg-success-500 rounded-lg mb-2"></span>
       )}

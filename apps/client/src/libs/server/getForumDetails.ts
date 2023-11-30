@@ -1,8 +1,9 @@
-import { Category, Forum } from '@prisma/client';
+import { Category, Forum, Message } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
 import { server_host } from '../../config/host.config';
+import { MessageWithAll } from 'types/message';
 
 export default async function getForumDetails(forumId: string) {
   const cookieStore = cookies();
@@ -10,7 +11,7 @@ export default async function getForumDetails(forumId: string) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
-  const url = `${server_host}/forums/${forumId}?populate=space&populate=author`;
+  const url = `${server_host}/forums/${forumId}?populate=space&populate=author&populate=messages`;
   const res = await fetch(url, {
     method: 'GET',
     next: { tags: [`getForumDetails/${forumId}`] },
@@ -28,7 +29,7 @@ export default async function getForumDetails(forumId: string) {
   }
 
   const { forum } = (await res.json()) as {
-    forum: (Forum & { category: Category })[];
+    forum: Forum & { messages: MessageWithAll[] };
   };
   if (!forum) {
     return redirect('/not-found');

@@ -23,7 +23,6 @@ type PropsType = {
   user: UserWithAll;
 };
 export default function UpdateCurrentUserForm({ user }: PropsType) {
-  console.log({ user });
 
   const { handleServerMutation } = useContext(TransitionContext);
   const [messages, setMessages] = useState<AlertMessage[]>([]);
