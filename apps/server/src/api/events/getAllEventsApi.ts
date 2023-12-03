@@ -38,7 +38,12 @@ export default async function getAllEventsApi(req, res) {
     if (!req.user || !superAdminRoles.length) {
       const events = await prisma.event.findMany({
         include: populations,
-        where: { published: true },
+        where: {
+          published: true,
+        },
+        orderBy: {
+          startAt: 'desc',
+        },
       });
       return res.status(200).json({
         events: events,
@@ -55,15 +60,15 @@ export default async function getAllEventsApi(req, res) {
           { published: true },
         ],
       },
+      orderBy: {
+        startAt: 'desc',
+      },
     });
 
     return res.status(200).json({
       events: events,
     });
   } catch (error) {
-    ;
-    return res
-      .status(500)
-      .json({ errors: [{ message: error.message }] })
+    return res.status(500).json({ errors: [{ message: error.message }] });
   }
 }

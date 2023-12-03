@@ -14,9 +14,11 @@ async function getPublishedEventDetails(eventId: string) {
   });
 
   if (!res.ok) {
-    ;
     if (res.status === 404) {
       return redirect('/not-found');
+    }
+    if (res.status === 403) {
+      return redirect('/forbidden');
     }
     // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');

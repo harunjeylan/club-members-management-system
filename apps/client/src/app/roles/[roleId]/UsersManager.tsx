@@ -78,7 +78,7 @@ function UsersManager({ users, roleId }: PropsType) {
           <UsersListTable
             users={users}
             setSelected={setSelected as Dispatch<SetStateAction<UserWithAll[]>>}
-            baseUrl={`/${roleId}/`}
+            baseUrl={``}
           />
         </Suspense>
       </div>

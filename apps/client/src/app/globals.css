@@ -36,6 +36,9 @@
   .vertical-timeline-element-content {
     @apply p-0;
   }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full bg-secondary-200 dark:bg-secondary-700 px-2 py-1 text-xs font-semibold;
+  }
 }
 /* 
 * {

@@ -19,7 +19,7 @@ function CreateRoleForm({
     scop: spaceName ? RoleScop.SPACE : RoleScop.SUPER,
     code: RoleCode.MEMBER,
     description: '',
-    spaceName: spaceName ?? spaces?.[0]?.name ?? '',
+    spaceName: spaceName ?? '',
   };
 
   useEffect(() => {

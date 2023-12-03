@@ -53,6 +53,8 @@ export default async function handleUpdateBlog(
       'tag[1]': `getBlogDetails/${slug}`,
       'tag[3]': `getSpaceDetails/${values.spaceName}`,
       'tag[2]': `getBlogDetails/${slug}`,
+      'tag[4]': `getPublishedBlogDetails/${slug}`,
+      'tag[5]': `getPublishedBlogs`,
     };
     revalidateOptions?.tags?.forEach((tag, ind) => {
       revalidate['tag[' + (6 + ind) + ']'] = tag;

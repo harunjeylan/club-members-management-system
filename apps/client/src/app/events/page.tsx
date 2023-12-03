@@ -8,6 +8,7 @@ import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
 import getPublishedEvents from '@client/libs/server/getPublishedEvents';
 import EventList from '../../components/Event/EventList';
 import Footer from '@client/components/Footer';
+import Header from '@client/components/ui/Header';
 
 async function Page() {
   const user = await getCurrentUser();
@@ -27,13 +28,14 @@ async function Page() {
   } else {
     events = await getPublishedEvents();
   }
-  ;
-
   if (!userRoles.length) {
     return (
       <>
         <section className="w-full ">
           <div className="w-full px-1 md:px-2 lg:px-4 mx-full ">
+          <div className="my-4">
+            <Header title="Events" />
+          </div>
             <EventList events={events} />
           </div>
         </section>

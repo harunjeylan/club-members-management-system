@@ -27,6 +27,9 @@ export default async function getAllPublishedEventsApi(req, res) {
     const events = await prisma.event.findMany({
       where: { published: true },
       include: populations,
+      orderBy: {
+        startAt: 'desc',
+      },
     });
     return res.status(200).json({
       events: events,

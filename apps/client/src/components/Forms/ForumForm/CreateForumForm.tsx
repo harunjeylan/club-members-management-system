@@ -17,7 +17,7 @@ function CreateForumForm({ spaceName, spaces }: PropsType) {
     title: '',
     description: '',
     scop: spaceName ? ForumScop.LOCAL : ForumScop.GENERAL,
-    spaceName: spaceName ?? spaces?.[0]?.name ?? '',
+    spaceName: spaceName ?? '',
   };
 
   useEffect(() => {

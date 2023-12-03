@@ -18,11 +18,13 @@ export default function Messages({ forum }: PropsType) {
     messages: forum.messages,
     roomId: forum.id,
   });
+  
   useLayoutEffect(() => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
   }, [messages]);
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (textInputRef.current) {

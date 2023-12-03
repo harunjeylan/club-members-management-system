@@ -5,15 +5,12 @@ import 'server-only';
 import { server_host } from '../../config/host.config';
 
 export default async function getRoleDetails(roleId: string) {
-  ;
-
   const cookieStore = cookies();
   if (!cookieStore.has('token')) {
     return redirect('/auth/login');
   }
   const token = cookieStore.get('token') as { value: string };
   const url = `${server_host}/roles/${roleId}?populate=users&populate=space`;
-  ;
 
   const res = await fetch(url, {
     method: 'GET',
@@ -24,9 +21,11 @@ export default async function getRoleDetails(roleId: string) {
   });
 
   if (!res.ok) {
-    ;
     if (res.status === 404) {
       return redirect('/not-found');
+    }
+    if (res.status === 403) {
+      return redirect('/forbidden');
     }
     // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');

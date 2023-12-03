@@ -3,8 +3,17 @@ import NavLink from '../ui/NavLink';
 import Profile from './Profile';
 import SearchForm from './SearchForm';
 import Theme from './Theme';
+import { UserWithAll } from 'types/user';
+import { getUserAccessRoles } from '@libs/utils/getUserAccessRoles';
+import { RoleCode, RoleScop } from '@prisma/client';
 
-async function Navbar() {
+async function Navbar({ user }: { user?: UserWithAll | null }) {
+  const adminRoles = getUserAccessRoles(user?.roles ?? [], [
+    { scop: RoleScop.SUPER, code: RoleCode.ADMIN },
+    { scop: RoleScop.SUPER, code: RoleCode.EDITOR },
+    { scop: RoleScop.SPACE, code: RoleCode.ADMIN },
+    { scop: RoleScop.SPACE, code: RoleCode.EDITOR },
+  ]);
   return (
     <header className="sticky z-10  top-0 w-full bg-secondary-100 dark:bg-secondary-900">
       <nav className="w-full px-8 py-4 flex justify-between items-center">
@@ -25,8 +34,12 @@ async function Navbar() {
             <Link href={'/blogs'}>Blogs</Link>
             <Link href={'/events'}>Events</Link>
             <Link href={'/forums'}>Forums</Link>
-            <Link href={'/about'}>About</Link>
-            <Link href={'/contacts'}>Contact</Link>
+            {!adminRoles.length && (
+              <>
+                <Link href={'/about'}>About</Link>
+                <Link href={'/contacts'}>Contact</Link>
+              </>
+            )}
           </NavLink>
         </div>
       </nav>

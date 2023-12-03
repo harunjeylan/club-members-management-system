@@ -23,7 +23,7 @@ function UpdateForumForm({
         ? ForumScop.LOCAL
         : ForumScop.GENERAL,
     description: forum.description ?? '',
-    spaceName: spaceName ?? '',
+    spaceName: forum.spaceName ?? spaceName ?? '',
   };
 
   useEffect(() => {

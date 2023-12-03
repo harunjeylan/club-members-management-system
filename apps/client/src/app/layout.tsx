@@ -41,7 +41,7 @@ export default async function RootLayout({ children }: PropsType) {
           <Suspense fallback={false}>
             <WebVitals />
             <StoreProvider user={user} token={token}>
-              <Navbar />
+              <Navbar user={user} />
               {children}
             </StoreProvider>
           </Suspense>

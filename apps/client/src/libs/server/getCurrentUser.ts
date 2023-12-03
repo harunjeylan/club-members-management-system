@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import 'server-only';
 import { UserWithAll } from 'types/user';
 import { server_host } from '../../config/host.config';
+import { redirect } from 'next/navigation';
 
 async function getCurrentUser() {
   const cookieStore = cookies();
@@ -18,6 +19,9 @@ async function getCurrentUser() {
         next: { tags: ['getCurrentUser'] },
       });
       if (!res.ok) {
+        if (res.status === 403) {
+          return redirect('/forbidden');
+        }
         return null;
       }
       const data = (await res.json()) as { user: UserWithAll };

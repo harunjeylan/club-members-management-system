@@ -158,6 +158,7 @@ export default function BlogForm({
               onUpload={(files) => {
                 setFieldValue('fileModelId', files?.[0].id);
               }}
+              type='image/*'
             >
               {({ setShow }) => (
                 <button

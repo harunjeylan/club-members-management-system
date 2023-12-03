@@ -6,7 +6,6 @@ import getArrayValues from '@libs/utils/getArrayValues';
 export default async function getOneBlogApi(req, res) {
   const { slug } = req.params;
   const { populate } = req.query;
-  ;
 
   try {
     let populations = {};
